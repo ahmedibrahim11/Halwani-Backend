@@ -41,7 +41,7 @@ namespace Halwani.Data
         #endregion
 
         #region Users
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Team> Users { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         #endregion
 
