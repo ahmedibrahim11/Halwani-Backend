@@ -2,6 +2,7 @@
 using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.SLA;
 using Halwani.Data.Entities.SLM_Measurement;
+using Halwani.Data.Entities.Team;
 using Halwani.Data.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -40,8 +41,12 @@ namespace Halwani.Data
         public virtual DbSet<SLmMeasurement> SLmMeasurements { get; set; }
         #endregion
 
+        #region Team
+        public virtual DbSet<Team> Teams { get; set; }
+        #endregion
+        
         #region Users
-        public virtual DbSet<Team> Users { get; set; }
+        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
         #endregion
 
