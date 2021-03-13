@@ -22,8 +22,8 @@ namespace Halwani.Data.Entities.Incident
         public Status TicketStatus { get; set; }
         public string Description { get; set; }
         public DateTime SubmitDate { get; set; }
-        public DateTime ResolvedDate { get; set; }
-        public DateTime LastModifiedDate { get; set; } 
+        public DateTime? ResolvedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; } 
         #endregion
 
         #region [SLM-Measurement]

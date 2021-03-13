@@ -33,7 +33,7 @@ namespace Halwani.Data
         public virtual DbSet<TicketHistory> TicketHistories { get; set; }
         #endregion
         
-        #region Tickets
+        #region SLA
         public virtual DbSet<SLA> SLAs { get; set; }
         #endregion
         
@@ -54,14 +54,9 @@ namespace Halwani.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseLazyLoadingProxies();    //UseLazyLoadingProxies
-
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=SCOTApp;Integrated Security=True");
-
-                optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=db.expertapps.com.sa\\MSSQL14,1444;Database=SCOTApp;User ID=sa;Password=ExpApps-14;Trusted_Connection=False;MultipleActiveResultSets=true;ApplicationIntent=ReadWrite");
-                //optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=db.expertapps.com.sa\\MSSQL14,1444;Database=SCOTAppzTest;User ID=sa;Password=ExpApps-14;Trusted_Connection=False;MultipleActiveResultSets=true;ApplicationIntent=ReadWrite");
+                optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=.;Database=Halwani;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
 

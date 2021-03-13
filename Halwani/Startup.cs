@@ -1,3 +1,4 @@
+using Halwani.Core.ModelRepositories;
 using Halwani.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,13 +29,10 @@ namespace Halwani
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<HalawaniContext>(options =>
-                     options.UseSqlServer(Configuration.GetConnectionString("HalwaniConnection")
+                     options.UseLazyLoadingProxies(false).UseSqlServer(Configuration.GetConnectionString("HalwaniConnection")
                  ));
-            services.AddDbContext<HalawaniContext>(options =>
-             options.UseLazyLoadingProxies(false)
 
-         );
-
+            services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddControllers();
             services.SwaggerConfiguration();
         }

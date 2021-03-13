@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Halwani.Core.ViewModels.TicketModels
 {
-    public class ListTicketViewModel : PaginationViewModel
+    public class TicketPageInputViewModel  : PaginationViewModel
     {
         public TicketPageInputFilter Filter { get; set; }
         public TicketPageInputSort Sort { get; set; }

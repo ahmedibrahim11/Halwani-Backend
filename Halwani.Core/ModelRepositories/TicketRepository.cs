@@ -24,10 +24,11 @@ namespace Halwani.Core.ModelRepositories
 
         }
 
-        public TicketPageResultViewModel List(ListTicketViewModel model, ClaimsIdentity userClaims)
+        public TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response)
         {
             try
             {
+                response = new RepositoryOutput();
                 TicketPageResultViewModel result = new TicketPageResultViewModel
                 {
                     CanAdd = true
@@ -45,13 +46,14 @@ namespace Halwani.Core.ModelRepositories
             catch (Exception ex)
             {
                 RepositoryHelper.LogException(ex);
+                response = RepositoryOutput.CreateErrorResponse(ex.Message);
                 return null;
             }
         }
 
         #region Private Methods
 
-        private void PagingList(ListTicketViewModel model, TicketPageResultViewModel result, IEnumerable<Ticket> qurey)
+        private void PagingList(TicketPageInputViewModel model, TicketPageResultViewModel result, IEnumerable<Ticket> qurey)
         {
             result.TotalCount = qurey.Count();
             if (!model.IsPrint)
@@ -77,7 +79,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        private IEnumerable<Ticket> SortList(ListTicketViewModel model, IEnumerable<Ticket> query)
+        private IEnumerable<Ticket> SortList(TicketPageInputViewModel model, IEnumerable<Ticket> query)
         {
             switch (model.Sort)
             {
@@ -100,7 +102,7 @@ namespace Halwani.Core.ModelRepositories
             return query;
         }
 
-        private IEnumerable<Ticket> FilterList(ListTicketViewModel model, IEnumerable<Ticket> qurey)
+        private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, IEnumerable<Ticket> qurey)
         {
             return qurey;
         }
@@ -119,7 +121,7 @@ namespace Halwani.Core.ModelRepositories
         #endregion
 
         #region Custom Methouds
-        TicketPageResultViewModel List(ListTicketViewModel model, ClaimsIdentity userClaims);
+        TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
         #endregion
     }
 }
