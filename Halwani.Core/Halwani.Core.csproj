@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Halwani.Data\Halwani.Data.csproj" />
+    <ProjectReference Include="..\Halwani.Utilites\Halwani.Utilites.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ModelRepositories\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+</Project>
