@@ -14,9 +14,11 @@ namespace Halwani.Data.Entities.Incident
         public string TicketName { get; set; }
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }
+        public string SubmitterName { get; set; }
         public string ServiceName { get; set; }
         public string ReportedSource { get; set; }
         public TicketType TicketType { get; set; }
+        public TicketSeverity TicketSeverity { get; set; }
         public Status TicketStatus { get; set; }
         public string Description { get; set; }
         public DateTime SubmitDate { get; set; }
