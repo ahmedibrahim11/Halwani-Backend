@@ -1,7 +1,9 @@
+using Halwani.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,7 +27,16 @@ namespace Halwani
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<HalawaniContext>(options =>
+                     options.UseSqlServer(Configuration.GetConnectionString("HalwaniConnection")
+                 ));
+            services.AddDbContext<HalawaniContext>(options =>
+             options.UseLazyLoadingProxies(false)
+
+         );
+
             services.AddControllers();
+            services.SwaggerConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +52,13 @@ namespace Halwani
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+
+            });
 
             app.UseEndpoints(endpoints =>
             {
