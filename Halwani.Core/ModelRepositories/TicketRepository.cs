@@ -102,9 +102,11 @@ namespace Halwani.Core.ModelRepositories
             return query;
         }
 
-        private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, IEnumerable<Ticket> qurey)
+        private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, IEnumerable<Ticket> query)
         {
-            return qurey;
+            if (!string.IsNullOrEmpty(model.SearchText))
+                query = query.Where(e => e.TicketName.Contains(model.SearchText));
+            return query;
         }
 
         private IEnumerable<Ticket> FilterLoggedUser(object userClaims, IEnumerable<Ticket> qurey, bool v)
