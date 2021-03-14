@@ -15,6 +15,7 @@ namespace Halwani.Data.Entities.SLA
         public double WorkingHours { get; set; }
         public string WorkingDays { get; set; }
         public string SLADuration { get; set; } 
+        public string ProductCategoryName { get; set; }
         #endregion
 
         #region [SlM-Measurement]
