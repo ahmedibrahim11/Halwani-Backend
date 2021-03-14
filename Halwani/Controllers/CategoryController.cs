@@ -26,45 +26,20 @@ namespace Halwani.Controllers
         [Route("getCategory")]
         public ActionResult GetAllCategory()
         {
-            return Ok();
+            var result = _categoryRepositry.List();
+            if (result == null)
+                return Problem();
+            return Ok(result);
         }
-
 
         [HttpPost]
         [Route("create")]
         public ActionResult CreateCategoryProduct(List<CreateProductCategroyModel> model)
         {
-
-            foreach (var item in model)
-            {
-                ProductCategory productCategory = new ProductCategory()
-                {
-                    Name = item.ParentCategory,
-                };
-
-                _categoryRepositry.Add(productCategory);
-                _categoryRepositry.Save();
-                foreach (var subcategory in item.SubCategory)
-                {
-                    ProductCategory subCategory = new ProductCategory()
-                    {
-                        Name = subcategory.SubCategoryName,
-                        Parent=productCategory,
-                        ParentCategoryId = productCategory.Id
-                    };
-                    _categoryRepositry.Add(subCategory);
-                    _categoryRepositry.Save();
-                }
-
-
-            }
-
-
-
-
+            var result = _categoryRepositry.Add(model);
+            if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.Error)
+                return Problem();
             return Ok();
         }
-
-
     }
 }

@@ -74,6 +74,13 @@ namespace Halwani.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.HasAnnotation("Relational:Collation", "Arabic_100_CI_AI");
 
+            modelBuilder.Entity<ProductCategory>(entity =>
+            {
+                entity.HasOne(d => d.Parent)
+                    .WithMany(p => p.ProductCategories)
+                    .HasForeignKey(d => d.ParentCategoryId)
+                    .HasConstraintName("FK_ProductCategories_ProductCategories_ParentId");
+            });
             modelBuilder.Entity<Assoication>(entity =>
             {
                 entity.Property(e => e.Sumbitter).IsRequired().HasMaxLength(150);
