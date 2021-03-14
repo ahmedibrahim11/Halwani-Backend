@@ -1,15 +1,18 @@
 ﻿using Halawani.Core;
 using Halawani.Core.Helper;
+using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.Authentication;
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.User;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -17,12 +20,6 @@ using System.Threading.Tasks;
 
 namespace Halwani.Core.ModelRepositories
 {
-    public interface ITicketRepository : IBaseRepository<Ticket>
-    {
-        #region Custom Methouds
-        TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
-        #endregion
-    }
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
         public TicketRepository()
@@ -54,6 +51,75 @@ namespace Halwani.Core.ModelRepositories
                 RepositoryHelper.LogException(ex);
                 response = RepositoryOutput.CreateErrorResponse(ex.Message);
                 return null;
+            }
+        }
+
+        public async Task<List<string>> PostFilesAsync(IFormFileCollection attachments, string saveFilePath)
+        {
+            try
+            {
+                var result = new List<string>();
+                foreach (var file in attachments)
+                {
+                    var filePath = Path.Combine(saveFilePath + Guid.NewGuid().ToString() + file.Name);
+                    if (!Directory.Exists(saveFilePath))
+                    {
+                        Directory.CreateDirectory(saveFilePath);
+                    }
+                    var filepath = Path.Combine(filePath);
+
+                    using var fileSteam = new FileStream(filepath, FileMode.Create);
+                    await file.CopyToAsync(fileSteam);
+                    result.Add(filePath);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+        }
+
+        public RepositoryOutput Add(CreateTicketViewModel model)
+        {
+            try
+            {
+                Add(new Ticket()
+                {
+                    Description = model.Description,
+                    TicketStatus = model.TicketStatus,
+                    SubmitterTeam = model.SubmitterTeam,
+                    SubmitterEmail = model.SubmitterEmail,
+                    ReportedSource = model.SubmitterEmail,
+                    ServiceName = model.ServiceName,
+                    SubmitterName = model.SubmitterName,
+                    TicketName = model.Summary,
+                    SubmitDate = DateTime.Now,
+                    TicketType = model.Type,
+                    TicketSeverity = model.TicketSeverity,
+                    TicketHistories = new List<TicketHistory> {
+                        new TicketHistory
+                        {
+                            OldStatus = null,
+                            NewStatus = Status.Created,
+                            ModifiedDate = DateTime.Now,
+                        }
+                    },
+                    LastModifiedDate = DateTime.Now,
+                    Attachement = model.Attachement
+                });
+
+                //TODO: Handle SLA.
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
 
