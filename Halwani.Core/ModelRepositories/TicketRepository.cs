@@ -90,19 +90,69 @@ namespace Halwani.Core.ModelRepositories
             switch (model.Sort)
             {
                 case TicketPageInputSort.RasiedBy:
-                    query = query.OrderBy(e => e.SubmitterName);
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.SubmitterName);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.SubmitterName);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case TicketPageInputSort.CreationDate:
-                    query = query.OrderByDescending(e => e.SubmitDate);
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.SubmitDate);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.SubmitDate);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case TicketPageInputSort.Topic:
-                    query = query.OrderBy(e => e.TicketName);
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.TicketName);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.TicketName);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case TicketPageInputSort.Severity:
-                    query = query.OrderBy(e => e.TicketSeverity);
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.TicketSeverity);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.TicketSeverity);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 default:
-                    query = query.OrderByDescending(e => e.SubmitDate);
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.SubmitDate);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.SubmitDate);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
             }
             return query;
