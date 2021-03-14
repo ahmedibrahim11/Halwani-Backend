@@ -18,6 +18,8 @@ namespace Halwani.Core.ViewModels.TicketModels
         public Status TicketStatus { get; set; }
         public string Description { get; set; }
         public DateTime SubmitDate { get; set; }
+        public string ProductCategoryName1 { get; set; }
+        public string ProductCategoryName2 { get; set; }
         public string Attachement { get; set; }
     }
 }

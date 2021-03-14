@@ -98,6 +98,8 @@ namespace Halwani.Core.ModelRepositories
                     SubmitDate = DateTime.Now,
                     TicketType = model.Type,
                     TicketSeverity = model.TicketSeverity,
+                    ProductCategoryName1 = model.ProductCategoryName1,
+                    ProductCategoryName2 = model.ProductCategoryName2,
                     TicketHistories = new List<TicketHistory> {
                         new TicketHistory
                         {
