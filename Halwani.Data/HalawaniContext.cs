@@ -1,5 +1,7 @@
 ﻿using Halwani.Data.Entities.AssoicationTikcet;
 using Halwani.Data.Entities.Incident;
+using Halwani.Data.Entities.ProductCategories;
+using Halwani.Data.Entities.ResolutionCategories;
 using Halwani.Data.Entities.SLA;
 using Halwani.Data.Entities.SLM_Measurement;
 using Halwani.Data.Entities.Team;
@@ -50,6 +52,13 @@ namespace Halwani.Data
         public virtual DbSet<Role> Roles { get; set; }
         #endregion
 
+        #region [ProductCategories]
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+        #endregion
+
+        #region [ResolutionCategories]
+        public DbSet<ResolutionCategory> ResolutionCategories { get; set; }
+        #endregion
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

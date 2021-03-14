@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210313221331_v0.0.history")]
+    partial class v00history
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,9 +74,6 @@ namespace Halwani.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Attachement")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -163,52 +162,6 @@ namespace Halwani.Data.Migrations
                     b.HasIndex("TicketId");
 
                     b.ToTable("TicketHistories");
-                });
-
-            modelBuilder.Entity("Halwani.Data.Entities.ProductCategories.ProductCategory", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("ParentCategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.ToTable("ProductCategories");
-                });
-
-            modelBuilder.Entity("Halwani.Data.Entities.ResolutionCategories.ResolutionCategory", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("ParentCategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ParentId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
-
-                    b.ToTable("ResolutionCategories");
                 });
 
             modelBuilder.Entity("Halwani.Data.Entities.SLA.SLA", b =>
@@ -355,24 +308,6 @@ namespace Halwani.Data.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("Halwani.Data.Entities.ProductCategories.ProductCategory", b =>
-                {
-                    b.HasOne("Halwani.Data.Entities.ProductCategories.ProductCategory", "Parent")
-                        .WithMany("ProductCategories")
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Halwani.Data.Entities.ResolutionCategories.ResolutionCategory", b =>
-                {
-                    b.HasOne("Halwani.Data.Entities.ResolutionCategories.ResolutionCategory", "Parent")
-                        .WithMany("ResolutionCategories")
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
             modelBuilder.Entity("Halwani.Data.Entities.SLM_Measurement.SLmMeasurement", b =>
                 {
                     b.HasOne("Halwani.Data.Entities.SLA.SLA", null)
@@ -412,16 +347,6 @@ namespace Halwani.Data.Migrations
                     b.Navigation("SLmMeasurements");
 
                     b.Navigation("TicketHistories");
-                });
-
-            modelBuilder.Entity("Halwani.Data.Entities.ProductCategories.ProductCategory", b =>
-                {
-                    b.Navigation("ProductCategories");
-                });
-
-            modelBuilder.Entity("Halwani.Data.Entities.ResolutionCategories.ResolutionCategory", b =>
-                {
-                    b.Navigation("ResolutionCategories");
                 });
 
             modelBuilder.Entity("Halwani.Data.Entities.SLA.SLA", b =>

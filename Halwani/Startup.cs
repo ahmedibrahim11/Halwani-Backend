@@ -1,4 +1,5 @@
 using Halwani.Core.ModelRepositories;
+using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,8 @@ namespace Halwani
                  ));
 
             services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+
             services.AddControllers();
             services.SwaggerConfiguration();
         }

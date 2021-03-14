@@ -9,12 +9,18 @@ namespace Halwani.Data.Entities.Incident
 {
     public class Ticket : Entity<long>
     {
+
+        public Ticket()
+        {
+            TicketHistories = new HashSet<TicketHistory>();
+        }
         #region [Ticker Properties]
         public int TicketNo { get; set; }
         public string TicketName { get; set; }
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }
         public string SubmitterName { get; set; }
+        public string  Attachement { get; set; }
         public string ServiceName { get; set; }
         public string ReportedSource { get; set; }
         public TicketType TicketType { get; set; }
@@ -33,6 +39,10 @@ namespace Halwani.Data.Entities.Incident
 
         #region [Assoication]
         public virtual ICollection<Assoication> Assoication { get; set; }
+        #endregion
+
+        #region [TicketHistory]
+        public virtual ICollection<TicketHistory> TicketHistories{ get; set; }
         #endregion
 
     }

@@ -17,6 +17,12 @@ using System.Threading.Tasks;
 
 namespace Halwani.Core.ModelRepositories
 {
+    public interface ITicketRepository : IBaseRepository<Ticket>
+    {
+        #region Custom Methouds
+        TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
+        #endregion
+    }
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
         public TicketRepository()
@@ -114,16 +120,6 @@ namespace Halwani.Core.ModelRepositories
             return qurey;
         }
 
-        #endregion
-    }
-    public interface ITicketRepository : IBaseRepository<Ticket>
-    {
-        #region General Methods
-
-        #endregion
-
-        #region Custom Methouds
-        TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
         #endregion
     }
 }
