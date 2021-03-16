@@ -20,10 +20,11 @@ namespace Halwani.Controllers
     public class TicketController : ControllerBase
     {
         private ITicketRepository _TicketRepository;
-
+        
         public TicketController(ITicketRepository TicketRepository)
         {
             _TicketRepository = TicketRepository;
+          
         }
 
         [HttpPost]
@@ -59,5 +60,15 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok(result);
         }
+        [HttpGet]
+        [Route("getCount")]
+        public ActionResult GetCount()
+        {
+            var result = _TicketRepository.GetCount();
+            if (result == null)
+                return Problem();
+            return Ok(result);
+        }
+
     }
 }

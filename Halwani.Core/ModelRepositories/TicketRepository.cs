@@ -4,9 +4,12 @@ using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.Authentication;
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.TicketModels;
+using Halwani.Data;
+using Halwani.Data.Entities;
 using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.User;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -22,9 +25,11 @@ namespace Halwani.Core.ModelRepositories
 {
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
+      
         public TicketRepository()
         {
-
+          
+        
         }
 
         public TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response)
@@ -237,6 +242,13 @@ namespace Halwani.Core.ModelRepositories
         {
             return qurey;
         }
+
+        public int GetCount()
+        {
+            return Count();
+        }
+
+
 
         #endregion
     }
