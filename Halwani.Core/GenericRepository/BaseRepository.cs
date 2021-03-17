@@ -89,6 +89,10 @@ namespace Halawani.Core
         {
             _dbSet.RemoveRange(entity);
         }
+        public int Count()
+        {
+          return  _dbSet.Count();
+        }
         public int Save()
         {
             return _context.SaveChanges();
