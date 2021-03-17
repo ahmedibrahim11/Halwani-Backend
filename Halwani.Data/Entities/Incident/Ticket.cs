@@ -23,6 +23,8 @@ namespace Halwani.Data.Entities.Incident
         public string  Attachement { get; set; }
         public string ServiceName { get; set; }
         public string ReportedSource { get; set; }
+        public Priority Priority { get; set; }
+        public Source Source { get; set; }
         public TicketType TicketType { get; set; }
         public TicketSeverity TicketSeverity { get; set; }
         public Status TicketStatus { get; set; }

@@ -11,7 +11,9 @@ namespace Halwani.Core.ViewModels.TicketModels
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }
         public string SubmitterName { get; set; }
-        public string ServiceName { get; set; }
+        public string Team { get; set; }
+        public Priority Priority { get; set; }
+        public  Source Source { get; set; }
         public string ReportedSource { get; set; }
         public TicketType Type { get; set; }
         public TicketSeverity TicketSeverity { get; set; }
