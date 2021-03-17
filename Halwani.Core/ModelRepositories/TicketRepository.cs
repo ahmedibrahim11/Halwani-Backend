@@ -142,6 +142,7 @@ namespace Halwani.Core.ModelRepositories
             {
                 result.PageData.Add(new TicketPageData
                 {
+                    ID=item.Id,
                     CanAssign = true,
                     CanView = true,
                     CanDelete = true,

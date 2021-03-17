@@ -69,6 +69,15 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok(result);
         }
+        [HttpGet]
+        [Route("getTicket")]
+        public ActionResult getbyID(int id)
+        {
+            var result = _TicketRepository.GetById((long)id);
+            if (result == null)
+                return Problem();
+            return Ok(result);
+        }
 
     }
 }

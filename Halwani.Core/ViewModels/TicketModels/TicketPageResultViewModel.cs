@@ -12,6 +12,7 @@ namespace Halwani.Core.ViewModels.TicketModels
     }
     public class TicketPageData
     {
+        public long ID { get; set; }
         public RasiedByViewModel RasiedBy { get; set; }
         public DateTime CreationDate { get; set; }
         public string TicketTopic { get; set; }

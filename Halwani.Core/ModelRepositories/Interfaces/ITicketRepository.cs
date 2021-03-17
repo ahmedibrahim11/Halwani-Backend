@@ -18,6 +18,8 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         Task<List<string>> PostFilesAsync(IFormFileCollection attachments, string saveFilePath);
         RepositoryOutput Add(CreateTicketViewModel model);
         int GetCount();
+
+       
         #endregion
     }
 }
