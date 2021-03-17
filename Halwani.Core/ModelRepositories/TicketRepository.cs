@@ -97,11 +97,13 @@ namespace Halwani.Core.ModelRepositories
                     SubmitterTeam = model.SubmitterTeam,
                     SubmitterEmail = model.SubmitterEmail,
                     ReportedSource = model.SubmitterEmail,
-                    ServiceName = model.ServiceName,
+                    ServiceName = model.Team,
                     SubmitterName = model.SubmitterName,
                     TicketName = model.Summary,
                     SubmitDate = DateTime.Now,
                     TicketType = model.Type,
+                    Source=model.Source,
+                    Priority=model.Priority,
                     TicketSeverity = model.TicketSeverity,
                     ProductCategoryName1 = model.ProductCategoryName1,
                     ProductCategoryName2 = model.ProductCategoryName2,
@@ -161,7 +163,7 @@ namespace Halwani.Core.ModelRepositories
 
         private IEnumerable<Ticket> SortList(TicketPageInputViewModel model, IEnumerable<Ticket> query)
         {
-            switch (model.Sort)
+            switch (model.SortValue)
             {
                 case TicketPageInputSort.RasiedBy:
                     switch (model.SortDirection)
