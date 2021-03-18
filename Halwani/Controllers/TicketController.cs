@@ -20,11 +20,11 @@ namespace Halwani.Controllers
     public class TicketController : ControllerBase
     {
         private ITicketRepository _TicketRepository;
-        
+
         public TicketController(ITicketRepository TicketRepository)
         {
             _TicketRepository = TicketRepository;
-          
+
         }
 
         [HttpPost]
@@ -69,15 +69,17 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok(result);
         }
-        [HttpGet]
+        [HttpPost]
         [Route("getTicket")]
-        public ActionResult getbyID(int id)
+            public ActionResult getbyID([FromBody] IdDTO idObject)
         {
-            var result = _TicketRepository.GetById((long)id);
+            var result = _TicketRepository.GetById(long.Parse(idObject.id));
             if (result == null)
                 return Problem();
             return Ok(result);
         }
 
     }
-}
+    public class IdDTO {
+        public string id { get; set; }
+    } }

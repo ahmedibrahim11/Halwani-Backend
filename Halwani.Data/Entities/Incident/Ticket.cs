@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Halwani.Data.Entities.AssoicationTikcet;
+using Halwani.Data.Entities.Message;
 
 namespace Halwani.Data.Entities.Incident
 {
@@ -13,6 +14,7 @@ namespace Halwani.Data.Entities.Incident
         public Ticket()
         {
             TicketHistories = new HashSet<TicketHistory>();
+            TicketMessage = new HashSet<TicketMessage>();
         }
         #region [Ticker Properties]
         public int TicketNo { get; set; }
@@ -40,6 +42,9 @@ namespace Halwani.Data.Entities.Incident
         #region [SLM-Measurement]
         public virtual ICollection<SLmMeasurement> SLmMeasurements { get; set; }
 
+        #endregion
+        #region messaging
+        public virtual ICollection<TicketMessage> TicketMessage { get; set; }
         #endregion
 
         #region [Assoication]

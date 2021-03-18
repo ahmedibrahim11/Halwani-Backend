@@ -1,5 +1,6 @@
 ﻿using Halwani.Data.Entities.AssoicationTikcet;
 using Halwani.Data.Entities.Incident;
+using Halwani.Data.Entities.Message;
 using Halwani.Data.Entities.ProductCategories;
 using Halwani.Data.Entities.ResolutionCategories;
 using Halwani.Data.Entities.SLA;
@@ -33,8 +34,9 @@ namespace Halwani.Data
         #region Tickets
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<TicketHistory> TicketHistories { get; set; }
+        public virtual DbSet<TicketMessage> TicketMessages { get; set; }
         #endregion
-        
+
         #region SLA
         public virtual DbSet<SLA> SLAs { get; set; }
         #endregion
