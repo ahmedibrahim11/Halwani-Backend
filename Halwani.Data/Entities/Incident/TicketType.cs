@@ -6,6 +6,6 @@ namespace Halwani.Data.Entities.Incident
 {
     public enum TicketType
     {
-       ServiceRequest,Incident
+       ServiceRequest=0,Incident=1,Problem=2,Change=3
     }
 }

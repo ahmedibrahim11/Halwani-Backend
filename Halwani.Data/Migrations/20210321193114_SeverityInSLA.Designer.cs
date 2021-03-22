@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210321193114_SeverityInSLA")]
+    partial class SeverityInSLA
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,8 +318,8 @@ namespace Halwani.Data.Migrations
                     b.Property<string>("ProductCategoryName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("SLADuration")
-                        .HasColumnType("float");
+                    b.Property<string>("SLADuration")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SLAName")
                         .HasColumnType("nvarchar(max)");
@@ -328,8 +330,8 @@ namespace Halwani.Data.Migrations
                     b.Property<string>("Team")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("WorkingDays")
-                        .HasColumnType("float");
+                    b.Property<string>("WorkingDays")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("WorkingHours")
                         .HasColumnType("float");

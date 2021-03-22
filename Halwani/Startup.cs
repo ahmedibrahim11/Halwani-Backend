@@ -41,6 +41,8 @@ namespace Halwani
                  ));
 
             services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<IRequestTypeRepository, RequestTypeRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ITicketMessageRepository, TicketMessageRepository>();
 

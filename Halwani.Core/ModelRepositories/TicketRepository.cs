@@ -25,11 +25,11 @@ namespace Halwani.Core.ModelRepositories
 {
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
-      
+
         public TicketRepository()
         {
-          
-        
+
+
         }
 
         public TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response)
@@ -97,13 +97,13 @@ namespace Halwani.Core.ModelRepositories
                     SubmitterTeam = model.SubmitterTeam,
                     SubmitterEmail = model.SubmitterEmail,
                     ReportedSource = model.SubmitterEmail,
-                    ServiceName = model.Team,
+                    ServiceName = model.ServiceName,
                     SubmitterName = model.SubmitterName,
                     TicketName = model.Summary,
                     SubmitDate = DateTime.Now,
-                    TicketType = model.Type,
-                    Source=model.Source,
-                    Priority=model.Priority,
+                    RequestTypeId = model.RequestTypeId,
+                    Source = model.Source,
+                    Priority = model.Priority,
                     TicketSeverity = model.TicketSeverity,
                     ProductCategoryName1 = model.ProductCategoryName1,
                     ProductCategoryName2 = model.ProductCategoryName2,
@@ -144,14 +144,20 @@ namespace Halwani.Core.ModelRepositories
             {
                 result.PageData.Add(new TicketPageData
                 {
-                    ID=item.Id,
+                    ID = item.Id,
                     CanAssign = true,
                     CanView = true,
                     CanDelete = true,
                     CreationDate = item.SubmitDate,
                     Severity = item.TicketSeverity,
                     TicketTopic = item.ServiceName,
-                    TicketType = item.TicketType,
+                    RequestType = new RequestTypeModel
+                    {
+                        Id = item.RequestType.Id,
+                        Name = item.RequestType.Name,
+                        Icon = item.RequestType.Icon,
+                        TicketType = item.RequestType.TicketType
+                    },
                     RasiedBy = new RasiedByViewModel
                     {
                         Email = item.SubmitterEmail,
