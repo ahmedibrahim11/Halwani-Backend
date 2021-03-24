@@ -17,7 +17,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         public DateTime CreationDate { get; set; }
         public string TicketTopic { get; set; }
         public RequestTypeModel RequestType { get; set; }
-        public TicketSeverity Severity { get; set; }
+        public TicketSeverity? Severity { get; set; }
         public bool CanView { get; set; }
         public bool CanDelete { get; set; }
         public bool CanAssign { get; set; }

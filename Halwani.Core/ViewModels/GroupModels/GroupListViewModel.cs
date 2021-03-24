@@ -16,5 +16,6 @@ namespace Halwani.Core.ViewModels.GroupModels
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TicketType TicketType { get; set; }
         public string Icon { get; set; }
+        public string Description { get; set; }
     }
 }

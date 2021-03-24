@@ -27,7 +27,8 @@ namespace Halwani.Core.ModelRepositories
                         Id = a.Id,
                         Text = a.Name,
                         TicketType = a.TicketType,
-                        Icon = a.Icon
+                        Icon = a.Icon,
+                        Description=a.Description
                     })
                 });
             }
@@ -47,6 +48,7 @@ namespace Halwani.Core.ModelRepositories
                     Name = item.Name,
                     Icon = item.Icon,
                     TicketType = item.TicketType,
+                    Description=item.Description,
                     RequestTypeGroups = item.GroupIds.Select(e => new RequestTypeGroups
                     {
                         GroupId = e

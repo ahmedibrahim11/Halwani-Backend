@@ -27,7 +27,8 @@ namespace Halwani.Core.ModelRepositories
                         Id = e.RequestType.Id,
                         Text = e.RequestType.Name,
                         TicketType = e.RequestType.TicketType,
-                        Icon = e.RequestType.Icon
+                        Icon = e.RequestType.Icon,
+                        Description=e.RequestType.Description,
                     })
                 });
             }

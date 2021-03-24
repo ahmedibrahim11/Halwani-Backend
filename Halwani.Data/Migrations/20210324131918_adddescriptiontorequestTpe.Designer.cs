@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210324131918_adddescriptiontorequestTpe")]
+    partial class adddescriptiontorequestTpe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,7 +145,7 @@ namespace Halwani.Data.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Priority")
+                    b.Property<int>("Priority")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductCategoryName1")
@@ -168,7 +170,7 @@ namespace Halwani.Data.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int?>("Source")
+                    b.Property<int>("Source")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("SubmitDate")
@@ -195,10 +197,10 @@ namespace Halwani.Data.Migrations
                     b.Property<int>("TicketNo")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TicketSeverity")
+                    b.Property<int>("TicketSeverity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TicketStatus")
+                    b.Property<int>("TicketStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

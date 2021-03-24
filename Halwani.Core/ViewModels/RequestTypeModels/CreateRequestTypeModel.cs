@@ -9,6 +9,7 @@ namespace Halwani.Core.ViewModels.RequestTypeModels
     {
         public string Name { get; set;}
         public string Icon { get; set;}
+        public string Description { get; set; }
         public TicketType TicketType { get; set; }
         public int[] GroupIds { get; set;}
     }
