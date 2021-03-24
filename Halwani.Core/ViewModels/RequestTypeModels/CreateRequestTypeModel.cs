@@ -12,5 +12,6 @@ namespace Halwani.Core.ViewModels.RequestTypeModels
         public string Description { get; set; }
         public TicketType TicketType { get; set; }
         public int[] GroupIds { get; set;}
+        public int TeamId { get; set; }
     }
 }

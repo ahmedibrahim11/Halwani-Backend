@@ -17,5 +17,6 @@ namespace Halwani.Core.ViewModels.GroupModels
         public TicketType TicketType { get; set; }
         public string Icon { get; set; }
         public string Description { get; set; }
+        public string  DefaultTeam { get; set; }
     }
 }

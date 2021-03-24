@@ -18,7 +18,8 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var groupBy = Find().GroupBy(e => e.TicketType);
+                var groupBy = Find(null,null,"DefaultTeam").GroupBy(e => e.TicketType);
+
                 return groupBy.Select(e => new RequestTypeListViewModel
                 {
                     TicketType = e.FirstOrDefault().TicketType,
@@ -28,7 +29,7 @@ namespace Halwani.Core.ModelRepositories
                         Text = a.Name,
                         TicketType = a.TicketType,
                         Icon = a.Icon,
-                        Description=a.Description
+                        Description=a.Description,
                     })
                 });
             }
@@ -49,6 +50,7 @@ namespace Halwani.Core.ModelRepositories
                     Icon = item.Icon,
                     TicketType = item.TicketType,
                     Description=item.Description,
+                    TeamId=item.TeamId,
                     RequestTypeGroups = item.GroupIds.Select(e => new RequestTypeGroups
                     {
                         GroupId = e

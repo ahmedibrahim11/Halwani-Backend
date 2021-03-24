@@ -18,7 +18,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                return Find(null,null, "RequestTypeGroups,RequestTypeGroups.RequestType").Select(e => new GroupListViewModel
+                return Find(null,null, "RequestTypeGroups,RequestTypeGroups.RequestType,RequestTypeGroups.RequestType.DefaultTeam").Select(e => new GroupListViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,
@@ -29,6 +29,7 @@ namespace Halwani.Core.ModelRepositories
                         TicketType = e.RequestType.TicketType,
                         Icon = e.RequestType.Icon,
                         Description=e.RequestType.Description,
+                        DefaultTeam=e.RequestType.DefaultTeam.Name
                     })
                 });
             }
