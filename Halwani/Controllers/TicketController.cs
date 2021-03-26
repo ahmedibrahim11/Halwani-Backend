@@ -3,6 +3,7 @@ using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data.Entities.Incident;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,7 @@ namespace Halwani.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         //[ValidateToken]
         [Route("List")]
         public ActionResult<TicketPageResultViewModel> List(TicketPageInputViewModel model)

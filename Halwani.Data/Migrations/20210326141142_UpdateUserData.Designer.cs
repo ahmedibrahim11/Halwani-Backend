@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210326141142_UpdateUserData")]
+    partial class UpdateUserData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -402,34 +404,6 @@ namespace Halwani.Data.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("Halwani.Data.Entities.Team.TeamPermissions", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AllowedTeams")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAllTeams")
-                        .HasColumnType("bit");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("TeamId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("TeamPermissions");
-                });
-
             modelBuilder.Entity("Halwani.Data.Entities.User.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -590,25 +564,6 @@ namespace Halwani.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Halwani.Data.Entities.Team.TeamPermissions", b =>
-                {
-                    b.HasOne("Halwani.Data.Entities.User.Role", "Role")
-                        .WithMany("TeamPermissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Halwani.Data.Entities.Team.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("Team");
-                });
-
             modelBuilder.Entity("Halwani.Data.Entities.User.User", b =>
                 {
                     b.HasOne("Halwani.Data.Entities.User.Role", "Role")
@@ -665,11 +620,6 @@ namespace Halwani.Data.Migrations
             modelBuilder.Entity("Halwani.Data.Entities.Team.Team", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Halwani.Data.Entities.User.Role", b =>
-                {
-                    b.Navigation("TeamPermissions");
                 });
 #pragma warning restore 612, 618
         }

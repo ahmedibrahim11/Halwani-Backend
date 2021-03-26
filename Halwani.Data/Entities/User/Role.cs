@@ -1,8 +1,16 @@
-﻿namespace Halwani.Data.Entities.User
+﻿using Halwani.Data.Entities.Team;
+using System.Collections.Generic;
+
+namespace Halwani.Data.Entities.User
 {
     public class Role : Entity<long>
     {
+        public Role()
+        {
+            TeamPermissions = new HashSet<TeamPermissions>();
+        }
         public string RoleName { get; set; }
         public string Permissions { get; set; }
+        public virtual ICollection<TeamPermissions> TeamPermissions { get; set; }
     }
 }

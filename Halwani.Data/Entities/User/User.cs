@@ -10,7 +10,9 @@ namespace Halwani.Data.Entities.User
         {
         }
         public string Name { get; set; }
+        public string UserName { get; set; }
         public string Email { get; set; }
+        public UserStatusEnum UserStatus { get; set; }
         public long RoleId { get; set; }
         public virtual Role Role { get; set; }
         public virtual Team.Team Teams { get; set; }

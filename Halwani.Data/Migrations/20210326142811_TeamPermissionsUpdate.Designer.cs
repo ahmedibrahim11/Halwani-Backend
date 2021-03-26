@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210326142811_TeamPermissionsUpdate")]
+    partial class TeamPermissionsUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -415,7 +417,10 @@ namespace Halwani.Data.Migrations
                     b.Property<bool>("IsAllTeams")
                         .HasColumnType("bit");
 
-                    b.Property<long>("RoleId")
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("RoleId1")
                         .HasColumnType("bigint");
 
                     b.Property<long>("TeamId")
@@ -423,7 +428,7 @@ namespace Halwani.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId1");
 
                     b.HasIndex("TeamId");
 
@@ -594,9 +599,7 @@ namespace Halwani.Data.Migrations
                 {
                     b.HasOne("Halwani.Data.Entities.User.Role", "Role")
                         .WithMany("TeamPermissions")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId1");
 
                     b.HasOne("Halwani.Data.Entities.Team.Team", "Team")
                         .WithMany()

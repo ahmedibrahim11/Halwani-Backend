@@ -8,7 +8,7 @@ namespace Halwani.Core.ViewModels.Authentication
     public class LoginModel
     {
         [Required(ErrorMessage = "User Name is required")]
-        public string Email { get; set; }
+        public string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
