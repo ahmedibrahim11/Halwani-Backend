@@ -76,6 +76,8 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
+                var permissions = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Permissions).Value;
+                var teams = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
                 return new UserSessionDataViewModel
                 {
                     Id = long.Parse(userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier).Value),
@@ -83,8 +85,8 @@ namespace Halwani.Core.ModelRepositories
                     Role = (RoleEnum)Enum.Parse(typeof(RoleEnum), userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role).Value),
                     Name = userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Name).Value,
                     UserName = userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData).Value,
-                    Permissions = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Permissions).Value.Split(",").ToList(),
-                    TeamsIds = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value.Split(",").Select(e => long.Parse(e)).ToList(),
+                    Permissions = permissions == null ? null : permissions.Split(",").ToList(),
+                    TeamsIds = teams == null ? null : teams.Split(",").ToList(),
                     IsAllTeams = bool.Parse(userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.AllTeams).Value),
                 };
             }
@@ -126,9 +128,9 @@ namespace Halwani.Core.ModelRepositories
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.Role.RoleName),
-                    new Claim(AdditionalClaims.Permissions, user.Role.Permissions == null ? "":user.Role.Permissions),
-                    new Claim(AdditionalClaims.Teams, teamPermission == null ?"":teamPermission.AllowedTeams == null ? "":teamPermission.AllowedTeams),
-                    new Claim(AdditionalClaims.AllTeams, teamPermission == null ?"":teamPermission.IsAllTeams.ToString())
+                    new Claim(AdditionalClaims.Permissions, user.Role.Permissions == null ? "" : user.Role.Permissions),
+                    new Claim(AdditionalClaims.Teams, teamPermission != null ? teamPermission.AllowedTeams ?? "" : ""),
+                    new Claim(AdditionalClaims.AllTeams, teamPermission == null ? "false" : teamPermission.IsAllTeams.ToString())
                 };
 
             return authClaims;

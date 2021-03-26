@@ -30,7 +30,6 @@ namespace Halwani.Controllers
 
         [HttpPost]
         [Authorize]
-        //[ValidateToken]
         [Route("List")]
         public ActionResult<TicketPageResultViewModel> List(TicketPageInputViewModel model)
         {

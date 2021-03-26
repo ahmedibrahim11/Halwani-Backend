@@ -12,8 +12,8 @@ namespace Halwani.Core.ViewModels.AuthenticationModels
         public string Name { get; set; }
         public string Email { get; set; }
         public RoleEnum Role { get; set; }
-        public List<long> TeamsIds { get; set; }
+        public List<string> TeamsIds { get; set; }
         public List<string> Permissions { get; set; }
-        public bool? IsAllTeams { get; set; }
+        public bool IsAllTeams { get; set; }
     }
 }

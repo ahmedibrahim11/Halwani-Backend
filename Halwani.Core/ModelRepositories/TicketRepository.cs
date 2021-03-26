@@ -25,11 +25,11 @@ namespace Halwani.Core.ModelRepositories
 {
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
+        private readonly IAuthenticationRepository _authenticationRepository;
 
-        public TicketRepository()
+        public TicketRepository(IAuthenticationRepository authenticationRepository)
         {
-
-
+            _authenticationRepository = authenticationRepository;
         }
 
         public TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response)
@@ -44,7 +44,7 @@ namespace Halwani.Core.ModelRepositories
 
                 var qurey = Find(null, null, "");
 
-                qurey = FilterLoggedUser(userClaims, qurey, false);
+                qurey = FilterLoggedUser(userClaims, qurey);
                 qurey = FilterList(model, qurey);
                 qurey = SortList(model, qurey);
                 PagingList(model, result, qurey);
@@ -247,9 +247,14 @@ namespace Halwani.Core.ModelRepositories
             return query;
         }
 
-        private IEnumerable<Ticket> FilterLoggedUser(object userClaims, IEnumerable<Ticket> qurey, bool v)
+        private IEnumerable<Ticket> FilterLoggedUser(ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
-            return qurey;
+            var userSession = _authenticationRepository.LoadUserSession(userClaims);
+            if(!userSession.IsAllTeams)
+            {
+                query = query.Where(e => userSession.TeamsIds.Contains(e.SubmitterTeam));
+            }    
+            return query;
         }
 
         public int GetCount()
