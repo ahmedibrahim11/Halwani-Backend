@@ -78,6 +78,8 @@ namespace Halwani.Core.ModelRepositories
             {
                 var permissions = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Permissions).Value;
                 var teams = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
+                var isAllTeams = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.AllTeams).Value;
+
                 return new UserSessionDataViewModel
                 {
                     Id = long.Parse(userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier).Value),
@@ -85,9 +87,9 @@ namespace Halwani.Core.ModelRepositories
                     Role = (RoleEnum)Enum.Parse(typeof(RoleEnum), userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role).Value),
                     Name = userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Name).Value,
                     UserName = userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData).Value,
-                    Permissions = permissions == null ? null : permissions.Split(",").ToList(),
-                    TeamsIds = teams == null ? null : teams.Split(",").ToList(),
-                    IsAllTeams = bool.Parse(userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.AllTeams).Value),
+                    Permissions = permissions?.Split(",").ToList(),
+                    TeamsIds = teams?.Split(",").ToList(),
+                    IsAllTeams = isAllTeams != null && bool.Parse(isAllTeams),
                 };
             }
             catch (Exception ex)
