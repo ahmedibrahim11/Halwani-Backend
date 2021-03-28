@@ -1,7 +1,6 @@
 ﻿using Halawani.Core;
 using Halawani.Core.Helper;
 using Halwani.Core.ModelRepositories.Interfaces;
-using Halwani.Core.ViewModels.TeamModels;
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Data.Entities.ProductCategories;
 using System;
