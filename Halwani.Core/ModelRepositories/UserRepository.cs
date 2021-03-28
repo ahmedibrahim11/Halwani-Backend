@@ -6,19 +6,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Halwani.Data.Entities.User;
 using Halwani.Core.ModelRepositories.Interfaces;
+using Halwani.Core.ViewModels.UserModels;
 
 namespace Halwani.Core.ModelRepositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public IEnumerable<LookupViewModel> ListReporters()
+        public IEnumerable<UserLookupViewModel> ListReporters()
         {
             try
             {
-                return Find().Select(e => new LookupViewModel
+                return Find(null, null, "Teams").Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
-                    Text = e.Name
+                    Text = e.Name,
+                    Email = e.Email,
+                    UserName = e.UserName,
+                    Team = e.Teams.Name
                 });
             }
             catch (Exception ex)
