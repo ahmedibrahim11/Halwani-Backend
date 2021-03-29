@@ -1,4 +1,5 @@
 ﻿using Halwani.Core.ViewModels.GenericModels;
+using Halwani.Data.Entities.User;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +18,7 @@ namespace Halwani.Core.ViewModels.Authentication
     {
         public long Id { get; set; }
         public string UserEmail { get; set; }
+        public RoleEnum RoleEnum { get; set; }
         public string UserName { get; set; }
         public string Name { get; set; }
     }

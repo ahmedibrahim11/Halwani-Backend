@@ -173,7 +173,7 @@ namespace Halwani.Core.ModelRepositories
                     CanDelete = true,
                     CreationDate = item.SubmitDate,
                     Severity = item.TicketSeverity,
-                    TicketTopic = item.ServiceName,
+                    TicketTopic = item.TicketName,
                     RequestType = new RequestTypeModel
                     {
                         Id = item.RequestType.Id,

@@ -76,6 +76,8 @@ namespace Halwani
             services.AddScoped<IRequestTypeRepository, RequestTypeRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ITicketMessageRepository, TicketMessageRepository>();
+            services.AddScoped<ITeamRepository, TeamRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddControllers();
             services.SwaggerConfiguration();

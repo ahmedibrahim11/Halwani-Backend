@@ -52,6 +52,7 @@ namespace Halwani.Core.ModelRepositories
                             Id = user.Id,
                             Name = user.Name,
                             UserEmail = user.Email,
+                            RoleEnum = (RoleEnum)user.RoleId,
                             UserName = user.UserName
                         },
                         Result = new RepositoryOutput()
@@ -119,7 +120,7 @@ namespace Halwani.Core.ModelRepositories
 
         private List<Claim> FillUserClaims(User user)
         {
-            var teamPermission = user.Role.TeamPermissions.Where(e => e.RoleId == user.RoleId).FirstOrDefault();
+            var teamPermission = user.Role.TeamPermissions.Where(e => e.RoleId == user.RoleId && e.TeamId == user.Teams.Id).FirstOrDefault();
 
             var authClaims =
                 new List<Claim>
@@ -131,7 +132,7 @@ namespace Halwani.Core.ModelRepositories
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.Role.RoleName),
                     new Claim(AdditionalClaims.Permissions, user.Role.Permissions == null ? "" : user.Role.Permissions),
-                    new Claim(AdditionalClaims.Teams, teamPermission != null ? teamPermission.AllowedTeams ?? "" : ""),
+                    new Claim(AdditionalClaims.Teams, teamPermission != null ? teamPermission.AllowedTeams+","+user.Teams.Name ??user.Teams.Name : user.Teams.Name),
                     new Claim(AdditionalClaims.AllTeams, teamPermission == null ? "false" : teamPermission.IsAllTeams.ToString())
                 };
 
