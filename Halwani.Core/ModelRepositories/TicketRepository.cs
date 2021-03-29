@@ -140,12 +140,36 @@ namespace Halwani.Core.ModelRepositories
                 var ticket = GetById(model.TicketId);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
-                
+
                 ticket.TicketStatus = model.Status;
+                //TODO: Check Resolve Text .
                 Update(ticket);
-                if(Save() < 1)
+                if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
-                
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
+        public RepositoryOutput AssignTicket(AssignTicketViewModel model)
+        {
+            try
+            {
+
+                var ticket = GetById(model.TicketId);
+                if (ticket == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+
+                ticket.AssignedUser = model.UserName;
+                Update(ticket);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
                 return RepositoryOutput.CreateSuccessResponse();
             }
             catch (Exception ex)
@@ -273,10 +297,10 @@ namespace Halwani.Core.ModelRepositories
         private IEnumerable<Ticket> FilterLoggedUser(ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             var userSession = _authenticationRepository.LoadUserSession(userClaims);
-            if(!userSession.IsAllTeams)
+            if (!userSession.IsAllTeams)
             {
                 query = query.Where(e => userSession.TeamsIds.Contains(e.SubmitterTeam));
-            }    
+            }
             return query;
         }
 

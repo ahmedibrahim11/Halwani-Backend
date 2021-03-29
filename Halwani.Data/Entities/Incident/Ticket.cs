@@ -19,6 +19,7 @@ namespace Halwani.Data.Entities.Incident
         #region [Ticker Properties]
         public int TicketNo { get; set; }
         public string TicketName { get; set; }
+        public string AssignedUser { get; set; }
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }
         public string SubmitterName { get; set; }

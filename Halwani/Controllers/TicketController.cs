@@ -66,6 +66,21 @@ namespace Halwani.Controllers
         }
 
         [HttpPost]
+        [Route("AssignTicket")]
+        public ActionResult AssignTicket(AssignTicketViewModel model)
+        {
+            var result = _TicketRepository.AssignTicket(model);
+
+            if (result.Code == RepositoryResponseStatus.Error)
+                return Problem();
+
+            if (result.Code == RepositoryResponseStatus.NotFound)
+                return NotFound();
+
+            return Ok();
+        }
+
+        [HttpPost]
         [Route("PostFile")]
         public IActionResult PostFile()
         {

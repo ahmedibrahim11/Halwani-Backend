@@ -5,10 +5,9 @@ using System.Text;
 
 namespace Halwani.Core.ViewModels.TicketModels
 {
-    public class UpdateStatusViewModel
+    public class AssignTicketViewModel
     {
         public long TicketId { get; set; }
-        public Status Status { get; set; }
-        public string ResolveText { get; set; }
+        public string UserName { get; set; }
     }
 }
