@@ -180,6 +180,53 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public TicketDetailsModel GetTicket(long id, string returnFilePath)
+        {
+            try
+            {
+                var ticket = Find(e => e.Id == id).FirstOrDefault();
+                if (ticket == null)
+                    return null;
+                var attachementsList = ticket.Attachement.Split(",").Select(e => returnFilePath + e);
+                return new TicketDetailsModel
+                {
+                    RequestTypeId = ticket.RequestTypeId,
+                    LastModifiedDate = ticket.LastModifiedDate,
+                    AssignedUser = ticket.AssignedUser,
+                    Description = ticket.Description,
+                    Priority = ticket.Priority,
+                    ProductCategoryName1 = ticket.ProductCategoryName1,
+                    ProductCategoryName2 = ticket.ProductCategoryName2,
+                    ReportedSource = ticket.ReportedSource,
+                    ResolvedDate = ticket.ResolvedDate,
+                    ResolveText = ticket.ResolveText,
+                    ServiceName = ticket.ServiceName,
+                    Source = ticket.Source,
+                    SubmitterEmail = ticket.SubmitterEmail,
+                    SubmitDate = ticket.SubmitDate,
+                    SubmitterName = ticket.SubmitterName,
+                    SubmitterTeam = ticket.SubmitterTeam,
+                    TicketName = ticket.TicketName,
+                    TicketNo = ticket.TicketNo,
+                    TicketSeverity = ticket.TicketSeverity,
+                    TicketStatus = ticket.TicketStatus,
+                    Attachement = attachementsList.ToArray(),
+                    RequestType = new RequestTypeModel
+                    {
+                        Id = ticket.RequestType.Id,
+                        Icon = ticket.RequestType.Icon,
+                        Name = ticket.RequestType.Name,
+                        TicketType = ticket.RequestType.TicketType
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+        }
+
         #region Private Methods
 
         private void PagingList(TicketPageInputViewModel model, TicketPageResultViewModel result, IEnumerable<Ticket> qurey)

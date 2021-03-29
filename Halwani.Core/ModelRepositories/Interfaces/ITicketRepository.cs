@@ -20,7 +20,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         RepositoryOutput UpdateStatus(UpdateStatusViewModel model);
         RepositoryOutput AssignTicket(AssignTicketViewModel model);
         int GetCount();
-
+        TicketDetailsModel GetTicket(long Id, string returnFilePath);
        
         #endregion
     }
