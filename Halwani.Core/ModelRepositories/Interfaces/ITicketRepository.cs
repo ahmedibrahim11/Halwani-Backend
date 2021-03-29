@@ -17,6 +17,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
         Task<List<string>> PostFilesAsync(IFormFileCollection attachments, string saveFilePath);
         RepositoryOutput Add(CreateTicketViewModel model);
+        RepositoryOutput UpdateStatus(UpdateStatusViewModel model);
         int GetCount();
 
        

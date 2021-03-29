@@ -49,6 +49,21 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok();
         }
+        
+        [HttpPost]
+        [Route("UpdateStatus")]
+        public ActionResult UpdateStatus(UpdateStatusViewModel model)
+        {
+            var result = _TicketRepository.UpdateStatus(model);
+
+            if (result.Code == RepositoryResponseStatus.Error)
+                return Problem();
+
+            if (result.Code == RepositoryResponseStatus.NotFound)
+                return NotFound();
+
+            return Ok();
+        }
 
         [HttpPost]
         [Route("PostFile")]

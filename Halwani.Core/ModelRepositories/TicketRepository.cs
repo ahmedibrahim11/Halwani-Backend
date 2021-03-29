@@ -132,6 +132,29 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public RepositoryOutput UpdateStatus(UpdateStatusViewModel model)
+        {
+            try
+            {
+
+                var ticket = GetById(model.TicketId);
+                if (ticket == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+                
+                ticket.TicketStatus = model.Status;
+                Update(ticket);
+                if(Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+                
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
         #region Private Methods
 
         private void PagingList(TicketPageInputViewModel model, TicketPageResultViewModel result, IEnumerable<Ticket> qurey)
@@ -261,8 +284,6 @@ namespace Halwani.Core.ModelRepositories
         {
             return Count();
         }
-
-
 
         #endregion
     }
