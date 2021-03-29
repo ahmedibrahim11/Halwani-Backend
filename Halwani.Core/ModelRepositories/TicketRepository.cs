@@ -142,7 +142,8 @@ namespace Halwani.Core.ModelRepositories
                     return RepositoryOutput.CreateNotFoundResponse();
 
                 ticket.TicketStatus = model.Status;
-                //TODO: Check Resolve Text .
+                ticket.ResolveText = model.ResolveText;
+
                 Update(ticket);
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
