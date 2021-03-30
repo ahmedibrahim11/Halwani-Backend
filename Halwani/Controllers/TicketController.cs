@@ -49,7 +49,7 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok();
         }
-        
+
         [HttpPost]
         [Route("UpdateStatus")]
         public ActionResult UpdateStatus(UpdateStatusViewModel model)
@@ -102,15 +102,18 @@ namespace Halwani.Controllers
         }
         [HttpPost]
         [Route("getTicket")]
-            public ActionResult getbyID([FromBody] IdDTO idObject)
+        public ActionResult getbyID([FromBody] IdDTO idObject)
         {
-            var result = _TicketRepository.GetById(long.Parse(idObject.id));
+            string path = @"wwwroot\files\";
+            var result = _TicketRepository.GetTicket(long.Parse(idObject.id), path);
             if (result == null)
                 return Problem();
             return Ok(result);
         }
 
     }
-    public class IdDTO {
+    public class IdDTO
+    {
         public string id { get; set; }
-    } }
+    }
+}
