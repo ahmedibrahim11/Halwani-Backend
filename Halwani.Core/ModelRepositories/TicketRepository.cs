@@ -292,6 +292,20 @@ namespace Halwani.Core.ModelRepositories
         {
             if (!string.IsNullOrEmpty(model.SearchText))
                 query = query.Where(e => e.TicketName.Contains(model.SearchText));
+            if(model.Filter != null)
+            {
+                if (model.Filter.Priority.HasValue)
+                    query = query.Where(e => e.Priority == model.Filter.Priority);
+                if (model.Filter.Severity.HasValue)
+                    query = query.Where(e => e.TicketSeverity == model.Filter.Severity);
+                if (model.Filter.Source.HasValue)
+                    query = query.Where(e => e.Source == model.Filter.Source);
+                if (model.Filter.State.HasValue)
+                    query = query.Where(e => e.TicketStatus == model.Filter.State);
+                if (model.Filter.Date.HasValue)
+                    query = query.Where(e => e.SubmitDate == model.Filter.Date.Value);
+                //TODO: Add Location Filter.
+            }
             return query;
         }
 
