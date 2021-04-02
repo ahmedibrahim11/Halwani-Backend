@@ -6,6 +6,8 @@ namespace Halwani.Data.Entities.Incident
 {
     public enum SLAStatus
     {
-       Within,Meet
+        Within = 0,
+        Meet = 1,
+        Deattached = 2
     }
 }

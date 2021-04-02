@@ -20,5 +20,10 @@ namespace Halwani.Core.ViewModels.RequestTypeModels
         public TicketType TicketType { get; set; }
         public string Icon { get; set; }
         public string Description { get; set; }
+        public string TeamName { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public Priority Priority { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public TicketSeverity Severity { get; set; }
     }
 }

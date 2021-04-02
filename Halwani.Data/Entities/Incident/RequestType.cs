@@ -15,7 +15,9 @@ namespace Halwani.Data.Entities.Incident
         public string Description { get; set; }
         public string Icon { get; set; }
         public TicketType TicketType { get; set; }
-        public long TeamId { get; set; }
+        public string TeamName { get; set; }
+        public Priority Priority { get; set; }
+        public TicketSeverity Severity { get; set; }
         public virtual Team.Team DefaultTeam { get; set; }
         public virtual ICollection<RequestTypeGroups> RequestTypeGroups { get; set; }
     }

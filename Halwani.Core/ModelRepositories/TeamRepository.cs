@@ -31,6 +31,11 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public Team GetByName(string name)
+        {
+            return Find(e => e.Name == name).FirstOrDefault();
+        }
+
         //public RepositoryOutput Add(List<CreateTeamModel> model)
         //{
         //    try

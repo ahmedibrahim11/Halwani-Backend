@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210402210629_slaStatus")]
+    partial class slaStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,9 +90,6 @@ namespace Halwani.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("DefaultTeamId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -106,15 +105,15 @@ namespace Halwani.Data.Migrations
                     b.Property<int>("Severity")
                         .HasColumnType("int");
 
-                    b.Property<string>("TeamName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("TeamId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("TicketType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DefaultTeamId");
+                    b.HasIndex("TeamId");
 
                     b.ToTable("RequestType");
                 });
@@ -515,7 +514,9 @@ namespace Halwani.Data.Migrations
                 {
                     b.HasOne("Halwani.Data.Entities.Team.Team", "DefaultTeam")
                         .WithMany()
-                        .HasForeignKey("DefaultTeamId");
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DefaultTeam");
                 });

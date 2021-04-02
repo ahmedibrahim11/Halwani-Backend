@@ -12,7 +12,7 @@ namespace Halwani.Data.Entities.SLA
         public string SLAName { get; set; }
         public SLAType SLAType { get; set; }
         public Priority Priority { get; set; }
-        public string Team { get; set; }
+        public string ServiceLine { get; set; }
         public double WorkingHours { get; set; }
         public double WorkingDays { get; set; }
         public double SLADuration { get; set; } 

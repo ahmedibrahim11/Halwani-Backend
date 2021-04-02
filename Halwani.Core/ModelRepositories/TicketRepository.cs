@@ -26,9 +26,11 @@ namespace Halwani.Core.ModelRepositories
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
         private readonly IAuthenticationRepository _authenticationRepository;
+        private readonly ISLARepository _slaRepository;
 
-        public TicketRepository(IAuthenticationRepository authenticationRepository)
+        public TicketRepository(IAuthenticationRepository authenticationRepository, ISLARepository slaRepository)
         {
+            _slaRepository = slaRepository;
             _authenticationRepository = authenticationRepository;
         }
 
@@ -98,7 +100,7 @@ namespace Halwani.Core.ModelRepositories
                     SubmitterEmail = model.SubmitterEmail,
                     ReportedSource = model.SubmitterEmail,
                     TeamName = model.TeamName,
-                    Location=model.Location,
+                    Location = model.Location,
                     SubmitterName = model.SubmitterName,
                     TicketName = model.Summary,
                     SubmitDate = DateTime.Now,
@@ -117,10 +119,10 @@ namespace Halwani.Core.ModelRepositories
                         }
                     },
                     LastModifiedDate = DateTime.Now,
+                    SLmMeasurements = _slaRepository.LoadTicketSlm(model, Data.Entities.SLA.SLAType.Intervention),
                     Attachement = model.Attachement
                 });
 
-                //TODO: Handle SLA.
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
 
@@ -137,11 +139,20 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-
                 var ticket = GetById(model.TicketId);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
-
+                if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
+                {
+                    ticket.SLmMeasurements = _slaRepository.LoadTicketSlm(new CreateTicketViewModel
+                    {
+                        TeamName = ticket.TeamName,
+                        Priority = ticket.Priority.Value,
+                        TicketSeverity = ticket.TicketSeverity.Value,
+                        ProductCategoryName1 = ticket.ProductCategoryName1,
+                        ProductCategoryName2 = ticket.ProductCategoryName2,
+                    }, Data.Entities.SLA.SLAType.Resolution);
+                }
                 ticket.TicketStatus = model.Status;
                 ticket.ResolveText = model.ResolveText;
 
@@ -340,7 +351,7 @@ namespace Halwani.Core.ModelRepositories
         {
             if (!string.IsNullOrEmpty(model.SearchText))
                 query = query.Where(e => e.TicketName.Contains(model.SearchText));
-            if(model.Filter != null)
+            if (model.Filter != null)
             {
                 if (model.Filter.Priority.HasValue)
                     query = query.Where(e => e.Priority == model.Filter.Priority);

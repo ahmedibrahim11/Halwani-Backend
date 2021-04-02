@@ -4,14 +4,16 @@ using Halwani.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    partial class HalawaniContextModelSnapshot : ModelSnapshot
+    [Migration("20210402192453_serviceLine")]
+    partial class serviceLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,9 +90,6 @@ namespace Halwani.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("DefaultTeamId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -100,21 +99,15 @@ namespace Halwani.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Priority")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Severity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TeamName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long>("TeamId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("TicketType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DefaultTeamId");
+                    b.HasIndex("TeamId");
 
                     b.ToTable("RequestType");
                 });
@@ -378,8 +371,8 @@ namespace Halwani.Data.Migrations
                     b.Property<long>("SLAId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("SLAStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("SLAStatus")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("TargetDate")
                         .HasColumnType("datetime2");
@@ -515,7 +508,9 @@ namespace Halwani.Data.Migrations
                 {
                     b.HasOne("Halwani.Data.Entities.Team.Team", "DefaultTeam")
                         .WithMany()
-                        .HasForeignKey("DefaultTeamId");
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DefaultTeam");
                 });
@@ -593,21 +588,17 @@ namespace Halwani.Data.Migrations
 
             modelBuilder.Entity("Halwani.Data.Entities.SLM_Measurement.SLmMeasurement", b =>
                 {
-                    b.HasOne("Halwani.Data.Entities.SLA.SLA", "SLA")
+                    b.HasOne("Halwani.Data.Entities.SLA.SLA", null)
                         .WithMany("SLmMeasurements")
                         .HasForeignKey("SLAId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Halwani.Data.Entities.Incident.Ticket", "Ticket")
+                    b.HasOne("Halwani.Data.Entities.Incident.Ticket", null)
                         .WithMany("SLmMeasurements")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("SLA");
-
-                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("Halwani.Data.Entities.Team.TeamPermissions", b =>

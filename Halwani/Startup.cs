@@ -70,6 +70,7 @@ namespace Halwani
 
             services.AddHttpContextAccessor();
          
+            services.AddScoped<ISLARepository, SLARepository>();
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
