@@ -113,7 +113,7 @@ namespace Halwani.Data
                     .IsRequired()
                     .HasMaxLength(150);
                 
-                entity.Property(e => e.ServiceName)
+                entity.Property(e => e.TeamName)
                     .IsRequired()
                     .HasMaxLength(150);
                 

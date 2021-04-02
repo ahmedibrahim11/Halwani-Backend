@@ -97,7 +97,8 @@ namespace Halwani.Core.ModelRepositories
                     SubmitterTeam = model.SubmitterTeam,
                     SubmitterEmail = model.SubmitterEmail,
                     ReportedSource = model.SubmitterEmail,
-                    ServiceName = model.ServiceName,
+                    TeamName = model.TeamName,
+                    Location=model.Location,
                     SubmitterName = model.SubmitterName,
                     TicketName = model.Summary,
                     SubmitDate = DateTime.Now,
@@ -200,7 +201,7 @@ namespace Halwani.Core.ModelRepositories
                     ReportedSource = ticket.ReportedSource,
                     ResolvedDate = ticket.ResolvedDate,
                     ResolveText = ticket.ResolveText,
-                    ServiceName = ticket.ServiceName,
+                    TeamName = ticket.TeamName,
                     Source = ticket.Source,
                     SubmitterEmail = ticket.SubmitterEmail,
                     SubmitDate = ticket.SubmitDate,
@@ -361,7 +362,7 @@ namespace Halwani.Core.ModelRepositories
             var userSession = _authenticationRepository.LoadUserSession(userClaims);
             if (!userSession.IsAllTeams)
             {
-                query = query.Where(e => userSession.TeamsIds.Contains(e.SubmitterTeam));
+                query = query.Where(e => userSession.TeamsIds.Contains(e.TeamName));
             }
             return query;
         }

@@ -25,7 +25,8 @@ namespace Halwani.Data.Entities.Incident
         public string SubmitterEmail { get; set; }
         public string SubmitterName { get; set; }
         public string  Attachement { get; set; }
-        public string ServiceName { get; set; }
+        public string TeamName { get; set; }
+        public string Location { get; set; }
         public string ReportedSource { get; set; }
         public int RequestTypeId { get; set; }
         public Priority? Priority { get; set; }
