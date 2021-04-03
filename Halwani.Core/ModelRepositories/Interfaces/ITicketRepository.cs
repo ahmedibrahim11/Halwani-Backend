@@ -19,6 +19,11 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         RepositoryOutput Add(CreateTicketViewModel model);
         RepositoryOutput UpdateStatus(UpdateStatusViewModel model);
         RepositoryOutput AssignTicket(AssignTicketViewModel model);
+        RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model);
+
+
+        RepositoryOutput UpdateTicket(long Id,UpdateTicketModel model);
+
         int GetCount();
         TicketDetailsModel GetTicket(long Id, string returnFilePath);
        

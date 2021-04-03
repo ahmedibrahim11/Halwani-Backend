@@ -7,16 +7,20 @@ using System.Linq;
 using Halwani.Data.Entities.User;
 using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.UserModels;
+using System.Security.Claims;
 
 namespace Halwani.Core.ModelRepositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public IEnumerable<UserLookupViewModel> ListReporters()
+
+        public IEnumerable<UserLookupViewModel> ListReporters(ClaimsIdentity claimsIdentity)
         {
             try
             {
-                return Find(null, null, "Teams").Select(e => new UserLookupViewModel
+                var teams = claimsIdentity.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
+
+                return Find(s=>teams.Contains(s.Teams.Name) && s.RoleId==1, null, "Teams").Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,

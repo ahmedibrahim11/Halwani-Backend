@@ -1,5 +1,6 @@
 ﻿using Halwani.Core.ModelRepositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Halwani.Controllers
 {
@@ -19,7 +20,7 @@ namespace Halwani.Controllers
         [Route("getUser")]
         public ActionResult GetAllUser()
         {
-            var result = _userRepositry.ListReporters();
+            var result = _userRepositry.ListReporters(User.Identity as ClaimsIdentity);
             if (result == null)
                 return Problem();
             return Ok(result);

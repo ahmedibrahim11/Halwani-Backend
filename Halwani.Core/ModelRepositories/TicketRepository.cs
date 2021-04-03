@@ -169,6 +169,37 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+
+        public RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model)
+        {
+            try
+            {
+                foreach (var item in model.TicketIds)
+                {
+                    var ticket = Find(s => s.Id == item, null, "").FirstOrDefault();
+
+                    if (ticket == null)
+                        return RepositoryOutput.CreateNotFoundResponse();
+
+                    ticket.AssignedUser = model.UserName;
+                    Update(ticket);
+                    if (Save() < 1)
+                        return RepositoryOutput.CreateErrorResponse("");
+
+                    return RepositoryOutput.CreateSuccessResponse();
+                }
+
+                return RepositoryOutput.CreateSuccessResponse();
+
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
+
         public RepositoryOutput AssignTicket(AssignTicketViewModel model)
         {
             try
@@ -381,6 +412,37 @@ namespace Halwani.Core.ModelRepositories
         public int GetCount()
         {
             return Count();
+        }
+
+        public RepositoryOutput UpdateTicket(long Id,UpdateTicketModel model)
+        {
+            try
+            {
+                var ticket = GetById(Id);
+                if (ticket == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+                ticket.Description = model.Description;
+                ticket.LastModifiedDate = DateTime.Now;
+                ticket.Attachement = model.Attachement;
+                ticket.Location = model.Location;
+                ticket.Priority = model.Priority;
+                ticket.RequestTypeId= model.RequestTypeId;
+                ticket.ReportedSource = model.ReportedSource;
+                ticket.Source = model.Source;
+                ticket.TeamName = model.TeamName;
+                ticket.SubmitterName = model.SubmitterName;
+                ticket.SubmitterEmail = model.SubmitterEmail;
+                Update(ticket);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
         }
 
         #endregion

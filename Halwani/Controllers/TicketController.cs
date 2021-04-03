@@ -43,7 +43,7 @@ namespace Halwani.Controllers
         [HttpPost]
         [Route("Create")]
         public ActionResult CreateTicket(CreateTicketViewModel model)
-        {
+            {
             var result = _TicketRepository.Add(model);
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -65,9 +65,59 @@ namespace Halwani.Controllers
             return Ok();
         }
 
+
+
+        [HttpPut]
+        [Route("UpdateTicket")]
+        public ActionResult UpdateTicket(UpdateStatusViewModel model)
+        {
+            var result = _TicketRepository.UpdateStatus(model);
+
+            if (result.Code == RepositoryResponseStatus.Error)
+                return Problem();
+
+            if (result.Code == RepositoryResponseStatus.NotFound)
+                return NotFound();
+
+            return Ok();
+        }
+
+
+
+        [HttpPut]
+        [Route("UpdateTicket/{id:long}")]
+        public ActionResult UpdateTicket(long Id,UpdateTicketModel model)
+        {
+            var result = _TicketRepository.UpdateTicket(Id,model);
+
+            if (result.Code == RepositoryResponseStatus.Error)
+                return Problem();
+
+            if (result.Code == RepositoryResponseStatus.NotFound)
+                return NotFound();
+
+            return Ok();
+        }
+
         [HttpPost]
         [Route("AssignTicket")]
         public ActionResult AssignTicket(AssignTicketViewModel model)
+        {
+            var result = _TicketRepository.AssignTicket(model);
+
+            if (result.Code == RepositoryResponseStatus.Error)
+                return Problem();
+
+            if (result.Code == RepositoryResponseStatus.NotFound)
+                return NotFound();
+
+            return Ok();
+        }
+
+
+        [HttpPost]
+        [Route("AssignTickets")]
+        public ActionResult AssignTicket(AssignMulipleTicketViewModel model)
         {
             var result = _TicketRepository.AssignTicket(model);
 

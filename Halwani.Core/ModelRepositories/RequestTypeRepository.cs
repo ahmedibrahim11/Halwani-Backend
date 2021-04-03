@@ -30,7 +30,7 @@ namespace Halwani.Core.ModelRepositories
                         TicketType = a.TicketType,
                         Icon = a.Icon,
                         Description = a.Description,
-                        TeamName = a.TeamName,
+                        TeamName = a.TeamName,  
                         Priority = a.Priority,
                         Severity = a.Severity
                     })
