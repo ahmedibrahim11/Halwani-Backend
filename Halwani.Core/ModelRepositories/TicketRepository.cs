@@ -47,7 +47,7 @@ namespace Halwani.Core.ModelRepositories
                 var qurey = Find(null, null, "");
 
                 qurey = FilterLoggedUser(userClaims, qurey);
-                qurey = FilterList(model, qurey);
+                qurey = FilterList(model, userClaims, qurey);
                 qurey = SortList(model, qurey);
                 PagingList(model, result, qurey);
 
@@ -237,21 +237,21 @@ namespace Halwani.Core.ModelRepositories
                     LastModifiedDate = ticket.LastModifiedDate,
                     AssignedUser = ticket.AssignedUser,
                     Description = ticket.Description,
-                    Priority = ticket.Priority,
+                    Priority = Enum.GetName(typeof(Priority),ticket.Priority),
                     ProductCategoryName1 = ticket.ProductCategoryName1,
                     ProductCategoryName2 = ticket.ProductCategoryName2,
                     ReportedSource = ticket.ReportedSource,
                     ResolvedDate = ticket.ResolvedDate,
                     ResolveText = ticket.ResolveText,
                     TeamName = ticket.TeamName,
-                    Source = ticket.Source,
+                    Source = Enum.GetName(typeof(Source), ticket.Source),
                     SubmitterEmail = ticket.SubmitterEmail,
                     SubmitDate = ticket.SubmitDate,
                     SubmitterName = ticket.SubmitterName,
                     SubmitterTeam = ticket.SubmitterTeam,
                     TicketName = ticket.TicketName,
                     TicketNo = ticket.TicketNo,
-                    TicketSeverity = ticket.TicketSeverity,
+                    TicketSeverity = Enum.GetName(typeof(TicketSeverity), ticket.TicketSeverity),
                     TicketStatus = ticket.TicketStatus,
                     Attachement = attachementsList.ToArray(),
                     RequestType = new RequestTypeModel
@@ -378,7 +378,7 @@ namespace Halwani.Core.ModelRepositories
             return query;
         }
 
-        private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, IEnumerable<Ticket> query)
+        private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             if (!string.IsNullOrEmpty(model.SearchText))
                 query = query.Where(e => e.TicketName.Contains(model.SearchText));
@@ -388,6 +388,19 @@ namespace Halwani.Core.ModelRepositories
                     query = query.Where(e => e.Priority == model.Filter.Priority);
                 if (model.Filter.Severity.HasValue)
                     query = query.Where(e => e.TicketSeverity == model.Filter.Severity);
+                if (model.Filter.TicketType.HasValue)
+                {
+                    if (model.Filter.TicketType != TicketType.All)
+                    {
+                        query = query.Where(e => e.RequestType.TicketType == model.Filter.TicketType);
+                    }
+
+                }
+                if (model.Filter.TicketTabs == TicketTabs.AssignedToMe)
+                {
+                    var userSession = _authenticationRepository.LoadUserSession(userClaims);
+                    query = query.Where(e => e.AssignedUser == userSession.UserName);
+                }
                 if (model.Filter.Source.HasValue)
                     query = query.Where(e => e.Source == model.Filter.Source);
                 if (model.Filter.State.HasValue)
@@ -414,7 +427,7 @@ namespace Halwani.Core.ModelRepositories
             return Count();
         }
 
-        public RepositoryOutput UpdateTicket(long Id,UpdateTicketModel model)
+        public RepositoryOutput UpdateTicket(long Id, UpdateTicketModel model)
         {
             try
             {
@@ -426,7 +439,7 @@ namespace Halwani.Core.ModelRepositories
                 ticket.Attachement = model.Attachement;
                 ticket.Location = model.Location;
                 ticket.Priority = model.Priority;
-                ticket.RequestTypeId= model.RequestTypeId;
+                ticket.RequestTypeId = model.RequestTypeId;
                 ticket.ReportedSource = model.ReportedSource;
                 ticket.Source = model.Source;
                 ticket.TeamName = model.TeamName;

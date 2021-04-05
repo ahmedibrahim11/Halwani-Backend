@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Halwani.Core.ViewModels.TicketModels
 {
@@ -19,10 +20,10 @@ namespace Halwani.Core.ViewModels.TicketModels
         public string TeamName { get; set; }
         public string ReportedSource { get; set; }
         public int RequestTypeId { get; set; }
-        public Priority? Priority { get; set; }
-        public Source? Source { get; set; }
+        public string Priority { get; set; }
+        public string Source { get; set; }
         public RequestTypeModel RequestType { get; set; }
-        public TicketSeverity? TicketSeverity { get; set; }
+        public string TicketSeverity { get; set; }
         public Status? TicketStatus { get; set; }
         public string Description { get; set; }
         public string ProductCategoryName1 { get; set; }
