@@ -17,6 +17,8 @@ namespace Halwani.Core.ViewModels.TicketModels
         public Source? Source { get; set; }
         public Status? State { get; set; }
         public TicketSeverity? Severity { get; set; }
+        public TicketType? TicketType { get; set; }
+        public TicketTabs TicketTabs { get; set; }
         public Priority? Priority { get; set; }
         public DateTime? Date { get; set; }
     }
