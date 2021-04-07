@@ -35,7 +35,7 @@ namespace Halwani
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200","http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/");
                 });
             });
 
@@ -100,7 +100,7 @@ namespace Halwani
             app.UseAuthorization();
 
             app.UseSwagger();
-
+            app.UseStaticFiles("/files");
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");

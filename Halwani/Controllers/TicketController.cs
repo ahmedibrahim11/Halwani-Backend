@@ -135,7 +135,7 @@ namespace Halwani.Controllers
         public IActionResult PostFile()
         {
             IFormFileCollection attachments = HttpContext.Request.Form.Files;
-            string path = @"wwwroot\files\";
+            string path = @"/files";
             var result = _TicketRepository.PostFilesAsync(attachments, path).Result;
             if (result == null)
                 return Problem();
@@ -154,7 +154,7 @@ namespace Halwani.Controllers
         [Route("getTicket")]
         public ActionResult getbyID([FromBody] IdDTO idObject)
         {
-            string path = @"wwwroot\files\";
+            string path = @"/files";
             var result = _TicketRepository.GetTicket(long.Parse(idObject.id), path);
             if (result == null)
                 return Problem();
