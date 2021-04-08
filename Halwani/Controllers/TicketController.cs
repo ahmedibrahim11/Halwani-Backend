@@ -1,9 +1,11 @@
-﻿using Halwani.Core.ModelRepositories;
+﻿using Halawani.Core.Helper;
+using Halwani.Core.ModelRepositories;
 using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data.Entities.Incident;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,9 +23,11 @@ namespace Halwani.Controllers
     public class TicketController : ControllerBase
     {
         private ITicketRepository _TicketRepository;
+        private readonly IWebHostEnvironment _env;
 
-        public TicketController(ITicketRepository TicketRepository)
+        public TicketController(ITicketRepository TicketRepository, IWebHostEnvironment env)
         {
+            _env = env;
             _TicketRepository = TicketRepository;
 
         }
@@ -43,7 +47,7 @@ namespace Halwani.Controllers
         [HttpPost]
         [Route("Create")]
         public ActionResult CreateTicket(CreateTicketViewModel model)
-            {
+        {
             var result = _TicketRepository.Add(model);
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -65,8 +69,6 @@ namespace Halwani.Controllers
             return Ok();
         }
 
-
-
         [HttpPut]
         [Route("UpdateTicket")]
         public ActionResult UpdateTicket(UpdateStatusViewModel model)
@@ -82,13 +84,11 @@ namespace Halwani.Controllers
             return Ok();
         }
 
-
-
         [HttpPut]
         [Route("UpdateTicket/{id:long}")]
-        public ActionResult UpdateTicket(long Id,UpdateTicketModel model)
+        public ActionResult UpdateTicket(long Id, UpdateTicketModel model)
         {
-            var result = _TicketRepository.UpdateTicket(Id,model);
+            var result = _TicketRepository.UpdateTicket(Id, model);
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -114,7 +114,6 @@ namespace Halwani.Controllers
             return Ok();
         }
 
-
         [HttpPost]
         [Route("AssignTickets")]
         public ActionResult AssignTicket(AssignMulipleTicketViewModel model)
@@ -134,13 +133,22 @@ namespace Halwani.Controllers
         [Route("PostFile")]
         public IActionResult PostFile()
         {
-            IFormFileCollection attachments = HttpContext.Request.Form.Files;
-            string path = @"/files";
-            var result = _TicketRepository.PostFilesAsync(attachments, path).Result;
-            if (result == null)
-                return Problem();
-            return Ok(result);
+            try
+            {
+                IFormFileCollection attachments = HttpContext.Request.Form.Files;
+                string path = _env.ContentRootPath + @"/files";
+                var result = _TicketRepository.PostFilesAsync(attachments, path).Result;
+                if (result == null)
+                    return Problem();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return Problem(ex.Message);
+            }
         }
+
         [HttpGet]
         [Route("getCount")]
         public ActionResult GetCount()
@@ -150,6 +158,7 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok(result);
         }
+
         [HttpPost]
         [Route("getTicket")]
         public ActionResult getbyID([FromBody] IdDTO idObject)
@@ -160,7 +169,6 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok(result);
         }
-
     }
     public class IdDTO
     {

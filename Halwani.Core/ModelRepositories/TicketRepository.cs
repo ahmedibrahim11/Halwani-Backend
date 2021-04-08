@@ -68,16 +68,16 @@ namespace Halwani.Core.ModelRepositories
                 var result = new List<string>();
                 foreach (var file in attachments)
                 {
-                    var filePath = Path.Combine(saveFilePath + Guid.NewGuid().ToString() + file.Name);
+                    var fileName = Guid.NewGuid().ToString() + file.FileName;
+                    var filePath = saveFilePath + "/" + fileName;
                     if (!Directory.Exists(saveFilePath))
                     {
                         Directory.CreateDirectory(saveFilePath);
                     }
-                    var filepath = Path.Combine(filePath);
 
-                    using var fileSteam = new FileStream(filepath, FileMode.Create);
+                    using var fileSteam = new FileStream(filePath, FileMode.Create);
                     await file.CopyToAsync(fileSteam);
-                    result.Add(filePath);
+                    result.Add(fileName);
                 }
                 return result;
             }
@@ -237,7 +237,7 @@ namespace Halwani.Core.ModelRepositories
                     LastModifiedDate = ticket.LastModifiedDate,
                     AssignedUser = ticket.AssignedUser,
                     Description = ticket.Description,
-                    Priority = Enum.GetName(typeof(Priority),ticket.Priority),
+                    Priority = Enum.GetName(typeof(Priority), ticket.Priority),
                     ProductCategoryName1 = ticket.ProductCategoryName1,
                     ProductCategoryName2 = ticket.ProductCategoryName2,
                     ReportedSource = ticket.ReportedSource,
