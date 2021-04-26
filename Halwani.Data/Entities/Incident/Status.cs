@@ -13,6 +13,7 @@ namespace Halwani.Data.Entities.Incident
         InProgress = 4,
         Esclated = 5,
         Reopened = 6,
-        Resolved = 7
+        Resolved = 7,
+        OverDue=8
     }
 }
