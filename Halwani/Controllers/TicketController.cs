@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,9 +25,11 @@ namespace Halwani.Controllers
     {
         private ITicketRepository _TicketRepository;
         private readonly IWebHostEnvironment _env;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TicketController(ITicketRepository TicketRepository, IWebHostEnvironment env)
+        public TicketController(ITicketRepository TicketRepository, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _env = env;
             _TicketRepository = TicketRepository;
 
@@ -45,10 +48,52 @@ namespace Halwani.Controllers
         }
 
         [HttpPost]
+        public IActionResult Post()
+        {
+            IEnumerable<IFormFile> attachements = null;
+            if (Request.Form.Files != null && Request.Form.Files.Count() > 0)
+                attachements = Request.Form.Files.ToList();
+
+            var model = JsonConvert.DeserializeObject<CreateTicketViewModel>(_httpContextAccessor.HttpContext.Request.Form["data"]);
+            TryValidateModel(model);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _TicketRepository.Add(model, attachements, _env.ContentRootPath + @"/files");
+            if (result == null || !result.Success)
+                return Problem("");
+
+            return Ok(result);
+
+        }
+
+        [HttpPut]
+        public IActionResult Put()
+        {
+            IEnumerable<IFormFile> attachements = null;
+            if (Request.Form.Files != null && Request.Form.Files.Count() > 0)
+                attachements = Request.Form.Files.ToList();
+
+            var model = JsonConvert.DeserializeObject<UpdateTicketModel>(_httpContextAccessor.HttpContext.Request.Form["data"]);
+            TryValidateModel(model);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _TicketRepository.UpdateTicket(model, attachements, _env.ContentRootPath + @"/files");
+            if (result == null || !result.Success)
+                return Problem("");
+
+            return Ok(result);
+
+        }
+
+        [HttpPost]
         [Route("Create")]
         public ActionResult CreateTicket(CreateTicketViewModel model)
         {
-            var result = _TicketRepository.Add(model);
+            var result = _TicketRepository.Add(model, null, "");
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
             return Ok();
@@ -163,7 +208,7 @@ namespace Halwani.Controllers
         [Route("getTicket")]
         public ActionResult getbyID([FromBody] IdDTO idObject)
         {
-            string path = @"/files";
+            string path = @"/files/";
             var result = _TicketRepository.GetTicket(long.Parse(idObject.id), path);
             if (result == null)
                 return Problem();

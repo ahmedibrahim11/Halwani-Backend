@@ -7,6 +7,7 @@ namespace Halwani.Core.ViewModels.TicketModels
 {
     public class UpdateTicketModel
     {
+        public int Id { get; set; }
         public string Summary { get; set; }
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }

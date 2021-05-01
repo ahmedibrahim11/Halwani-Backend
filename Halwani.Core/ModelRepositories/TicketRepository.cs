@@ -20,6 +20,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Halwani.Core.ModelRepositories
 {
@@ -88,11 +89,11 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput Add(CreateTicketViewModel model)
+        public RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath)
         {
             try
             {
-                Add(new Ticket()
+                var ticket = new Ticket()
                 {
                     Description = model.Description,
                     TicketStatus = model.TicketStatus,
@@ -121,11 +122,21 @@ namespace Halwani.Core.ModelRepositories
                     LastModifiedDate = DateTime.Now,
                     SLmMeasurements = _slaRepository.LoadTicketSlm(model, Data.Entities.SLA.SLAType.Intervention),
                     Attachement = model.Attachement
-                });
+                };
+                Add(ticket);
+                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    if (Save() < 1)
+                        return RepositoryOutput.CreateErrorResponse("");
+                    List<string> result = StoreFiles(attachments, saveFilePath, ticket);
 
-                if (Save() < 1)
-                    return RepositoryOutput.CreateErrorResponse("");
+                    ticket.Attachement = string.Join(",", result);
+                    Update(ticket);
+                    if (Save() < 1)
+                        return RepositoryOutput.CreateErrorResponse("");
 
+                    scope.Complete();
+                }
                 return RepositoryOutput.CreateSuccessResponse();
             }
             catch (Exception ex)
@@ -133,6 +144,28 @@ namespace Halwani.Core.ModelRepositories
                 RepositoryHelper.LogException(ex);
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
+        }
+
+        private static List<string> StoreFiles(IEnumerable<IFormFile> attachments, string saveFilePath, Ticket ticket)
+        {
+            var result = new List<string>();
+            if (attachments == null)
+                return result;
+            foreach (var file in attachments)
+            {
+                var fileName = Guid.NewGuid().ToString() + file.FileName;
+                var filePath = saveFilePath + "/" + ticket.Id + "/" + fileName;
+                if (!Directory.Exists(saveFilePath))
+                {
+                    Directory.CreateDirectory(saveFilePath);
+                }
+
+                using var fileSteam = new FileStream(filePath, FileMode.Create);
+                file.CopyToAsync(fileSteam).GetAwaiter().GetResult();
+                result.Add(fileName);
+            }
+
+            return result;
         }
 
         public RepositoryOutput UpdateStatus(UpdateStatusViewModel model)
@@ -169,7 +202,6 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-
         public RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model)
         {
             try
@@ -198,7 +230,6 @@ namespace Halwani.Core.ModelRepositories
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
-
 
         public RepositoryOutput AssignTicket(AssignTicketViewModel model)
         {
@@ -445,6 +476,40 @@ namespace Halwani.Core.ModelRepositories
                 ticket.TeamName = model.TeamName;
                 ticket.SubmitterName = model.SubmitterName;
                 ticket.SubmitterEmail = model.SubmitterEmail;
+                Update(ticket);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
+        public RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath)
+        {
+            try
+            {
+                var ticket = GetById(model.Id);
+                if (ticket == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+                ticket.Description = model.Description;
+                ticket.LastModifiedDate = DateTime.Now;
+                ticket.Attachement = model.Attachement;
+                ticket.Location = model.Location;
+                ticket.Priority = model.Priority;
+                ticket.RequestTypeId = model.RequestTypeId;
+                ticket.ReportedSource = model.ReportedSource;
+                ticket.Source = model.Source;
+                ticket.TeamName = model.TeamName;
+                ticket.SubmitterName = model.SubmitterName;
+                ticket.SubmitterEmail = model.SubmitterEmail;
+
+                List<string> result = StoreFiles(attachments, saveFilePath, ticket);
+                ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
                 Update(ticket);
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
