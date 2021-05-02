@@ -155,9 +155,9 @@ namespace Halwani.Core.ModelRepositories
             {
                 var fileName = Guid.NewGuid().ToString() + file.FileName;
                 var filePath = saveFilePath + "/" + ticket.Id + "/" + fileName;
-                if (!Directory.Exists(saveFilePath))
+                if (!Directory.Exists(saveFilePath + "/" + ticket.Id))
                 {
-                    Directory.CreateDirectory(saveFilePath);
+                    Directory.CreateDirectory(saveFilePath + "/" + ticket.Id);
                 }
 
                 using var fileSteam = new FileStream(filePath, FileMode.Create);
@@ -261,7 +261,7 @@ namespace Halwani.Core.ModelRepositories
                 var ticket = Find(e => e.Id == id).FirstOrDefault();
                 if (ticket == null)
                     return null;
-                var attachementsList = ticket.Attachement.Split(",").Select(e => returnFilePath + e);
+                var attachementsList = ticket.Attachement.Split(",").Select(e => returnFilePath + "/" + ticket.Id + "/" + e);
                 return new TicketDetailsModel
                 {
                     RequestTypeId = ticket.RequestTypeId,

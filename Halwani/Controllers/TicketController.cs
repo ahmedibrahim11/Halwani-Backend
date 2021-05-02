@@ -48,6 +48,8 @@ namespace Halwani.Controllers
         }
 
         [HttpPost]
+        [Route("CreateTicket")]
+
         public IActionResult Post()
         {
             IEnumerable<IFormFile> attachements = null;
