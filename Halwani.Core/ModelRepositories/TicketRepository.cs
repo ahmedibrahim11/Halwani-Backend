@@ -437,7 +437,7 @@ namespace Halwani.Core.ModelRepositories
                 if (model.Filter.State.HasValue)
                     query = query.Where(e => e.TicketStatus == model.Filter.State);
                 if (model.Filter.Date.HasValue)
-                    query = query.Where(e => e.SubmitDate == model.Filter.Date.Value);
+                    query = query.Where(e => e.SubmitDate.Date == model.Filter.Date.Value.Date);
                 //TODO: Add Location Filter.
             }
             return query;
