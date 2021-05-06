@@ -71,6 +71,7 @@ namespace Halwani.Controllers
         }
 
         [HttpPut]
+        [Route("UpdateTic")]
         public IActionResult Put()
         {
             IEnumerable<IFormFile> attachements = null;
@@ -86,7 +87,6 @@ namespace Halwani.Controllers
             var result = _TicketRepository.UpdateTicket(model, attachements, _env.ContentRootPath + @"/files");
             if (result == null || !result.Success)
                 return Problem("");
-
             return Ok(result);
 
         }
