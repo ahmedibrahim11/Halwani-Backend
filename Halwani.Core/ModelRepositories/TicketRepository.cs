@@ -146,6 +146,23 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public bool RemoveAttachments(string filePath)
+        {
+           
+            if (Directory.Exists(filePath))
+            {
+                Directory.Delete(filePath,true);
+                return true;
+            }
+            else
+            {
+                Directory.CreateDirectory(filePath);
+                return false;
+            }
+           
+        }
+
+
         private static List<string> StoreFiles(IEnumerable<IFormFile> attachments, string saveFilePath, Ticket ticket)
         {
             var result = new List<string>();

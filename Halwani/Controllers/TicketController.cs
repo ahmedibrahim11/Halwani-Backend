@@ -83,7 +83,12 @@ namespace Halwani.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
+            var filePath = _env.ContentRootPath + @"/files/" + model.Id;
+            bool deleted = _TicketRepository.RemoveAttachments(filePath);
+            if (deleted)
+            {
+                Directory.CreateDirectory(filePath);
+            }
             var result = _TicketRepository.UpdateTicket(model, attachements, _env.ContentRootPath + @"/files");
             if (result == null || !result.Success)
                 return Problem("");
