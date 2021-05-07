@@ -121,7 +121,6 @@ namespace Halwani.Core.ModelRepositories
                     },
                     LastModifiedDate = DateTime.Now,
                     SLmMeasurements = _slaRepository.LoadTicketSlm(model, Data.Entities.SLA.SLAType.Intervention),
-                    Attachement = model.Attachement
                 };
                 Add(ticket);
                 using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -515,7 +514,6 @@ namespace Halwani.Core.ModelRepositories
                     return RepositoryOutput.CreateNotFoundResponse();
                 ticket.Description = model.Description;
                 ticket.LastModifiedDate = DateTime.Now;
-                ticket.Attachement = model.Attachement;
                 ticket.Location = model.Location;
                 ticket.Priority = model.Priority;
                 ticket.RequestTypeId = model.RequestTypeId;
@@ -525,8 +523,14 @@ namespace Halwani.Core.ModelRepositories
                 ticket.SubmitterName = model.SubmitterName;
                 ticket.SubmitterEmail = model.SubmitterEmail;
 
+                //List<string> result = StoreFiles(attachments, saveFilePath, ticket);
+
+
                 List<string> result = StoreFiles(attachments, saveFilePath, ticket);
-                ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
+
+                    ticket.Attachement = string.Join(",", result);
+
+                //ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
                 Update(ticket);
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
