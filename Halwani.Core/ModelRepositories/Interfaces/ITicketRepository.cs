@@ -27,7 +27,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
 
         int GetCount();
         TicketDetailsModel GetTicket(long Id, string returnFilePath);
-        bool RemoveAttachments(string filePath);
+        List<string> RemoveAttachments(string filePath,string [] attachment);
 
         #endregion
     }

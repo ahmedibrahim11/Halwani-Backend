@@ -127,7 +127,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
-                    List<string> result = StoreFiles(attachments, saveFilePath, ticket);
+                    List<string> result = StoreFiles(attachments, null,saveFilePath, ticket);
 
                     ticket.Attachement = string.Join(",", result);
                     Update(ticket);
@@ -145,28 +145,43 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public bool RemoveAttachments(string filePath)
+        public List<string> RemoveAttachments(string filePath,string []attachment)
         {
-           
+            DirectoryInfo directory = new DirectoryInfo(filePath);
+            var result = new List<string>();
+            var fileNames = directory.GetFiles().Select(s=>s.Name);
+            var files = directory.GetFiles();
             if (Directory.Exists(filePath))
             {
-                Directory.Delete(filePath,true);
-                return true;
+                var OldAttachment = fileNames.Except(attachment);
+
+                foreach (var item in OldAttachment)
+                {
+                    File.Delete(filePath + "/" + item);
+                }
+
+                var repteadAttachement = files.Where(x => attachment.Any(y => x.Name.Contains(y))).ToList();
+
+                foreach (var item in repteadAttachement)
+                {
+                    result.Add(item.Name);
+                }
+                return result;
             }
             else
             {
-                Directory.CreateDirectory(filePath);
-                return false;
+                return null;
             }
            
         }
 
 
-        private static List<string> StoreFiles(IEnumerable<IFormFile> attachments, string saveFilePath, Ticket ticket)
+        private static List<string> StoreFiles(IEnumerable<IFormFile> attachments,List<string> oldAttachments, string saveFilePath, Ticket ticket)
         {
             var result = new List<string>();
             if (attachments == null)
                 return result;
+
             foreach (var file in attachments)
             {
                 var fileName = Guid.NewGuid().ToString() + file.FileName;
@@ -175,12 +190,17 @@ namespace Halwani.Core.ModelRepositories
                 {
                     Directory.CreateDirectory(saveFilePath + "/" + ticket.Id);
                 }
-
                 using var fileSteam = new FileStream(filePath, FileMode.Create);
                 file.CopyToAsync(fileSteam).GetAwaiter().GetResult();
                 result.Add(fileName);
             }
-
+            if (oldAttachments != null)
+            {
+                foreach (var item in oldAttachments)
+                {
+                    result.Add(item);
+                }
+            }
             return result;
         }
 
@@ -277,7 +297,7 @@ namespace Halwani.Core.ModelRepositories
                 var ticket = Find(e => e.Id == id).FirstOrDefault();
                 if (ticket == null)
                     return null;
-                var attachementsList = ticket.Attachement.Split(",").Select(e => returnFilePath + "/" + ticket.Id + "/" + e);
+                var attachementsList = ticket.Attachement.Split(",");
                 return new TicketDetailsModel
                 {
                     RequestTypeId = ticket.RequestTypeId,
@@ -522,11 +542,8 @@ namespace Halwani.Core.ModelRepositories
                 ticket.TeamName = model.TeamName;
                 ticket.SubmitterName = model.SubmitterName;
                 ticket.SubmitterEmail = model.SubmitterEmail;
-
-                //List<string> result = StoreFiles(attachments, saveFilePath, ticket);
-
-
-                List<string> result = StoreFiles(attachments, saveFilePath, ticket);
+                var old = model.Attachement.Split(",");
+                List<string> result = StoreFiles(attachments, old.ToList(),saveFilePath, ticket);
 
                     ticket.Attachement = string.Join(",", result);
 
