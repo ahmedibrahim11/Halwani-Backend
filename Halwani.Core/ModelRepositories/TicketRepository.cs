@@ -468,6 +468,8 @@ namespace Halwani.Core.ModelRepositories
                     var userSession = _authenticationRepository.LoadUserSession(userClaims);
                     query = query.Where(e => e.AssignedUser == userSession.UserName);
                 }
+                if (!string.IsNullOrEmpty(model.Filter.SubmitterName))
+                    query = query.Where(e => e.SubmitterName == model.Filter.SubmitterName);
                 if (model.Filter.Source.HasValue)
                     query = query.Where(e => e.Source == model.Filter.Source);
                 if (model.Filter.State.HasValue)
