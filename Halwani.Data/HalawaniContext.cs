@@ -1,5 +1,6 @@
 ﻿using Halwani.Data.Entities.AssoicationTikcet;
 using Halwani.Data.Entities.Incident;
+using Halwani.Data.Entities.location;
 using Halwani.Data.Entities.Message;
 using Halwani.Data.Entities.ProductCategories;
 using Halwani.Data.Entities.ResolutionCategories;
@@ -61,6 +62,8 @@ namespace Halwani.Data
         #region [ResolutionCategories]
         public DbSet<ResolutionCategory> ResolutionCategories { get; set; }
         #endregion
+        public DbSet<Location> Locations { get; set; }
+
         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
