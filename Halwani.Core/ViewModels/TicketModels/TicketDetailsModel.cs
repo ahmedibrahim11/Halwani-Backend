@@ -31,6 +31,8 @@ namespace Halwani.Core.ViewModels.TicketModels
         public DateTime SubmitDate { get; set; }
         public DateTime? ResolvedDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
+        public string ResolutionSLA { get; set; }
+        public string InterventionSLA { get; set; }
     }
 
 }

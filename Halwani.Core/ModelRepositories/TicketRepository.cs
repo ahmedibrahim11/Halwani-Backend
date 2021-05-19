@@ -127,7 +127,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
-                    List<string> result = StoreFiles(attachments, null,saveFilePath, ticket);
+                    List<string> result = StoreFiles(attachments, null, saveFilePath, ticket);
 
                     ticket.Attachement = string.Join(",", result);
                     Update(ticket);
@@ -145,11 +145,11 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public List<string> RemoveAttachments(string filePath,string []attachment)
+        public List<string> RemoveAttachments(string filePath, string[] attachment)
         {
             DirectoryInfo directory = new DirectoryInfo(filePath);
             var result = new List<string>();
-            var fileNames = directory.GetFiles().Select(s=>s.Name);
+            var fileNames = directory.GetFiles().Select(s => s.Name);
             var files = directory.GetFiles();
             if (Directory.Exists(filePath))
             {
@@ -172,11 +172,11 @@ namespace Halwani.Core.ModelRepositories
             {
                 return null;
             }
-           
+
         }
 
 
-        private static List<string> StoreFiles(IEnumerable<IFormFile> attachments,List<string> oldAttachments, string saveFilePath, Ticket ticket)
+        private static List<string> StoreFiles(IEnumerable<IFormFile> attachments, List<string> oldAttachments, string saveFilePath, Ticket ticket)
         {
             var result = new List<string>();
             if (attachments == null)
@@ -297,7 +297,10 @@ namespace Halwani.Core.ModelRepositories
                 var ticket = Find(e => e.Id == id).FirstOrDefault();
                 if (ticket == null)
                     return null;
-                var attachementsList = ticket.Attachement.Split(",");
+                var attachementsList = ticket.Attachement.Split(",", StringSplitOptions.None);
+                var slm = ticket.SLmMeasurements;
+                var interventionTime = DateTime.Now - slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention)?.TargetDate;
+                var resolutionTime = DateTime.Now - slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution)?.TargetDate;
                 return new TicketDetailsModel
                 {
                     RequestTypeId = ticket.RequestTypeId,
@@ -327,7 +330,9 @@ namespace Halwani.Core.ModelRepositories
                         Icon = ticket.RequestType.Icon,
                         Name = ticket.RequestType.Name,
                         TicketType = ticket.RequestType.TicketType
-                    }
+                    },
+                    InterventionSLA = interventionTime.HasValue ? interventionTime.Value.TotalHours.ToString() : "",
+                    ResolutionSLA = resolutionTime.HasValue ? resolutionTime.Value.TotalHours.ToString() : ""
                 };
             }
             catch (Exception ex)
@@ -545,9 +550,9 @@ namespace Halwani.Core.ModelRepositories
                 ticket.SubmitterName = model.SubmitterName;
                 ticket.SubmitterEmail = model.SubmitterEmail;
                 var old = model.Attachement.Split(",");
-                List<string> result = StoreFiles(attachments, old.ToList(),saveFilePath, ticket);
+                List<string> result = StoreFiles(attachments, old.ToList(), saveFilePath, ticket);
 
-                    ticket.Attachement = string.Join(",", result);
+                ticket.Attachement = string.Join(",", result);
 
                 //ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
                 Update(ticket);

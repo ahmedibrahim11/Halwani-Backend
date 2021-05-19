@@ -33,7 +33,47 @@ namespace Halwani.Core.ModelRepositories
                 var sla = Find(e => e.Priority == model.Priority && e.SLAType == slaType && e.ProductCategoryName == model.ProductCategoryName2 && e.ServiceLine == team.ServiceLine).FirstOrDefault();
                 if (sla == null)
                     return null;
-                
+
+                var allWeekDays = new List<DayOfWeek> { DayOfWeek.Saturday, DayOfWeek.Sunday, DayOfWeek.Monday, DayOfWeek.Tuesday,
+                    DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+                var workingDays = sla.WorkingDays.Split(",").Select(e => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), e)).ToList();
+                var totalWorkingHours = int.Parse(sla.WorkingHours.Split(",")[1]) - int.Parse(sla.WorkingHours.Split(",")[0]);
+                var currentDay = DateTime.Now.DayOfWeek;
+                var currentDayIndex = allWeekDays.IndexOf(currentDay);
+                var workDuration = sla.SLADuration;
+                double totalHours = 0;
+                var currentLoopDay = currentDay;
+
+                while (true)
+                {
+                    if (!workingDays.Contains(currentLoopDay))
+                    {
+                        totalHours += 24;
+                    }
+                    else
+                    {
+                        workDuration -= totalWorkingHours;
+                        if (workDuration <= totalWorkingHours)
+                        {
+                            totalHours += int.Parse(sla.WorkingHours.Split(",")[0]) + workDuration;
+                            break;
+                        }
+                        else
+                            totalHours += 24;
+                    }
+                    var indexOfCurrentLoopDay = allWeekDays.IndexOf(currentLoopDay);
+                    if (indexOfCurrentLoopDay == allWeekDays.Count - 1)
+                        indexOfCurrentLoopDay = -1;
+                    currentLoopDay = allWeekDays.ElementAt(++indexOfCurrentLoopDay);
+                }
+
+                if (DateTime.Now.Hour < int.Parse(sla.WorkingHours.Split(",")[1]) && DateTime.Now.Hour > int.Parse(sla.WorkingHours.Split(",")[0]))
+                    totalHours -= 8 + (int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour);
+                if (DateTime.Now.Hour > int.Parse(sla.WorkingHours.Split(",")[0]))
+                    totalHours -= 8;
+                if (totalHours > totalWorkingHours)
+                    totalHours -= (DateTime.Now.Hour);
+
                 //TODO: Handle TargetDate .
                 return new List<SLmMeasurement>
                 {
@@ -41,7 +81,7 @@ namespace Halwani.Core.ModelRepositories
                     {
                         SLAId = sla.Id,
                         ModifiedDate = DateTime.Now,
-                        //TargetDate = ,
+                        TargetDate = DateTime.Now.AddHours(totalHours)
                     }
                 };
             }
