@@ -363,6 +363,7 @@ namespace Halwani.Core.ModelRepositories
                     CanDelete = true,
                     CreationDate = item.SubmitDate,
                     Severity = item.TicketSeverity,
+                    Status=item.TicketStatus,
                     TicketTopic = item.TicketName,
                     RequestType = new RequestTypeModel
                     {
