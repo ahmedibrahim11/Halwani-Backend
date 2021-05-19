@@ -514,6 +514,7 @@ namespace Halwani.Core.ModelRepositories
                 ticket.Attachement = model.Attachement;
                 ticket.Location = model.Location;
                 ticket.Priority = model.Priority;
+                ticket.TicketSeverity = model.Severity;
                 ticket.RequestTypeId = model.RequestTypeId;
                 ticket.ReportedSource = model.ReportedSource;
                 ticket.Source = model.Source;

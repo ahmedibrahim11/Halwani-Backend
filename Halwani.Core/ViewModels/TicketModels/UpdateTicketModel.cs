@@ -15,6 +15,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         public string TeamName { get; set; }
         public string Location { get; set; }
         public Priority Priority { get; set; }
+        public TicketSeverity Severity { get; set; }
         public Source Source { get; set; }
         public string ReportedSource { get; set; }
         public int RequestTypeId { get; set; }
