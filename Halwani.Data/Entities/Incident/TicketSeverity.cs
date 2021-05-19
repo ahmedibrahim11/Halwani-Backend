@@ -6,6 +6,6 @@ namespace Halwani.Data.Entities.Incident
 {
     public enum TicketSeverity
     {
-       Low,High,Medium
+        Low = 0, Medium, High
     }
 }
