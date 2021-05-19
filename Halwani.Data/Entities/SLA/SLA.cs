@@ -13,8 +13,8 @@ namespace Halwani.Data.Entities.SLA
         public SLAType SLAType { get; set; }
         public Priority Priority { get; set; }
         public string ServiceLine { get; set; }
-        public double WorkingHours { get; set; }
-        public double WorkingDays { get; set; }
+        public string WorkingHours { get; set; }
+        public string WorkingDays { get; set; }
         public double SLADuration { get; set; } 
         public string ProductCategoryName { get; set; }
         #endregion
