@@ -43,38 +43,53 @@ namespace Halwani.Core.ModelRepositories
                 var workDuration = sla.SLADuration;
                 double totalHours = 0;
                 var currentLoopDay = currentDay;
+                var today = true;
 
                 while (true)
                 {
-                    if (!workingDays.Contains(currentLoopDay))
+                    if (today)
                     {
-                        totalHours += 24;
+                        if (workDuration < totalWorkingHours && int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                        {
+                            totalHours = int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
+                            
+                            if (workDuration == 0)
+                                break;
+                        }
+                        else
+                        {
+                            if (int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                            {
+                                workDuration -= int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                            }
+                            totalHours += 24 - DateTime.Now.Hour;
+                        }
                     }
                     else
                     {
-                        workDuration -= totalWorkingHours;
-                        if (workDuration <= totalWorkingHours)
+                        if (!workingDays.Contains(currentLoopDay))
                         {
-                            totalHours += int.Parse(sla.WorkingHours.Split(",")[0]) + workDuration;
-                            break;
+                            totalHours += 24;
                         }
                         else
-                            totalHours += 24;
+                        {
+                            if (workDuration <= totalWorkingHours)
+                            {
+                                totalHours += int.Parse(sla.WorkingHours.Split(",")[0]) + workDuration;
+                                break;
+                            }
+                            else
+                                totalHours += 24;
+                            workDuration -= totalWorkingHours;
+                        }
+                        var indexOfCurrentLoopDay = allWeekDays.IndexOf(currentLoopDay);
+                        if (indexOfCurrentLoopDay == allWeekDays.Count - 1)
+                            indexOfCurrentLoopDay = -1;
+                        currentLoopDay = allWeekDays.ElementAt(++indexOfCurrentLoopDay);
                     }
-                    var indexOfCurrentLoopDay = allWeekDays.IndexOf(currentLoopDay);
-                    if (indexOfCurrentLoopDay == allWeekDays.Count - 1)
-                        indexOfCurrentLoopDay = -1;
-                    currentLoopDay = allWeekDays.ElementAt(++indexOfCurrentLoopDay);
+                    today = false;
                 }
 
-                if (DateTime.Now.Hour < int.Parse(sla.WorkingHours.Split(",")[1]) && DateTime.Now.Hour > int.Parse(sla.WorkingHours.Split(",")[0]))
-                    totalHours -= 8 + (int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour);
-                if (DateTime.Now.Hour > int.Parse(sla.WorkingHours.Split(",")[0]))
-                    totalHours -= 8;
-                if (totalHours > totalWorkingHours)
-                    totalHours -= (DateTime.Now.Hour);
-
-                //TODO: Handle TargetDate .
                 return new List<SLmMeasurement>
                 {
                     new SLmMeasurement
