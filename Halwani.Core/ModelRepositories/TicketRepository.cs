@@ -314,6 +314,7 @@ namespace Halwani.Core.ModelRepositories
                     ResolvedDate = ticket.ResolvedDate,
                     ResolveText = ticket.ResolveText,
                     TeamName = ticket.TeamName,
+                    Location=ticket.Location,
                     Source = Enum.GetName(typeof(Source), ticket.Source),
                     SubmitterEmail = ticket.SubmitterEmail,
                     SubmitDate = ticket.SubmitDate,
@@ -513,6 +514,7 @@ namespace Halwani.Core.ModelRepositories
                 ticket.Attachement = model.Attachement;
                 ticket.Location = model.Location;
                 ticket.Priority = model.Priority;
+                ticket.TicketSeverity = model.TicketSeverity;
                 ticket.RequestTypeId = model.RequestTypeId;
                 ticket.ReportedSource = model.ReportedSource;
                 ticket.Source = model.Source;

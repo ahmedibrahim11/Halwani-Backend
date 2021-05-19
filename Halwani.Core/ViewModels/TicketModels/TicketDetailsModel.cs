@@ -22,6 +22,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         public int RequestTypeId { get; set; }
         public string Priority { get; set; }
         public string Source { get; set; }
+        public string Location { get; set; }
         public RequestTypeModel RequestType { get; set; }
         public string TicketSeverity { get; set; }
         public Status? TicketStatus { get; set; }
