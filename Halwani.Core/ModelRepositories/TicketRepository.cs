@@ -492,7 +492,7 @@ namespace Halwani.Core.ModelRepositories
         private IEnumerable<Ticket> FilterLoggedUser(ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             var userSession = _authenticationRepository.LoadUserSession(userClaims);
-            if (!userSession.IsAllTeams)
+            if (!userSession.IsAllTeams&&userSession.Role!=RoleEnum.User)
             {
                 query = query.Where(e => userSession.TeamsIds.Contains(e.TeamName));
             }
