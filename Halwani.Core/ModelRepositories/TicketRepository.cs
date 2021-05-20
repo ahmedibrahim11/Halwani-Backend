@@ -486,6 +486,8 @@ namespace Halwani.Core.ModelRepositories
                 if (model.Filter.Date.HasValue)
                     query = query.Where(e => e.SubmitDate.Date == model.Filter.Date.Value.Date);
                 //TODO: Add Location Filter.
+                if (model.Filter.Location.HasValue)
+                    query = query.Where(e => e.Location == model.Filter.Location.ToString());
             }
             return query;
         }
