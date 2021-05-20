@@ -208,12 +208,12 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var ticket = GetById(model.TicketId);
+                var ticket = Find(e=> e.Id == model.TicketId,null, "SLmMeasurements").FirstOrDefault();
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
                 if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
                 {
-                    ticket.SLmMeasurements = _slaRepository.LoadTicketSlm(new CreateTicketViewModel
+                    var newSla = _slaRepository.LoadTicketSlm(new CreateTicketViewModel
                     {
                         TeamName = ticket.TeamName,
                         Priority = ticket.Priority.Value,
@@ -221,6 +221,8 @@ namespace Halwani.Core.ModelRepositories
                         ProductCategoryName1 = ticket.ProductCategoryName1,
                         ProductCategoryName2 = ticket.ProductCategoryName2,
                     }, Data.Entities.SLA.SLAType.Resolution);
+                    if (newSla != null)
+                        ticket.SLmMeasurements.Add(newSla.FirstOrDefault());
                 }
                 ticket.TicketStatus = model.Status;
                 ticket.ResolveText = model.ResolveText;
@@ -299,8 +301,8 @@ namespace Halwani.Core.ModelRepositories
                     return null;
                 var attachementsList = ticket.Attachement.Split(",", StringSplitOptions.None);
                 var slm = ticket.SLmMeasurements;
-                var interventionTime = DateTime.Now - slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention)?.TargetDate;
-                var resolutionTime = DateTime.Now - slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution)?.TargetDate;
+                var interventionTime = slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention)?.TargetDate - DateTime.Now;
+                var resolutionTime = slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution)?.TargetDate - DateTime.Now;
                 return new TicketDetailsModel
                 {
                     RequestTypeId = ticket.RequestTypeId,
@@ -314,7 +316,7 @@ namespace Halwani.Core.ModelRepositories
                     ResolvedDate = ticket.ResolvedDate,
                     ResolveText = ticket.ResolveText,
                     TeamName = ticket.TeamName,
-                    Location=ticket.Location,
+                    Location = ticket.Location,
                     Source = Enum.GetName(typeof(Source), ticket.Source),
                     SubmitterEmail = ticket.SubmitterEmail,
                     SubmitDate = ticket.SubmitDate,
@@ -361,6 +363,7 @@ namespace Halwani.Core.ModelRepositories
                     CanDelete = true,
                     CreationDate = item.SubmitDate,
                     Severity = item.TicketSeverity,
+                    Status=item.TicketStatus,
                     TicketTopic = item.TicketName,
                     RequestType = new RequestTypeModel
                     {
@@ -490,7 +493,7 @@ namespace Halwani.Core.ModelRepositories
         private IEnumerable<Ticket> FilterLoggedUser(ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             var userSession = _authenticationRepository.LoadUserSession(userClaims);
-            if (!userSession.IsAllTeams)
+            if (!userSession.IsAllTeams&&userSession.Role!=RoleEnum.User)
             {
                 query = query.Where(e => userSession.TeamsIds.Contains(e.TeamName));
             }
