@@ -13,7 +13,7 @@ namespace Halwani.Core.ViewModels.TicketModels
     }
     public class TicketPageInputFilter
     {
-        public int? Location { get; set; }
+        public string? Location { get; set; }
         public string SubmitterName { get; set; }
         public Source? Source { get; set; }
         public Status? State { get; set; }
