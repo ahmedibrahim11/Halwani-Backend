@@ -545,6 +545,7 @@ namespace Halwani.Core.ModelRepositories
                 ticket.LastModifiedDate = DateTime.Now;
                 ticket.Location = model.Location;
                 ticket.Priority = model.Priority;
+                ticket.TicketSeverity = model.TicketSeverity;
                 ticket.RequestTypeId = model.RequestTypeId;
                 ticket.ReportedSource = model.ReportedSource;
                 ticket.Source = model.Source;
