@@ -6,7 +6,7 @@ namespace Halwani.Core.ViewModels.GenericModels
 {
     public class PaginationViewModel
     {
-        public string SearchText { get; set; }
+        public string[] SearchText { get; set; }
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
         public SortDirection SortDirection { get; set; }

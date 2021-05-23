@@ -456,8 +456,8 @@ namespace Halwani.Core.ModelRepositories
 
         private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
-            if (!string.IsNullOrEmpty(model.SearchText))
-                query = query.Where(e => e.TicketName.Contains(model.SearchText));
+            if (model.SearchText != null && model.SearchText.Any())
+                query = query.Where(e => model.SearchText.Any(z=> z.ToLower().Contains(e.TicketName.ToLower())));
             if (model.Filter != null)
             {
                 if (model.Filter.Priority.HasValue)
