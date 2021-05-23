@@ -1,12 +1,15 @@
 using Halwani.Core.ModelRepositories;
 using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Data;
+using Halwani.Hubs;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,6 +70,23 @@ namespace Halwani
                     // IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                     IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(Configuration["JWT:Secret"]))
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var xx = context.Request.Headers.TryGetValue("Authorization", out var token);
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddHangfire(x => x.UseSqlServerStorage("HalwaniConnection"));
@@ -87,6 +107,7 @@ namespace Halwani
 
 
             services.AddControllers();
+            services.AddSignalR();
             services.SwaggerConfiguration();
         }
 
@@ -116,7 +137,14 @@ namespace Halwani
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<HubBase>("/hubs", options =>
+                {
+                    options.Transports =
+                        HttpTransportType.WebSockets |
+                        HttpTransportType.LongPolling;
+                });
             });
+            HubBase.Current = app.ApplicationServices.GetService<IHubContext<HubBase>>();
         }
     }
 }

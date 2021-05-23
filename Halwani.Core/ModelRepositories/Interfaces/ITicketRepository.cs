@@ -16,15 +16,11 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         #region Custom Methouds
         TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
         Task<List<string>> PostFilesAsync(IFormFileCollection attachments, string saveFilePath);
-        RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath); 
-        RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath);
+        RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token); 
+        RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token);
         RepositoryOutput UpdateStatus(UpdateStatusViewModel model);
         RepositoryOutput AssignTicket(AssignTicketViewModel model);
         RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model);
-
-
-        RepositoryOutput UpdateTicket(long Id,UpdateTicketModel model);
-
         int GetCount();
         TicketDetailsModel GetTicket(long Id, string returnFilePath);
         List<string> RemoveAttachments(string filePath,string [] attachment);

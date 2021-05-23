@@ -10,6 +10,7 @@ using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.User;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -29,9 +30,13 @@ namespace Halwani.Core.ModelRepositories
     {
         private readonly IAuthenticationRepository _authenticationRepository;
         private readonly ISLARepository _slaRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IConfiguration _configuration;
 
-        public TicketRepository(IAuthenticationRepository authenticationRepository, ISLARepository slaRepository)
+        public TicketRepository(IAuthenticationRepository authenticationRepository, ISLARepository slaRepository, IConfiguration configuration, IUserRepository userRepository)
         {
+            _userRepository = userRepository;
+            _configuration = configuration;
             _slaRepository = slaRepository;
             _authenticationRepository = authenticationRepository;
         }
@@ -90,7 +95,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath)
+        public RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token)
         {
             try
             {
@@ -144,6 +149,50 @@ namespace Halwani.Core.ModelRepositories
 
                     scope.Complete();
                 }
+
+                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+                SendSignalR(token, "updateTickets", userIds.ToArray()).Wait();
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
+        public RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token)
+        {
+            try
+            {
+                var ticket = GetById(model.Id);
+                if (ticket == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+                ticket.Description = model.Description;
+                ticket.LastModifiedDate = DateTime.Now;
+                ticket.Location = model.Location;
+                ticket.Priority = model.Priority;
+                ticket.TicketSeverity = model.TicketSeverity;
+                ticket.RequestTypeId = model.RequestTypeId;
+                ticket.ReportedSource = model.ReportedSource;
+                ticket.Source = model.Source;
+                ticket.TeamName = model.TeamName;
+                ticket.SubmitterName = model.SubmitterName;
+                ticket.SubmitterEmail = model.SubmitterEmail;
+                var old = model.Attachement.Split(",");
+                List<string> result = StoreFiles(attachments, old.ToList(), saveFilePath, ticket);
+
+                ticket.Attachement = string.Join(",", result);
+
+                //ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
+                Update(ticket);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+                SendSignalR(token, "updateTickets", userIds.ToArray()).Wait();
+
                 return RepositoryOutput.CreateSuccessResponse();
             }
             catch (Exception ex)
@@ -182,7 +231,6 @@ namespace Halwani.Core.ModelRepositories
             }
 
         }
-
 
         private static List<string> StoreFiles(IEnumerable<IFormFile> attachments, List<string> oldAttachments, string saveFilePath, Ticket ticket)
         {
@@ -403,6 +451,27 @@ namespace Halwani.Core.ModelRepositories
 
         #region Private Methods
 
+        public async Task SendSignalR(string token, string eventName,/* List<string> userIds,*/ params string[] paramters)
+        {
+            try
+            {
+                var signalrUrl = _configuration["SignalR:Url"];
+                //var signalrUrl = "https://localhost:44312/hubs";
+                var hubConnectionBuilder = new HubConnectionBuilder();
+                var hubConnection = hubConnectionBuilder.WithUrl(signalrUrl, Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets, options =>
+                {
+                    options.AccessTokenProvider = async () => { return token; };
+                    options.UseDefaultCredentials = true;
+                }).Build();
+                await hubConnection.StartAsync();
+                await hubConnection.InvokeAsync(eventName, paramters);
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+            }
+        }
+
         private void PagingList(TicketPageInputViewModel model, TicketPageResultViewModel result, IEnumerable<Ticket> qurey)
         {
             result.TotalCount = qurey.Count();
@@ -561,75 +630,6 @@ namespace Halwani.Core.ModelRepositories
         public int GetCount()
         {
             return Count();
-        }
-
-        public RepositoryOutput UpdateTicket(long Id, UpdateTicketModel model)
-        {
-            try
-            {
-                var ticket = GetById(Id);
-                if (ticket == null)
-                    return RepositoryOutput.CreateNotFoundResponse();
-                ticket.Description = model.Description;
-                ticket.LastModifiedDate = DateTime.Now;
-                ticket.Attachement = model.Attachement;
-                ticket.Location = model.Location;
-                ticket.Priority = model.Priority;
-                ticket.TicketSeverity = model.TicketSeverity;
-                ticket.RequestTypeId = model.RequestTypeId;
-                ticket.ReportedSource = model.ReportedSource;
-                ticket.Source = model.Source;
-                ticket.TeamName = model.TeamName;
-                ticket.SubmitterName = model.SubmitterName;
-                ticket.SubmitterEmail = model.SubmitterEmail;
-                Update(ticket);
-                if (Save() < 1)
-                    return RepositoryOutput.CreateErrorResponse("");
-
-                return RepositoryOutput.CreateSuccessResponse();
-            }
-            catch (Exception ex)
-            {
-                RepositoryHelper.LogException(ex);
-                return RepositoryOutput.CreateErrorResponse(ex.Message);
-            }
-        }
-
-        public RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath)
-        {
-            try
-            {
-                var ticket = GetById(model.Id);
-                if (ticket == null)
-                    return RepositoryOutput.CreateNotFoundResponse();
-                ticket.Description = model.Description;
-                ticket.LastModifiedDate = DateTime.Now;
-                ticket.Location = model.Location;
-                ticket.Priority = model.Priority;
-                ticket.TicketSeverity = model.TicketSeverity;
-                ticket.RequestTypeId = model.RequestTypeId;
-                ticket.ReportedSource = model.ReportedSource;
-                ticket.Source = model.Source;
-                ticket.TeamName = model.TeamName;
-                ticket.SubmitterName = model.SubmitterName;
-                ticket.SubmitterEmail = model.SubmitterEmail;
-                var old = model.Attachement.Split(",");
-                List<string> result = StoreFiles(attachments, old.ToList(), saveFilePath, ticket);
-
-                ticket.Attachement = string.Join(",", result);
-
-                //ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
-                Update(ticket);
-                if (Save() < 1)
-                    return RepositoryOutput.CreateErrorResponse("");
-
-                return RepositoryOutput.CreateSuccessResponse();
-            }
-            catch (Exception ex)
-            {
-                RepositoryHelper.LogException(ex);
-                return RepositoryOutput.CreateErrorResponse(ex.Message);
-            }
         }
 
         #endregion
