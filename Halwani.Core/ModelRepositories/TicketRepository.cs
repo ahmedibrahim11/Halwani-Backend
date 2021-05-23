@@ -8,6 +8,7 @@ using Halwani.Data;
 using Halwani.Data.Entities;
 using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.User;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -134,6 +135,13 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
+                    var slm = ticket.SLmMeasurements.FirstOrDefault();
+                    if (slm != null)
+                    {
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention),
+        slm.TargetDate);
+                    }
+
                     scope.Complete();
                 }
                 return RepositoryOutput.CreateSuccessResponse();
@@ -208,7 +216,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var ticket = Find(e=> e.Id == model.TicketId,null, "SLmMeasurements").FirstOrDefault();
+                var ticket = Find(e => e.Id == model.TicketId, null, "SLmMeasurements").FirstOrDefault();
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
                 if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
@@ -223,6 +231,13 @@ namespace Halwani.Core.ModelRepositories
                     }, Data.Entities.SLA.SLAType.Resolution);
                     if (newSla != null)
                         ticket.SLmMeasurements.Add(newSla.FirstOrDefault());
+
+                    var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution);
+                    if (slm != null)
+                    {
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Resolution),
+        slm.TargetDate);
+                    }
                 }
                 ticket.TicketStatus = model.Status;
                 ticket.ResolveText = model.ResolveText;
@@ -345,6 +360,47 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public void IsMet(long ticketId, SLMType slMType)
+        {
+            try
+            {
+                var ticket = Find(e => e.Id == ticketId).FirstOrDefault();
+                switch (slMType)
+                {
+                    case SLMType.Intervention:
+                        if (ticket.TicketStatus != Status.InProgress)
+                        {
+                            var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention);
+                            if (slm != null)
+                                slm.SLAStatus = SLAStatus.Deattached;
+                            ticket.TicketStatus = Status.OverDue;
+
+                            Update(ticket);
+                            Save();
+                        }
+                        break;
+                    case SLMType.Resolution:
+                        if (ticket.TicketStatus != Status.Resolved)
+                        {
+                            var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution);
+                            if (slm != null)
+                                slm.SLAStatus = SLAStatus.Deattached;
+                            ticket.TicketStatus = Status.OverDue;
+                            Update(ticket);
+                            Save();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+            }
+        }
+
         #region Private Methods
 
         private void PagingList(TicketPageInputViewModel model, TicketPageResultViewModel result, IEnumerable<Ticket> qurey)
@@ -363,7 +419,7 @@ namespace Halwani.Core.ModelRepositories
                     CanDelete = true,
                     CreationDate = item.SubmitDate,
                     Severity = item.TicketSeverity,
-                    Status=item.TicketStatus,
+                    Status = item.TicketStatus,
                     TicketTopic = item.TicketName,
                     RequestType = new RequestTypeModel
                     {
@@ -457,7 +513,7 @@ namespace Halwani.Core.ModelRepositories
         private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             if (model.SearchText != null && model.SearchText.Any())
-                query = query.Where(e => model.SearchText.Any(z=> z.ToLower().Contains(e.TicketName.ToLower())));
+                query = query.Where(e => model.SearchText.Any(z => z.ToLower().Contains(e.TicketName.ToLower())));
             if (model.Filter != null)
             {
                 if (model.Filter.Priority.HasValue)
@@ -495,7 +551,7 @@ namespace Halwani.Core.ModelRepositories
         private IEnumerable<Ticket> FilterLoggedUser(ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             var userSession = _authenticationRepository.LoadUserSession(userClaims);
-            if (!userSession.IsAllTeams&&userSession.Role!=RoleEnum.User)
+            if (!userSession.IsAllTeams && userSession.Role != RoleEnum.User)
             {
                 query = query.Where(e => userSession.TeamsIds.Contains(e.TeamName));
             }

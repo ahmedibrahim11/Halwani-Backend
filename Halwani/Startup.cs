@@ -1,6 +1,7 @@
 using Halwani.Core.ModelRepositories;
 using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Data;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -67,6 +68,9 @@ namespace Halwani
                     IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(Configuration["JWT:Secret"]))
                 };
             });
+
+            services.AddHangfire(x => x.UseSqlServerStorage("HalwaniConnection"));
+            services.AddHangfireServer();
 
             services.AddHttpContextAccessor();
          
