@@ -4,6 +4,7 @@ using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data.Entities.Incident;
+using Halwani.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -62,7 +63,7 @@ namespace Halwani.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = _TicketRepository.Add(model, attachements, _env.ContentRootPath + @"/files");
+            var result = _TicketRepository.Add(model, attachements, _env.ContentRootPath + @"/files", HeadersHelper.GetAuthToken(Request));
             if (result == null || !result.Success)
                 return Problem("");
 
@@ -86,22 +87,22 @@ namespace Halwani.Controllers
             var filePath = _env.ContentRootPath + @"/files/" + model.Id;
             var  res = _TicketRepository.RemoveAttachments(filePath,model.Attachement.Split(','));
             model.Attachement = string.Join(",", res);
-            var result = _TicketRepository.UpdateTicket(model,attachements, _env.ContentRootPath + @"/files");
+            var result = _TicketRepository.UpdateTicket(model,attachements, _env.ContentRootPath + @"/files", HeadersHelper.GetAuthToken(Request));
             if (result == null || !result.Success)
                 return Problem("");
             return Ok(result);
 
         }
 
-        [HttpPost]
-        [Route("Create")]
-        public ActionResult CreateTicket(CreateTicketViewModel model)
-        {
-            var result = _TicketRepository.Add(model, null, "");
-            if (result.Code == RepositoryResponseStatus.Error)
-                return Problem();
-            return Ok();
-        }
+        //[HttpPost]
+        //[Route("Create")]
+        //public ActionResult CreateTicket(CreateTicketViewModel model)
+        //{
+        //    var result = _TicketRepository.Add(model, null, "");
+        //    if (result.Code == RepositoryResponseStatus.Error)
+        //        return Problem();
+        //    return Ok();
+        //}
 
         [HttpPost]
         [Route("UpdateStatus")]
@@ -133,20 +134,20 @@ namespace Halwani.Controllers
             return Ok();
         }
 
-        [HttpPut]
-        [Route("UpdateTicket/{id:long}")]
-        public ActionResult UpdateTicket(long Id, UpdateTicketModel model)
-        {
-            var result = _TicketRepository.UpdateTicket(Id, model);
+        //[HttpPut]
+        //[Route("UpdateTicket/{id:long}")]
+        //public ActionResult UpdateTicket(long Id, UpdateTicketModel model)
+        //{
+        //    var result = _TicketRepository.UpdateTicket(Id, model);
 
-            if (result.Code == RepositoryResponseStatus.Error)
-                return Problem();
+        //    if (result.Code == RepositoryResponseStatus.Error)
+        //        return Problem();
 
-            if (result.Code == RepositoryResponseStatus.NotFound)
-                return NotFound();
+        //    if (result.Code == RepositoryResponseStatus.NotFound)
+        //        return NotFound();
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpPost]
         [Route("AssignTicket")]
