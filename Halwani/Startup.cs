@@ -89,7 +89,7 @@ namespace Halwani
                 };
             });
 
-            services.AddHangfire(x => x.UseSqlServerStorage("HalwaniConnection"));
+            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("HalwaniConnection")));
             services.AddHangfireServer();
 
             services.AddHttpContextAccessor();
