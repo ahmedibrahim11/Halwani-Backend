@@ -3,6 +3,7 @@ using Halawani.Core.Helper;
 using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.Authentication;
 using Halwani.Core.ViewModels.GenericModels;
+using Halwani.Core.ViewModels.NotificationModels;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data;
 using Halwani.Data.Entities;
@@ -29,12 +30,14 @@ namespace Halwani.Core.ModelRepositories
     public class TicketRepository : BaseRepository<Ticket>, ITicketRepository
     {
         private readonly IAuthenticationRepository _authenticationRepository;
+        private readonly INotificationRepository _notificationRepository;
         private readonly ISLARepository _slaRepository;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
-        public TicketRepository(IAuthenticationRepository authenticationRepository, ISLARepository slaRepository, IConfiguration configuration, IUserRepository userRepository)
+        public TicketRepository(IAuthenticationRepository authenticationRepository, ISLARepository slaRepository, IConfiguration configuration, IUserRepository userRepository, INotificationRepository notificationRepository)
         {
+            _notificationRepository = notificationRepository;
             _userRepository = userRepository;
             _configuration = configuration;
             _slaRepository = slaRepository;
@@ -95,7 +98,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token)
+        public RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token)
         {
             try
             {
@@ -151,6 +154,9 @@ namespace Halwani.Core.ModelRepositories
                 }
 
                 var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, userIds.ToList());
+
                 SendSignalR(token, "updateTickets", userIds.ToArray()).Wait();
 
                 return RepositoryOutput.CreateSuccessResponse();
@@ -450,6 +456,24 @@ namespace Halwani.Core.ModelRepositories
         }
 
         #region Private Methods
+
+        private void SendNotification(long ticketId, NotificationType notificationType, string madeBy, string token, List<string> userIds)
+        {
+            try
+            {
+                _notificationRepository.Add(new ViewModels.NotificationModels.AddNotificationModel
+                {
+                    ObjectId = ticketId.ToString(),
+                    NotificationType = notificationType,
+                    ResourceKey = "BreakingBadNews",
+                    UsersIds = userIds
+                }, madeBy, token);
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+            }
+        }
 
         public async Task SendSignalR(string token, string eventName,/* List<string> userIds,*/ params string[] paramters)
         {
