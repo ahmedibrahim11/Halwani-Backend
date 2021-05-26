@@ -13,7 +13,7 @@ namespace Halwani.Controllers
 {
     [EnableCors("ApiCorsPolicy")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class NotificationController : ControllerBase
     {
         private readonly IStringLocalizer<NotificationController> _localizer;

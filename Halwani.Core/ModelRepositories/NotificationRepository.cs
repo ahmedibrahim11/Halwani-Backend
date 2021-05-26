@@ -136,7 +136,7 @@ namespace Halwani.Core.ModelRepositories
         {
             foreach (var item in query)
             {
-                var user = _userRepository.GetById(item.MadeBy);
+                var user = _userRepository.GetById(long.Parse(item.MadeBy));
                 item.MadeByName = user.Name;
             }
         }

@@ -143,11 +143,14 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
-                    var slm = ticket.SLmMeasurements.FirstOrDefault();
-                    if (slm != null)
+                    if (ticket.SLmMeasurements != null)
                     {
-                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention),
-        slm.TargetDate);
+                        var slm = ticket.SLmMeasurements.FirstOrDefault();
+                        if (slm != null)
+                        {
+                            var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention),
+            slm.TargetDate);
+                        }
                     }
 
                     scope.Complete();
@@ -155,9 +158,9 @@ namespace Halwani.Core.ModelRepositories
 
                 var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
 
-                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, userIds.ToList());
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "NewTicket", userIds.ToList());
 
-                SendSignalR(token, "updateTickets", userIds.ToArray()).Wait();
+                SendSignalR(token, "updateTickets", userIds.ToArray()).GetAwaiter().GetResult();
 
                 return RepositoryOutput.CreateSuccessResponse();
             }
@@ -457,7 +460,7 @@ namespace Halwani.Core.ModelRepositories
 
         #region Private Methods
 
-        private void SendNotification(long ticketId, NotificationType notificationType, string madeBy, string token, List<string> userIds)
+        private void SendNotification(long ticketId, NotificationType notificationType, string madeBy, string token, string resourceKey, List<string> userIds)
         {
             try
             {
@@ -465,7 +468,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     ObjectId = ticketId.ToString(),
                     NotificationType = notificationType,
-                    ResourceKey = "BreakingBadNews",
+                    ResourceKey = resourceKey,
                     UsersIds = userIds
                 }, madeBy, token);
             }
