@@ -102,6 +102,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
+                Random rnd = new Random();
                 var ticket = new Ticket()
                 {
                     Description = model.Description,
@@ -120,7 +121,8 @@ namespace Halwani.Core.ModelRepositories
                     TicketSeverity = model.TicketSeverity,
                     ProductCategoryName1 = model.ProductCategoryName1,
                     ProductCategoryName2 = model.ProductCategoryName2,
-                    TicketHistories = new List<TicketHistory> {
+                    TicketNumber = "SR-" + rnd.Next(),
+                TicketHistories = new List<TicketHistory> {
                         new TicketHistory
                         {
                             OldStatus = null,
@@ -131,7 +133,6 @@ namespace Halwani.Core.ModelRepositories
                     LastModifiedDate = DateTime.Now,
                     SLmMeasurements = _slaRepository.LoadTicketSlm(model, Data.Entities.SLA.SLAType.Intervention),
                 };
-                ticket.TicketNumber = "SR-" + ticket.Id;
                 Add(ticket);
                 using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
