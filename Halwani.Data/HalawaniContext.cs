@@ -2,6 +2,7 @@
 using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.location;
 using Halwani.Data.Entities.Message;
+using Halwani.Data.Entities.Notification;
 using Halwani.Data.Entities.ProductCategories;
 using Halwani.Data.Entities.ResolutionCategories;
 using Halwani.Data.Entities.SLA;
@@ -48,6 +49,10 @@ namespace Halwani.Data
 
         #region Team
         public virtual DbSet<Team> Teams { get; set; }
+        #endregion
+
+        #region Notification
+        public virtual DbSet<Notification> Notifications { get; set; }
         #endregion
         
         #region Users
