@@ -2,13 +2,13 @@
 
 namespace Halwani.Data.Migrations
 {
-    public partial class adddescriptiontorequestTpe : Migration
+    public partial class chngeticketnum : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "RequestType",
+                name: "TicketNumber",
+                table: "Tickets",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -16,8 +16,8 @@ namespace Halwani.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Description",
-                table: "RequestType");
+                name: "TicketNumber",
+                table: "Tickets");
         }
     }
 }

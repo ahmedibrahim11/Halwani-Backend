@@ -128,6 +128,7 @@ namespace Halwani.Core.ModelRepositories
                     LastModifiedDate = DateTime.Now,
                     SLmMeasurements = _slaRepository.LoadTicketSlm(model, Data.Entities.SLA.SLAType.Intervention),
                 };
+                ticket.TicketNumber = "SR-" + ticket.Id;
                 Add(ticket);
                 using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
@@ -386,7 +387,7 @@ namespace Halwani.Core.ModelRepositories
                     SubmitterName = ticket.SubmitterName,
                     SubmitterTeam = ticket.SubmitterTeam,
                     TicketName = ticket.TicketName,
-                    TicketNo = ticket.TicketNo,
+                    TicketNumber = ticket.TicketNumber,
                     TicketSeverity = Enum.GetName(typeof(TicketSeverity), ticket.TicketSeverity),
                     TicketStatus = ticket.TicketStatus,
                     Attachement = attachementsList.ToArray(),
@@ -579,10 +580,25 @@ namespace Halwani.Core.ModelRepositories
             return query;
         }
 
+        public IEnumerable<string> getTicketNO()
+        {
+            try
+            {
+                var t = Find(t => t.TicketNumber != null).Select(t => t.TicketNumber).ToList();
+                return t;
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+
+        }
+
         private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             if (model.SearchText != null && model.SearchText.Any())
-                query = query.Where(e => model.SearchText.Any(z => z.ToLower().Contains(e.TicketName.ToLower())));
+                query = query.Where(e => model.SearchText[0] == e.TicketNumber).ToList();
             if (model.Filter != null)
             {
                 if (model.Filter.Priority.HasValue)

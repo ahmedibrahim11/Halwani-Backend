@@ -70,8 +70,8 @@ namespace Halwani.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=SQL5103.site4now.net;Database=DB_A64D3A_Halwani;User ID=DB_A64D3A_Halwani_admin;Password=Halwani1094;Trusted_Connection=False;MultipleActiveResultSets=true;ApplicationIntent=ReadWrite");
-                //optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=.;Database=Halwani;Trusted_Connection=True;MultipleActiveResultSets=true");
+                //optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=SQL5103.site4now.net;Database=DB_A64D3A_Halwani;User ID=DB_A64D3A_Halwani_admin;Password=Halwani1094;Trusted_Connection=False;MultipleActiveResultSets=true;ApplicationIntent=ReadWrite");
+                optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=.;Database=Halwani;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
 

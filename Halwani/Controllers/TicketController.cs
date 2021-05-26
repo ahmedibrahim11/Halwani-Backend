@@ -48,6 +48,17 @@ namespace Halwani.Controllers
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("getTicketNumbers")]
+        public IActionResult getTicketNumbers()
+        {
+            var result = _TicketRepository.getTicketNO();
+            if (result == null)
+                return Problem();
+
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("CreateTicket")]
 
