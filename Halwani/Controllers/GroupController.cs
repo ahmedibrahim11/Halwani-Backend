@@ -41,5 +41,27 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok();
         }
+        [HttpPost]
+        [Route("createOne")]
+        public ActionResult CreateOne(CreateGroupModel model)
+        {
+            var result = _groupRepositry.AddOne(model);
+            if (result==0)
+                return Problem();
+            return Ok(result);
+        }
+        [HttpPost]
+        [Route("getGroupforTicketType")]
+        public ActionResult getGroupforTicketType([FromBody] myID ticketType)
+        {
+            var result = _groupRepositry.listTicketTypeGroups(ticketType.id);
+            if (result == null)
+                return Problem();
+            return Ok(result);
+        }
+        public class myID
+        {
+            public int id { get; set; }
+        }
     }
 }

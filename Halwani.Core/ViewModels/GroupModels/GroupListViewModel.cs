@@ -19,4 +19,11 @@ namespace Halwani.Core.ViewModels.GroupModels
         public string Description { get; set; }
         public string  DefaultTeam { get; set; }
     }
+    public class GroupList
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public bool Selected { get; set; }
+
+    }
 }

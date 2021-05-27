@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Halwani.Data.Entities.Incident;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Halwani.Core.ModelRepositories
 {
@@ -57,6 +58,40 @@ namespace Halwani.Core.ModelRepositories
             {
                 RepositoryHelper.LogException(ex);
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+        public int AddOne(CreateGroupModel model)
+        {
+            try
+            {
+               var addedGroup= Add(new Group() { Name=model.Name});
+
+                if (Save() < 1)
+                    return 0;
+                return addedGroup.Id;
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return 0;
+            }
+        }
+
+        public IEnumerable<GroupList> listTicketTypeGroups(int ticketType)
+        {
+            try
+            {
+                var selected= Find(r => r.RequestTypeGroups.Any(l=>l.RequestType.TicketType==(TicketType)ticketType), null, "").
+                     Select(r => new GroupList {ID=r.Id,Name=r.Name , Selected = false });
+                var unselected = Find(r => r.RequestTypeGroups.Count==0, null, "").
+                    Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
+                return selected.Concat(unselected);
+
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
             }
         }
     }

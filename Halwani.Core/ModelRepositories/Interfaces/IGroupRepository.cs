@@ -14,5 +14,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
     {
         IEnumerable<GroupListViewModel> List();
         RepositoryOutput Add(List<CreateGroupModel> model);
+        IEnumerable<GroupList> listTicketTypeGroups(int ticketType);
+        int AddOne(CreateGroupModel model);
     }
 }
