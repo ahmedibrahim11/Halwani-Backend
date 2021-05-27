@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,7 +42,7 @@ namespace Halwani
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200","http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/");
+                    policy.WithOrigins("http://localhost:4200","http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
                 });
             });
 
@@ -75,11 +78,11 @@ namespace Halwani
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
-                        var xx = context.Request.Headers.TryGetValue("Authorization", out var token);
+                        var xx = context.Request.Headers.TryGetValue("authorization", out var token);
 
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs")))
+                        if (!string.IsNullOrEmpty(token) && (path.StartsWithSegments("/hubs")))
                         {
                             // Read the token out of the query string
                             context.Token = accessToken;
@@ -87,6 +90,18 @@ namespace Halwani
                         return Task.CompletedTask;
                     }
                 };
+            });
+
+            services.AddLocalization(option => option.ResourcesPath = "Resources");
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("en-US"),
+                };
+                options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
             });
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("HalwaniConnection")));
@@ -119,7 +134,10 @@ namespace Halwani
             {
                 app.UseDeveloperExceptionPage();
             }
-           
+
+            var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
+            app.UseRequestLocalization(locOptions.Value);
+
             app.UseHttpsRedirection();
 
             app.UseRouting();

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Halwani.Data.Migrations
 {
     [DbContext(typeof(HalawaniContext))]
-    [Migration("20210321193114_SeverityInSLA")]
-    partial class SeverityInSLA
+    [Migration("20210526151131_chnge-ticketnum")]
+    partial class chngeticketnum
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -90,16 +90,33 @@ namespace Halwani.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long?>("DefaultTeamId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Icon")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TeamName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TicketType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DefaultTeamId");
 
                     b.ToTable("RequestType");
                 });
@@ -133,6 +150,9 @@ namespace Halwani.Data.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AssignedUser")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Attachement")
                         .HasColumnType("nvarchar(max)");
 
@@ -142,7 +162,10 @@ namespace Halwani.Data.Migrations
                     b.Property<DateTime?>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Priority")
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Priority")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductCategoryName1")
@@ -159,15 +182,13 @@ namespace Halwani.Data.Migrations
                     b.Property<int>("RequestTypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ResolveText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("ResolvedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<int>("Source")
+                    b.Property<int?>("Source")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("SubmitDate")
@@ -186,18 +207,23 @@ namespace Halwani.Data.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("TeamName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
                     b.Property<string>("TicketName")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("TicketNo")
+                    b.Property<string>("TicketNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TicketSeverity")
                         .HasColumnType("int");
 
-                    b.Property<int>("TicketSeverity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TicketStatus")
+                    b.Property<int?>("TicketStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -318,8 +344,8 @@ namespace Halwani.Data.Migrations
                     b.Property<string>("ProductCategoryName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SLADuration")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("SLADuration")
+                        .HasColumnType("float");
 
                     b.Property<string>("SLAName")
                         .HasColumnType("nvarchar(max)");
@@ -327,14 +353,14 @@ namespace Halwani.Data.Migrations
                     b.Property<int>("SLAType")
                         .HasColumnType("int");
 
-                    b.Property<string>("Team")
+                    b.Property<string>("ServiceLine")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("WorkingDays")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("WorkingHours")
-                        .HasColumnType("float");
+                    b.Property<string>("WorkingHours")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -354,8 +380,8 @@ namespace Halwani.Data.Migrations
                     b.Property<long>("SLAId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("SLAStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SLAStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("TargetDate")
                         .HasColumnType("datetime2");
@@ -396,6 +422,34 @@ namespace Halwani.Data.Migrations
                     b.ToTable("Teams");
                 });
 
+            modelBuilder.Entity("Halwani.Data.Entities.Team.TeamPermissions", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AllowedTeams")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAllTeams")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TeamId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("TeamPermissions");
+                });
+
             modelBuilder.Entity("Halwani.Data.Entities.User.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -433,6 +487,12 @@ namespace Halwani.Data.Migrations
                     b.Property<long?>("TeamsId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserStatus")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
@@ -440,6 +500,21 @@ namespace Halwani.Data.Migrations
                     b.HasIndex("TeamsId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Halwani.Data.Entities.location.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("Halwani.Data.Entities.AssoicationTikcet.Assoication", b =>
@@ -451,6 +526,15 @@ namespace Halwani.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("Halwani.Data.Entities.Incident.RequestType", b =>
+                {
+                    b.HasOne("Halwani.Data.Entities.Team.Team", "DefaultTeam")
+                        .WithMany()
+                        .HasForeignKey("DefaultTeamId");
+
+                    b.Navigation("DefaultTeam");
                 });
 
             modelBuilder.Entity("Halwani.Data.Entities.Incident.RequestTypeGroups", b =>
@@ -526,17 +610,40 @@ namespace Halwani.Data.Migrations
 
             modelBuilder.Entity("Halwani.Data.Entities.SLM_Measurement.SLmMeasurement", b =>
                 {
-                    b.HasOne("Halwani.Data.Entities.SLA.SLA", null)
+                    b.HasOne("Halwani.Data.Entities.SLA.SLA", "SLA")
                         .WithMany("SLmMeasurements")
                         .HasForeignKey("SLAId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Halwani.Data.Entities.Incident.Ticket", null)
+                    b.HasOne("Halwani.Data.Entities.Incident.Ticket", "Ticket")
                         .WithMany("SLmMeasurements")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("SLA");
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("Halwani.Data.Entities.Team.TeamPermissions", b =>
+                {
+                    b.HasOne("Halwani.Data.Entities.User.Role", "Role")
+                        .WithMany("TeamPermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Halwani.Data.Entities.Team.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Halwani.Data.Entities.User.User", b =>
@@ -595,6 +702,11 @@ namespace Halwani.Data.Migrations
             modelBuilder.Entity("Halwani.Data.Entities.Team.Team", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Halwani.Data.Entities.User.Role", b =>
+                {
+                    b.Navigation("TeamPermissions");
                 });
 #pragma warning restore 612, 618
         }

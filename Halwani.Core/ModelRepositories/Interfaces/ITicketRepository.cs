@@ -23,6 +23,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model);
         int GetCount();
         TicketDetailsModel GetTicket(long Id, string returnFilePath);
+        IEnumerable<string> getTicketNO();
         List<string> RemoveAttachments(string filePath,string [] attachment);
 
         #endregion

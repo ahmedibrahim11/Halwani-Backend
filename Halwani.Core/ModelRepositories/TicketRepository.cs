@@ -102,6 +102,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
+                Random rnd = new Random();
                 var ticket = new Ticket()
                 {
                     Description = model.Description,
@@ -120,7 +121,8 @@ namespace Halwani.Core.ModelRepositories
                     TicketSeverity = model.TicketSeverity,
                     ProductCategoryName1 = model.ProductCategoryName1,
                     ProductCategoryName2 = model.ProductCategoryName2,
-                    TicketHistories = new List<TicketHistory> {
+                    TicketNumber = "SR-" + rnd.Next(),
+                TicketHistories = new List<TicketHistory> {
                         new TicketHistory
                         {
                             OldStatus = null,
@@ -143,11 +145,14 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
-                    var slm = ticket.SLmMeasurements.FirstOrDefault();
-                    if (slm != null)
+                    if (ticket.SLmMeasurements != null)
                     {
-                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention),
-        slm.TargetDate);
+                        var slm = ticket.SLmMeasurements.FirstOrDefault();
+                        if (slm != null)
+                        {
+                            var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention),
+            slm.TargetDate);
+                        }
                     }
 
                     scope.Complete();
@@ -155,9 +160,9 @@ namespace Halwani.Core.ModelRepositories
 
                 var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
 
-                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, userIds.ToList());
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "NewTicket", userIds.ToList());
 
-                SendSignalR(token, "updateTickets", userIds.ToArray()).Wait();
+                SendSignalR(token, "updateTickets", userIds.ToArray()).GetAwaiter().GetResult();
 
                 return RepositoryOutput.CreateSuccessResponse();
             }
@@ -392,7 +397,7 @@ namespace Halwani.Core.ModelRepositories
                     SubmitterName = ticket.SubmitterName,
                     SubmitterTeam = ticket.SubmitterTeam,
                     TicketName = ticket.TicketName,
-                    TicketNo = ticket.TicketNo,
+                    TicketNumber = ticket.TicketNumber,
                     TicketSeverity = Enum.GetName(typeof(TicketSeverity), ticket.TicketSeverity),
                     TicketStatus = ticket.TicketStatus,
                     Attachement = attachementsList.ToArray(),
@@ -457,7 +462,7 @@ namespace Halwani.Core.ModelRepositories
 
         #region Private Methods
 
-        private void SendNotification(long ticketId, NotificationType notificationType, string madeBy, string token, List<string> userIds)
+        private void SendNotification(long ticketId, NotificationType notificationType, string madeBy, string token, string resourceKey, List<string> userIds)
         {
             try
             {
@@ -465,7 +470,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     ObjectId = ticketId.ToString(),
                     NotificationType = notificationType,
-                    ResourceKey = "BreakingBadNews",
+                    ResourceKey = resourceKey,
                     UsersIds = userIds
                 }, madeBy, token);
             }
@@ -603,10 +608,25 @@ namespace Halwani.Core.ModelRepositories
             return query;
         }
 
+        public IEnumerable<string> getTicketNO()
+        {
+            try
+            {
+                var t = Find(t => t.TicketNumber != null).Select(t => t.TicketNumber).ToList();
+                return t;
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+
+        }
+
         private IEnumerable<Ticket> FilterList(TicketPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<Ticket> query)
         {
             if (model.SearchText != null && model.SearchText.Any())
-                query = query.Where(e => model.SearchText.Any(z => z.ToLower().Contains(e.TicketName.ToLower())));
+                query = query.Where(e => model.SearchText[0] == e.TicketNumber).ToList();
             if (model.Filter != null)
             {
                 if (model.Filter.Priority.HasValue)

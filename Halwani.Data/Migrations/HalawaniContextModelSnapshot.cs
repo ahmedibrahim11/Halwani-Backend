@@ -215,8 +215,8 @@ namespace Halwani.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("TicketNo")
-                        .HasColumnType("int");
+                    b.Property<string>("TicketNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TicketSeverity")
                         .HasColumnType("int");
