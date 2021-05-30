@@ -1,7 +1,9 @@
 ﻿using Halwani.Core.ModelRepositories.Interfaces;
+using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.RequestTypeModels;
 using Halwani.Data.Entities.ProductCategories;
 using Halwani.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -70,6 +72,30 @@ namespace Halwani.Controllers
 
             return Ok(result);
         }
+        
+        [HttpPost]
+        [Authorize]
+        [Route("List")]
+        public ActionResult<RequestTypeResultViewModel> List(RequestTypeInputViewModel model)
+        {
+            var result = _requestTypeRepositry.List(model, User.Identity as ClaimsIdentity, out RepositoryOutput response);
+            if (response.Code == RepositoryResponseStatus.Error)
+                return Problem(response.ErrorMessages.FirstOrDefault());
 
+            return Ok(result);
+        }
+        [HttpPost]
+        [Route("GetRequestType")]
+        public ActionResult GetForEdit(requestTypeIDModel requestTypeID)
+        {
+            var result = _requestTypeRepositry.Get(requestTypeID.ID);
+            
+            return Ok(result);
+
+        }
+        public class requestTypeIDModel
+        {
+            public int ID { get; set; }
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace Halwani.Core.ModelRepositories
                         TicketType = e.RequestType.TicketType,
                         Icon = e.RequestType.Icon,
                         Description=e.RequestType.Description,
-                        DefaultTeam=e.RequestType.DefaultTeam.Name
+                        DefaultTeam=e.RequestType.DefaultTeam!=null?e.RequestType.DefaultTeam.Name:""
                     })
                 });
             }
@@ -84,6 +84,23 @@ namespace Halwani.Core.ModelRepositories
                 var selected= Find(r => r.RequestTypeGroups.Any(l=>l.RequestType.TicketType==(TicketType)ticketType), null, "").
                      Select(r => new GroupList {ID=r.Id,Name=r.Name , Selected = false });
                 var unselected = Find(r => r.RequestTypeGroups.Count==0, null, "").
+                    Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
+                return selected.Concat(unselected);
+
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+        }
+        public IEnumerable<GroupList> listTicketTypeGroups(int ticketType,int RTID)
+        {
+            try
+            {
+                var selected = Find(r => r.RequestTypeGroups.Any(r=>r.RequestTypeId==RTID), null, "").
+                     Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = true });
+                var unselected = Find(r => r.RequestTypeGroups.Count == 0, null, "").
                     Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
                 return selected.Concat(unselected);
 
