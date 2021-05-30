@@ -75,6 +75,7 @@ namespace Halwani.Core.ModelRepositories
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
+
         public RepositoryOutput Add(CreateRequestTypeModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token)
         {
             try
@@ -105,12 +106,8 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
-                    
-
                     scope.Complete();
                 }
-
-               
 
                 return RepositoryOutput.CreateSuccessResponse();
             }
