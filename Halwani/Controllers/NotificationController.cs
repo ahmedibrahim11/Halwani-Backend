@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace Halwani.Controllers
 {
-    [EnableCors("ApiCorsPolicy")]
     [ApiController]
     [Route("[controller]")]
     public class NotificationController : ControllerBase
