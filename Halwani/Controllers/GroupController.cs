@@ -59,9 +59,19 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok(result);
         }
+        [HttpPost]
+        [Route("getGroupforTicketTypeEdit")]
+        public ActionResult getGroupforTicketTypeEdit([FromBody] myID ticketType)
+        {
+            var result = _groupRepositry.listTicketTypeGroups(ticketType.id,ticketType.rtid);
+            if (result == null)
+                return Problem();
+            return Ok(result);
+        }
         public class myID
         {
             public int id { get; set; }
+            public int rtid { get; set; }
         }
     }
 }
