@@ -42,7 +42,7 @@ namespace Halwani
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200","http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
+                    policy.WithOrigins("http://localhost:4200", "http://localhost:4200/hubs", "http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
                 });
             });
 
