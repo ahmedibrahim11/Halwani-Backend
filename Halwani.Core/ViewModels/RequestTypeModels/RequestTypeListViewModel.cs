@@ -12,6 +12,7 @@ namespace Halwani.Core.ViewModels.RequestTypeModels
     {
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TicketType TicketType { get; set; }
+        public bool IsVisible { get; set; }
         public IEnumerable<RequestTypeViewModel> Topics { get; set; }
     }
     public class RequestTypeViewModel : LookupViewModel

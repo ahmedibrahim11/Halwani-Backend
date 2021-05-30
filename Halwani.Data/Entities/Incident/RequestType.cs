@@ -14,6 +14,7 @@ namespace Halwani.Data.Entities.Incident
         public string Name { get; set; }
         public string Description { get; set; }
         public string Icon { get; set; }
+        public bool IsVisible { get; set; }
         public TicketType TicketType { get; set; }
         public string TeamName { get; set; }
         public Priority Priority { get; set; }

@@ -33,7 +33,7 @@ namespace Halwani.Core.ModelRepositories
             {
                 response = new RepositoryOutput();
                 RequestTypeResultViewModel result = new RequestTypeResultViewModel();
-              
+
 
                 var qurey = Find(null, null, "");
 
@@ -63,7 +63,7 @@ namespace Halwani.Core.ModelRepositories
         private IEnumerable<RequestType> FilterList(RequestTypeInputViewModel model, ClaimsIdentity userClaims, IEnumerable<RequestType> query)
         {
             if (!string.IsNullOrEmpty(model.Filter.SearchText))
-                query = query.Where(e =>e.Name.ToLower().Contains( model.Filter.SearchText.ToLower())).ToList();
+                query = query.Where(e => e.Name.ToLower().Contains(model.Filter.SearchText.ToLower())).ToList();
             if (model.Filter != null)
             {
                 if (model.Filter.Priority.HasValue)
@@ -78,14 +78,14 @@ namespace Halwani.Core.ModelRepositories
                     }
 
                 }
-              
-                if(model.Filter.GroupID.HasValue)
+
+                if (model.Filter.GroupID.HasValue)
                 {
                     query = query.Where(e => e.RequestTypeGroups.Any(t => t.GroupId == model.Filter.GroupID));
                 }
-                if (!string.IsNullOrEmpty( model.Filter.Team))
+                if (!string.IsNullOrEmpty(model.Filter.Team))
                 {
-                    query = query.Where(e => e.TeamName==model.Filter.Team);
+                    query = query.Where(e => e.TeamName == model.Filter.Team);
                 }
             }
             return query;
@@ -173,11 +173,11 @@ namespace Halwani.Core.ModelRepositories
                 result.PageData.Add(new RequestTypeData
                 {
                     ID = item.Id,
-                    Title=item.Name,
-                    Description=item.Description,
-                    Group=item.RequestTypeGroups.Count>1? "(Used in 2 groups)":item.RequestTypeGroups.First().Group.Name,
-                    Team=item.TeamName,
-                    TicketType=(int)item.TicketType
+                    Title = item.Name,
+                    Description = item.Description,
+                    Group = item.RequestTypeGroups.Count > 1 ? "(Used in 2 groups)" : item.RequestTypeGroups.First().Group.Name,
+                    Team = item.TeamName,
+                    TicketType = (int)item.TicketType
 
 
 
@@ -195,6 +195,7 @@ namespace Halwani.Core.ModelRepositories
                 return groupBy.Select(e => new RequestTypeListViewModel
                 {
                     TicketType = e.FirstOrDefault().TicketType,
+                    IsVisible = e.FirstOrDefault().IsVisible,
                     Topics = e.Select(a => new RequestTypeViewModel
                     {
                         Id = a.Id,
@@ -202,7 +203,7 @@ namespace Halwani.Core.ModelRepositories
                         TicketType = a.TicketType,
                         Icon = a.Icon,
                         Description = a.Description,
-                        TeamName = a.TeamName,  
+                        TeamName = a.TeamName,
                         Priority = a.Priority,
                         Severity = a.Severity
                     })
@@ -252,7 +253,7 @@ namespace Halwani.Core.ModelRepositories
                 var RT = new RequestType()
                 {
                     Name = model.Name,
-                    Icon =model.Icon==null?"": model.Icon,
+                    Icon = model.Icon == null ? "" : model.Icon,
                     TicketType = model.TicketType,
                     Description = model.Description,
                     TeamName = model.TeamName,
@@ -286,6 +287,70 @@ namespace Halwani.Core.ModelRepositories
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
+
+        public RepositoryOutput Update(CreateRequestTypeModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token)
+        {
+            try
+            {
+                var RT = Find(e => e.Id == model.Id.Value).FirstOrDefault();
+                RT.Name = model.Name;
+                RT.Icon = model.Icon == null ? "" : model.Icon;
+                RT.TicketType = model.TicketType;
+                RT.Description = model.Description;
+                RT.TeamName = model.TeamName;
+                RT.Priority = model.Priority;
+                RT.Severity = model.Severity;
+                RT.RequestTypeGroups = model.GroupIds.Select(e => new RequestTypeGroups
+                {
+                    GroupId = e
+                }).ToList();
+
+                using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    if (Save() < 1)
+                        return RepositoryOutput.CreateErrorResponse("");
+                    if (attachments != null)
+                    {
+                        List<string> result = StoreFiles(attachments, null, saveFilePath, RT);
+
+                        RT.Icon = string.Join(",", result);
+                    }
+
+                    Update(RT);
+                    if (Save() < 1)
+                        return RepositoryOutput.CreateErrorResponse("");
+
+                    scope.Complete();
+                }
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
+        public RepositoryOutput UpdateVisiblity(int id,bool isVisible)
+        {
+            try
+            {
+                var RT = Find(e => e.Id == id).FirstOrDefault();
+                RT.IsVisible = isVisible;
+                Update(RT);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
         private static List<string> StoreFiles(IEnumerable<IFormFile> attachments, List<string> oldAttachments, string saveFilePath, RequestType RT)
         {
             var result = new List<string>();
@@ -316,11 +381,11 @@ namespace Halwani.Core.ModelRepositories
 
         public GetRequestType Get(int id)
         {
-            var query = Find(r=>r.Id==id).FirstOrDefault();
+            var query = Find(r => r.Id == id).FirstOrDefault();
             var RT = new GetRequestType();
             if (query != null)
             {
-               RT = new GetRequestType()
+                RT = new GetRequestType()
                 {
                     ID = query.Id,
                     Title = query.Name,
@@ -330,7 +395,7 @@ namespace Halwani.Core.ModelRepositories
                     TicketType = (int)query.TicketType,
                     Team = query.TeamName,
                     Icon = query.Icon,
-                   
+
                 };
             }
 

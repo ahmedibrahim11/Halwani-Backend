@@ -25,7 +25,7 @@ namespace Halwani.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWebHostEnvironment _env;
 
-        public RequestTypeController(IWebHostEnvironment env,IRequestTypeRepository RequestTypeRepositry, IHttpContextAccessor HttpContextAccessor)
+        public RequestTypeController(IWebHostEnvironment env, IRequestTypeRepository RequestTypeRepositry, IHttpContextAccessor HttpContextAccessor)
         {
             _env = env;
             _requestTypeRepositry = RequestTypeRepositry;
@@ -72,7 +72,26 @@ namespace Halwani.Controllers
 
             return Ok(result);
         }
-        
+
+        [HttpPut]
+        [Route("UpdateRequestType")]
+        public IActionResult UpdateRequestType()
+        {
+            var model = JsonConvert.DeserializeObject<CreateRequestTypeModel>(_httpContextAccessor.HttpContext.Request.Form["data"]);
+
+            TryValidateModel(model);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = _requestTypeRepositry.Update(model, Request.Form.Files.ToList(), _env.ContentRootPath + @"/files", User.FindFirstValue(ClaimTypes.NameIdentifier), HeadersHelper.GetAuthToken(Request));
+
+            if (result == null || !result.Success)
+                return Problem("");
+
+            return Ok(result);
+        }
+
         [HttpPost]
         [Authorize]
         [Route("List")]
@@ -84,12 +103,24 @@ namespace Halwani.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("UpdateVisiblity")]
+        public ActionResult UpdateVisibility(int id, bool isVisible)
+        {
+            var result = _requestTypeRepositry.UpdateVisiblity(id, isVisible);
+            if (!result.Success)
+                return Problem("");
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("GetRequestType")]
         public ActionResult GetForEdit(requestTypeIDModel requestTypeID)
         {
             var result = _requestTypeRepositry.Get(requestTypeID.ID);
-            
+
             return Ok(result);
 
         }
