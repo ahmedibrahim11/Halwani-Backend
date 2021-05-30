@@ -16,5 +16,6 @@ namespace Halwani.Core.ViewModels.RequestTypeModels
         public string TeamName { get; set; }
         public Priority Priority { get; set; }
         public TicketSeverity Severity { get; set; }
+        
     }
 }

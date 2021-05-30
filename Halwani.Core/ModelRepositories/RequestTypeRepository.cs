@@ -177,7 +177,8 @@ namespace Halwani.Core.ModelRepositories
                     Description = item.Description,
                     Group = item.RequestTypeGroups.Count > 1 ? "(Used in 2 groups)" : item.RequestTypeGroups.First().Group.Name,
                     Team = item.TeamName,
-                    TicketType = (int)item.TicketType
+                    TicketType = (int)item.TicketType,
+                    IsVisable = item.IsVisible
 
 
 

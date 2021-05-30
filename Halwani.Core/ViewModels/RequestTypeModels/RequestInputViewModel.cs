@@ -43,6 +43,7 @@ namespace Halwani.Core.ViewModels.RequestTypeModels
         public int TicketType { get; set; }
         public string Team { get; set; }
 
+        public bool IsVisable { get; set; }
     }
     public class GetRequestType    {
         public int ID { get; set; }
