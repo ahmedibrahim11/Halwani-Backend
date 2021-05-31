@@ -519,6 +519,7 @@ namespace Halwani.Core.ModelRepositories
                     Severity = item.TicketSeverity,
                     Status = item.TicketStatus,
                     TicketTopic = item.TicketName,
+                    TicketNumber = item.TicketNumber,
                     RequestType = new RequestTypeModel
                     {
                         Id = item.RequestType.Id,
