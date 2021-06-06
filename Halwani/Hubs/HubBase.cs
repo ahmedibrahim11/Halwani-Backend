@@ -85,7 +85,9 @@ namespace Halwani.Hubs
                     {
                         if (connectionId == Context.ConnectionId)
                             continue;
-                        Clients.Client(connectionId).SendAsync("changeNotificationCount");
+                        Clients.All.SendAsync("changeNotificationCount");
+                        //Clients.Client(connectionId).SendAsync("changeNotificationCount");
+                        //Clients.Clients(dicUser.ConnectionIds.ToList()).SendAsync("changeNotificationCount");
                     }
                 }
             }

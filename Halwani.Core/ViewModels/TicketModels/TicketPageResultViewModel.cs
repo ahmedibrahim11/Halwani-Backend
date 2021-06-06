@@ -16,6 +16,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         public RasiedByViewModel RasiedBy { get; set; }
         public DateTime CreationDate { get; set; }
         public string TicketTopic { get; set; }
+        public string TicketNumber { get; set; }
         public RequestTypeModel RequestType { get; set; }
         public TicketSeverity? Severity { get; set; }
         public Status? Status { get; set; }
