@@ -120,4 +120,7 @@
   <data name="NewTicket" xml:space="preserve">
     <value>New Ticket has been added by {0}</value>
   </data>
+  <data name="TicketLate" xml:space="preserve">
+    <value>Ticket has been delayed</value>
+  </data>
 </root>

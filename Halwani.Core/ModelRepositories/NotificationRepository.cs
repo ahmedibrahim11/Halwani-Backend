@@ -42,7 +42,8 @@ namespace Halwani.Core.ModelRepositories
                 };
                 foreach (var userId in model.UsersIds)
                 {
-                    AddNewNotification(loggedUserId, notificationObjectViewModel, userId);
+                    if (userId != loggedUserId)
+                        AddNewNotification(loggedUserId, notificationObjectViewModel, userId);
                 }
                 if (Save() < model.UsersIds.Count)
                     return RepositoryOutput.CreateErrorResponse("");
@@ -99,7 +100,7 @@ namespace Halwani.Core.ModelRepositories
             }
             catch (Exception ex)
             {
-                RepositoryHelper.LogException(ex);
+                //RepositoryHelper.LogException(ex);
             }
         }
 

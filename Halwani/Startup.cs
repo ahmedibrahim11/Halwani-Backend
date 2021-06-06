@@ -42,7 +42,7 @@ namespace Halwani
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200","http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
+                    policy.WithOrigins("http://localhost:4200", "https://halwani-frontend.azurewebsites.net/", "https://halwani-frontend.azurewebsites.net/hubs", "http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
                 });
             });
 
@@ -82,7 +82,7 @@ namespace Halwani
 
                         // If the request is for our hub...
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(token) && (path.StartsWithSegments("/hubs")))
+                        if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/hubs")))
                         {
                             // Read the token out of the query string
                             context.Token = accessToken;
@@ -159,7 +159,7 @@ namespace Halwani
                 endpoints.MapHub<HubBase>("/hubs", options =>
                 {
                     options.Transports =
-                        HttpTransportType.WebSockets |
+                        //HttpTransportType.WebSockets |
                         HttpTransportType.LongPolling;
                 });
             });

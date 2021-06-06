@@ -122,7 +122,7 @@ namespace Halwani.Core.ModelRepositories
                     ProductCategoryName1 = model.ProductCategoryName1,
                     ProductCategoryName2 = model.ProductCategoryName2,
                     TicketNumber = "SR-" + rnd.Next(),
-                TicketHistories = new List<TicketHistory> {
+                    TicketHistories = new List<TicketHistory> {
                         new TicketHistory
                         {
                             OldStatus = null,
@@ -150,7 +150,7 @@ namespace Halwani.Core.ModelRepositories
                         var slm = ticket.SLmMeasurements.FirstOrDefault();
                         if (slm != null)
                         {
-                            var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention),
+                            var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention, token),
             slm.TargetDate);
                         }
                     }
@@ -271,7 +271,7 @@ namespace Halwani.Core.ModelRepositories
             return result;
         }
 
-        public RepositoryOutput UpdateStatus(UpdateStatusViewModel model)
+        public RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string token)
         {
             try
             {
@@ -294,7 +294,7 @@ namespace Halwani.Core.ModelRepositories
                     var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution);
                     if (slm != null)
                     {
-                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Resolution),
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Resolution, token),
         slm.TargetDate);
                     }
                 }
@@ -326,6 +326,7 @@ namespace Halwani.Core.ModelRepositories
                         return RepositoryOutput.CreateNotFoundResponse();
 
                     ticket.AssignedUser = model.UserName;
+                    ticket.TicketStatus = Status.Assigned;
                     Update(ticket);
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
@@ -353,6 +354,7 @@ namespace Halwani.Core.ModelRepositories
                     return RepositoryOutput.CreateNotFoundResponse();
 
                 ticket.AssignedUser = model.UserName;
+                ticket.TicketStatus = Status.Assigned;
                 Update(ticket);
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
@@ -400,7 +402,7 @@ namespace Halwani.Core.ModelRepositories
                     TicketNumber = ticket.TicketNumber,
                     TicketSeverity = Enum.GetName(typeof(TicketSeverity), ticket.TicketSeverity),
                     TicketStatus = ticket.TicketStatus,
-                    Attachement = attachementsList.ToArray(),
+                    Attachement = attachementsList.Select(e => returnFilePath + e).ToArray(),
                     RequestType = new RequestTypeModel
                     {
                         Id = ticket.RequestType.Id,
@@ -419,7 +421,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public void IsMet(long ticketId, SLMType slMType)
+        public void IsMet(long ticketId, SLMType slMType, string token)
         {
             try
             {
@@ -436,6 +438,10 @@ namespace Halwani.Core.ModelRepositories
 
                             Update(ticket);
                             Save();
+
+                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+
+                            SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
                         }
                         break;
                     case SLMType.Resolution:
@@ -447,6 +453,11 @@ namespace Halwani.Core.ModelRepositories
                             ticket.TicketStatus = Status.OverDue;
                             Update(ticket);
                             Save();
+
+                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+
+                            SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
+
                         }
                         break;
                     default:

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -26,10 +27,12 @@ namespace Halwani.Controllers
     {
         private ITicketRepository _TicketRepository;
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TicketController(ITicketRepository TicketRepository, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+        public TicketController(ITicketRepository TicketRepository, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor, IConfiguration _configuration)
         {
+            configuration = _configuration;
             _httpContextAccessor = httpContextAccessor;
             _env = env;
             _TicketRepository = TicketRepository;
@@ -119,7 +122,7 @@ namespace Halwani.Controllers
         [Route("UpdateStatus")]
         public ActionResult UpdateStatus(UpdateStatusViewModel model)
         {
-            var result = _TicketRepository.UpdateStatus(model);
+            var result = _TicketRepository.UpdateStatus(model, HeadersHelper.GetAuthToken(Request));
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -134,7 +137,7 @@ namespace Halwani.Controllers
         [Route("UpdateTicket")]
         public ActionResult UpdateTicket(UpdateStatusViewModel model)
         {
-            var result = _TicketRepository.UpdateStatus(model);
+            var result = _TicketRepository.UpdateStatus(model, HeadersHelper.GetAuthToken(Request));
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -224,7 +227,7 @@ namespace Halwani.Controllers
         [Route("getTicket")]
         public ActionResult getbyID([FromBody] IdDTO idObject)
         {
-            string path = @"/files/";
+            string path = configuration["Url:BaseServiceUrl"] + @"/files/";
             var result = _TicketRepository.GetTicket(long.Parse(idObject.id), path);
             if (result == null)
                 return Problem();

@@ -18,7 +18,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         Task<List<string>> PostFilesAsync(IFormFileCollection attachments, string saveFilePath);
         RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token); 
         RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token);
-        RepositoryOutput UpdateStatus(UpdateStatusViewModel model);
+        RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string token);
         RepositoryOutput AssignTicket(AssignTicketViewModel model);
         RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model);
         int GetCount();

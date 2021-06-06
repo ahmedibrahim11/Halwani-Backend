@@ -30,7 +30,7 @@ namespace Halwani.Core.ModelRepositories
                         TicketType = e.RequestType.TicketType,
                         Icon = e.RequestType.Icon,
                         Description=e.RequestType.Description,
-                        DefaultTeam=e.RequestType.DefaultTeam!=null?e.RequestType.DefaultTeam.Name:""
+                        DefaultTeam=e.RequestType.TeamName
                     })
                 });
             }

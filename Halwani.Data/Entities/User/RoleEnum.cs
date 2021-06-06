@@ -3,7 +3,7 @@
     public enum RoleEnum
     {
         ItManager = 0,
-        Manager = 1,
+        ItPersonal = 1,
         User = 2
     }
 }
