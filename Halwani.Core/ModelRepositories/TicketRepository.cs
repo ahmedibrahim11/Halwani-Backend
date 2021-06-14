@@ -145,17 +145,18 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
-                    if (ticket.SLmMeasurements != null)
-                    {
-                        var slm = ticket.SLmMeasurements.FirstOrDefault();
-                        if (slm != null)
-                        {
-                            var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention, token),
-            slm.TargetDate);
-                        }
-                    }
 
                     scope.Complete();
+                }
+
+                if (ticket.SLmMeasurements != null)
+                {
+                    var slm = ticket.SLmMeasurements.FirstOrDefault();
+                    if (slm != null)
+                    {
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention, token),
+        slm.TargetDate);
+                    }
                 }
 
                 var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
