@@ -395,7 +395,7 @@ namespace Halwani.Core.ModelRepositories
                     Description = query.Description,
                     TicketType = (int)query.TicketType,
                     Team = query.TeamName,
-                    Icon = rootFile+ "/" + RT.ID + "/" + query.Icon,
+                    Icon = rootFile+ "/" + query.Id + "/" + query.Icon,
 
                 };
             }
