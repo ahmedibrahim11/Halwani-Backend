@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -24,9 +25,11 @@ namespace Halwani.Controllers
         private IRequestTypeRepository _requestTypeRepositry;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IWebHostEnvironment _env;
+        private readonly IConfiguration configuration;
 
-        public RequestTypeController(IWebHostEnvironment env, IRequestTypeRepository RequestTypeRepositry, IHttpContextAccessor HttpContextAccessor)
+        public RequestTypeController(IWebHostEnvironment env, IRequestTypeRepository RequestTypeRepositry, IHttpContextAccessor HttpContextAccessor, IConfiguration _configuration)
         {
+            configuration = _configuration;
             _env = env;
             _requestTypeRepositry = RequestTypeRepositry;
             _httpContextAccessor = HttpContextAccessor;
@@ -119,7 +122,8 @@ namespace Halwani.Controllers
         [Route("GetRequestType")]
         public ActionResult GetForEdit(requestTypeIDModel requestTypeID)
         {
-            var result = _requestTypeRepositry.Get(requestTypeID.ID);
+            string path = configuration["Url:BaseServiceUrl"] + @"/files/";
+            var result = _requestTypeRepositry.Get(requestTypeID.ID, path);
 
             return Ok(result);
 

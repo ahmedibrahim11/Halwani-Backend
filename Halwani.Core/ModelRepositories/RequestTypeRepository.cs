@@ -333,7 +333,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput UpdateVisiblity(int id,bool isVisible)
+        public RepositoryOutput UpdateVisiblity(int id, bool isVisible)
         {
             try
             {
@@ -380,7 +380,7 @@ namespace Halwani.Core.ModelRepositories
             return result;
         }
 
-        public GetRequestType Get(int id)
+        public GetRequestType Get(int id, string rootFile)
         {
             var query = Find(r => r.Id == id).FirstOrDefault();
             var RT = new GetRequestType();
@@ -395,7 +395,7 @@ namespace Halwani.Core.ModelRepositories
                     Description = query.Description,
                     TicketType = (int)query.TicketType,
                     Team = query.TeamName,
-                    Icon = query.Icon,
+                    Icon = rootFile + query.Icon,
 
                 };
             }

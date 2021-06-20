@@ -20,6 +20,6 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         RepositoryOutput Update(CreateRequestTypeModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token);
         RepositoryOutput UpdateVisiblity(int id, bool isVisible);
         RequestTypeResultViewModel List(RequestTypeInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
-        GetRequestType Get(int id);
+        GetRequestType Get(int id, string rootFile);
     }
 }
