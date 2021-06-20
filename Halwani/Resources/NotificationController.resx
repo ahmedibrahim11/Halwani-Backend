@@ -120,4 +120,16 @@
   <data name="NewTicket" xml:space="preserve">
     <value>New Ticket has been added by {0}</value>
   </data>
+  <data name="TicketAssignedToUser" xml:space="preserve">
+    <value>Ticket has been Assigned by {0}</value>
+  </data>
+  <data name="TicketLate" xml:space="preserve">
+    <value>Ticket has been delayed</value>
+  </data>
+  <data name="UpdateTicket" xml:space="preserve">
+    <value>Ticket has been updated by {0}</value>
+  </data>
+  <data name="UpdateTicketStatus" xml:space="preserve">
+    <value>Ticket has been changed status by {0}</value>
+  </data>
 </root>

@@ -17,10 +17,10 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         TicketPageResultViewModel List(TicketPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response);
         Task<List<string>> PostFilesAsync(IFormFileCollection attachments, string saveFilePath);
         RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token); 
-        RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token);
-        RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string token);
-        RepositoryOutput AssignTicket(AssignTicketViewModel model);
-        RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model);
+        RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token);
+        RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string loggedUserId, string token);
+        RepositoryOutput AssignTicket(AssignTicketViewModel model, string loggedUserId, string token);
+        RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model, string loggedUserId, string token);
         int GetCount();
         TicketDetailsModel GetTicket(long Id, string returnFilePath);
         IEnumerable<string> getTicketNO();

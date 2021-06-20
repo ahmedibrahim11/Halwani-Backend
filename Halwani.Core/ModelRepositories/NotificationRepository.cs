@@ -138,20 +138,21 @@ namespace Halwani.Core.ModelRepositories
             foreach (var item in query)
             {
                 var user = _userRepository.GetById(long.Parse(item.MadeBy));
-                item.MadeByName = user.Name;
+                if (user != null)
+                    item.MadeByName = user.Name;
             }
         }
 
         private void SeeNotificationsInPage(PaginationViewModel model, Notification userNotification, List<NotificationObjectViewModel> query)
         {
-            var index = 0;
+            //var index = 0;
             foreach (var item in query)
             {
                 item.IsSeen = true;
-                if (index < model.PageSize)
-                    index++;
-                else
-                    break;
+                //if (index < model.PageSize)
+                //    index++;
+                //else
+                //    break;
             }
             userNotification.NotificationBody = JsonConvert.SerializeObject(query);
             Update(userNotification);

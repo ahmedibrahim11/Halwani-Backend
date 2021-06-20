@@ -145,7 +145,6 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
-
                     scope.Complete();
                 }
 
@@ -159,7 +158,7 @@ namespace Halwani.Core.ModelRepositories
                     }
                 }
 
-                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
 
                 SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "NewTicket", userIds.ToList());
 
@@ -174,7 +173,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string token)
+        public RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token)
         {
             try
             {
@@ -202,7 +201,10 @@ namespace Halwani.Core.ModelRepositories
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
 
-                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "UpdateTicket", userIds.ToList());
+
                 SendSignalR(token, "updateTickets", userIds.ToArray()).Wait();
 
                 return RepositoryOutput.CreateSuccessResponse();
@@ -272,7 +274,7 @@ namespace Halwani.Core.ModelRepositories
             return result;
         }
 
-        public RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string token)
+        public RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string loggedUserId, string token)
         {
             try
             {
@@ -306,6 +308,10 @@ namespace Halwani.Core.ModelRepositories
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
 
+                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "UpdateTicketStatus", userIds.ToList());
+
                 return RepositoryOutput.CreateSuccessResponse();
             }
             catch (Exception ex)
@@ -315,7 +321,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model)
+        public RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model, string loggedUserId, string token)
         {
             try
             {
@@ -332,6 +338,10 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
+                    var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+
+                    SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "TicketAssignedToUser", userIds.ToList());
+
                     return RepositoryOutput.CreateSuccessResponse();
                 }
 
@@ -345,7 +355,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public RepositoryOutput AssignTicket(AssignTicketViewModel model)
+        public RepositoryOutput AssignTicket(AssignTicketViewModel model, string loggedUserId, string token)
         {
             try
             {
@@ -359,6 +369,10 @@ namespace Halwani.Core.ModelRepositories
                 Update(ticket);
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
+
+                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "TicketAssignedToUser", userIds.ToList());
 
                 return RepositoryOutput.CreateSuccessResponse();
             }
@@ -440,7 +454,7 @@ namespace Halwani.Core.ModelRepositories
                             Update(ticket);
                             Save();
 
-                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
 
                             SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
                         }
@@ -455,7 +469,7 @@ namespace Halwani.Core.ModelRepositories
                             Update(ticket);
                             Save();
 
-                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName).Select(e => e.Id.ToString());
+                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
 
                             SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
 
