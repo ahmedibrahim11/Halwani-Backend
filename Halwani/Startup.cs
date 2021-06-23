@@ -126,7 +126,7 @@ namespace Halwani
 
 
             services.AddControllers();
-            services.AddSignalR();
+            services.AddSignalR().AddAzureSignalR();
             services.SwaggerConfiguration();
         }
 
@@ -145,6 +145,10 @@ namespace Halwani
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
+            app.UseAzureSignalR(routes =>
+            {
+                routes.MapHub<HubBase>("/hubs");
+            });
             app.UseAuthentication();
             app.UseAuthorization();
 
