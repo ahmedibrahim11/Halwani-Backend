@@ -101,7 +101,7 @@ namespace Halwani.Controllers
             var filePath = _env.ContentRootPath + @"/files/" + model.Id;
             var res = _TicketRepository.RemoveAttachments(filePath, model.Attachement.Split(','));
             model.Attachement = string.Join(",", res);
-            var result = _TicketRepository.UpdateTicket(model, attachements, _env.ContentRootPath + @"/files", HeadersHelper.GetAuthToken(Request));
+            var result = _TicketRepository.UpdateTicket(model, attachements, _env.ContentRootPath + @"/files", User.FindFirstValue(ClaimTypes.NameIdentifier), HeadersHelper.GetAuthToken(Request));
             if (result == null || !result.Success)
                 return Problem("");
             return Ok(result);
@@ -122,7 +122,7 @@ namespace Halwani.Controllers
         [Route("UpdateStatus")]
         public ActionResult UpdateStatus(UpdateStatusViewModel model)
         {
-            var result = _TicketRepository.UpdateStatus(model, HeadersHelper.GetAuthToken(Request));
+            var result = _TicketRepository.UpdateStatus(model, User.FindFirstValue(ClaimTypes.NameIdentifier), HeadersHelper.GetAuthToken(Request));
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -137,7 +137,7 @@ namespace Halwani.Controllers
         [Route("UpdateTicket")]
         public ActionResult UpdateTicket(UpdateStatusViewModel model)
         {
-            var result = _TicketRepository.UpdateStatus(model, HeadersHelper.GetAuthToken(Request));
+            var result = _TicketRepository.UpdateStatus(model, User.FindFirstValue(ClaimTypes.NameIdentifier), HeadersHelper.GetAuthToken(Request));
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -167,7 +167,7 @@ namespace Halwani.Controllers
         [Route("AssignTicket")]
         public ActionResult AssignTicket(AssignTicketViewModel model)
         {
-            var result = _TicketRepository.AssignTicket(model);
+            var result = _TicketRepository.AssignTicket(model,User.FindFirstValue(ClaimTypes.NameIdentifier),HeadersHelper.GetAuthToken(Request));
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
@@ -182,7 +182,7 @@ namespace Halwani.Controllers
         [Route("AssignTickets")]
         public ActionResult AssignTicket(AssignMulipleTicketViewModel model)
         {
-            var result = _TicketRepository.AssignTicket(model);
+            var result = _TicketRepository.AssignTicket(model, User.FindFirstValue(ClaimTypes.NameIdentifier), HeadersHelper.GetAuthToken(Request));
 
             if (result.Code == RepositoryResponseStatus.Error)
                 return Problem();
