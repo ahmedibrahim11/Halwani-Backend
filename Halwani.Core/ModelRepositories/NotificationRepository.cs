@@ -137,9 +137,12 @@ namespace Halwani.Core.ModelRepositories
         {
             foreach (var item in query)
             {
-                var user = _userRepository.GetById(long.Parse(item.MadeBy));
-                if (user != null)
-                    item.MadeByName = user.Name;
+                if (!string.IsNullOrEmpty(item.MadeBy))
+                {
+                    var user = _userRepository.GetById(long.Parse(item.MadeBy));
+                    if (user != null)
+                        item.MadeByName = user.Name;
+                }
             }
         }
 
