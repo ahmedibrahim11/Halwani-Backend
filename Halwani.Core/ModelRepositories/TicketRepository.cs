@@ -281,6 +281,13 @@ namespace Halwani.Core.ModelRepositories
                 var ticket = Find(e => e.Id == model.TicketId, null, "SLmMeasurements").FirstOrDefault();
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
+
+                if (model.Status == Status.InProgress)
+                {
+                    var intervention = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention);
+                    if (intervention != null && intervention.TargetDate < DateTime.Now)
+                        intervention.SLAStatus = SLAStatus.Meet;
+                }
                 if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
                 {
                     var newSla = _slaRepository.LoadTicketSlm(new CreateTicketViewModel
@@ -444,7 +451,7 @@ namespace Halwani.Core.ModelRepositories
                 switch (slMType)
                 {
                     case SLMType.Intervention:
-                        if (ticket.TicketStatus != Status.InProgress)
+                        if (ticket.TicketStatus == Status.Created)
                         {
                             var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention);
                             if (slm != null)

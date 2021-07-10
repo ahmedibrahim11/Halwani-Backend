@@ -45,7 +45,7 @@ namespace Halwani
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200", "https://halwani-frontend.azurewebsites.net/", "https://halwani-frontend.azurewebsites.net/hubs", "http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
+                    policy.WithOrigins("http://localhost:4200", "https://halwani-frontend.azurewebsites.net/", "https://halwani-frontend.azurewebsites.net/hubs", "http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","https://halwani-backend.azurewebsites.net/hubs", "*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
                 });
             });
 
@@ -126,7 +126,7 @@ namespace Halwani
 
 
             services.AddControllers();
-            services.AddSignalR().AddAzureSignalR();
+            services.AddSignalR();
             services.SwaggerConfiguration();
         }
 
@@ -145,10 +145,6 @@ namespace Halwani
 
             app.UseRouting();
             app.UseCors("CorsPolicy");
-            app.UseAzureSignalR(routes =>
-            {
-                routes.MapHub<HubBase>("/hubs");
-            });
             app.UseAuthentication();
             app.UseAuthorization();
 
