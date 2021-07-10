@@ -11,6 +11,7 @@ using Halwani.Data.Entities.Incident;
 using Halwani.Data.Entities.SLA;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data.Entities.SLM_Measurement;
+using Halwani.Core.ViewModels.SLAModels;
 
 namespace Halwani.Core.ModelRepositories
 {
@@ -52,7 +53,7 @@ namespace Halwani.Core.ModelRepositories
                         if (workDuration < totalWorkingHours && int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
                         {
                             totalHours = int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
-                            
+
                             if (workDuration == 0)
                                 break;
                         }
@@ -107,6 +108,59 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public RepositoryOutput Edit(SLAModel model)
+        {
+            try
+            {
+                var old = Find(e => e.Id == model.Id).FirstOrDefault();
+                if (old == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+                old.Priority = model.Priority;
+                old.ProductCategoryName = model.ProductCategoryName;
+                old.ServiceLine = model.TeamName;
+                old.SLADuration = model.SLADuration;
+                old.SLAName = "";
+                old.SLAType = model.SLAType;
+                old.WorkingDays = model.WorkingDays;
+                old.WorkingHours = model.WorkingHours;
+
+                Update(old);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse();
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse();
+            }
+        }
+
+        public RepositoryOutput Add(SLAModel model)
+        {
+            try
+            {
+                Add(new SLA
+                {
+                    Priority = model.Priority,
+                    ProductCategoryName = model.ProductCategoryName,
+                    ServiceLine = model.TeamName,
+                    SLADuration = model.SLADuration,
+                    SLAName = "",
+                    SLAType = model.SLAType,
+                    WorkingDays = model.WorkingDays,
+                    WorkingHours = model.WorkingHours
+                });
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse();
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse();
+            }
+        }
         //public List<SLmMeasurement> UpdateTicketSlm(CreateTicketViewModel model, Ticket ticket, SLAType slaType)
         //{
         //    try

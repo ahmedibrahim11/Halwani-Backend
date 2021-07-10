@@ -41,5 +41,17 @@ namespace Halwani.Controllers
                 return Problem();
             return Ok();
         }
+
+        [HttpPut]
+        [Route("edit")]
+        public ActionResult EditCategoryProduct(CreateProductCategroyModel model)
+        {
+            var result = _categoryRepositry.Edit(model);
+            if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.Error)
+                return Problem();;
+            if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.NotFound)
+                return NotFound();
+            return Ok();
+        }
     }
 }

@@ -2,6 +2,8 @@
 {
     public class SubCateogryModel
     {
-        public string  SubCategoryName { get; set; }
+        public int? SubCategoryId { get; set; }
+        public bool IsDeleted { get; set; }
+        public string SubCategoryName { get; set; }
     }
 }
