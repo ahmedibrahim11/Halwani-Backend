@@ -12,15 +12,20 @@ using Halwani.Data.Entities.SLA;
 using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data.Entities.SLM_Measurement;
 using Halwani.Core.ViewModels.SLAModels;
+using System.Security.Claims;
+using Halwani.Data.Entities.User;
 
 namespace Halwani.Core.ModelRepositories
 {
     public class SLARepository : BaseRepository<SLA>, ISLARepository
     {
         private readonly ITeamRepository _teamRepository;
-        public SLARepository(ITeamRepository teamRepository)
+        private readonly IAuthenticationRepository _authenticationRepository;
+
+        public SLARepository(ITeamRepository teamRepository, IAuthenticationRepository authenticationRepository)
         {
             _teamRepository = teamRepository;
+            _authenticationRepository = authenticationRepository;
         }
 
         public List<SLmMeasurement> LoadTicketSlm(CreateTicketViewModel model, SLAType slaType)
@@ -161,6 +166,171 @@ namespace Halwani.Core.ModelRepositories
                 return RepositoryOutput.CreateErrorResponse();
             }
         }
+
+        public SLAResultViewModel List(SLAPageInputViewModel model, ClaimsIdentity userClaims, out RepositoryOutput response)
+        {
+            try
+            {
+                response = new RepositoryOutput();
+                SLAResultViewModel result = new SLAResultViewModel();
+
+
+                var qurey = Find(null, null, "");
+
+                qurey = FilterLoggedUser(userClaims, qurey);
+                qurey = FilterList(model, userClaims, qurey);
+                qurey = SortList(model, qurey);
+                PagingList(model, result, qurey);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                response = RepositoryOutput.CreateErrorResponse(ex.Message);
+                return null;
+            }
+        }
+        private IEnumerable<SLA> FilterLoggedUser(ClaimsIdentity userClaims, IEnumerable<SLA> query)
+        {
+            var userSession = _authenticationRepository.LoadUserSession(userClaims);
+            if (userSession.Role != RoleEnum.User)
+            {
+                return query;
+            }
+            return new List<SLA>();
+        }
+        private IEnumerable<SLA> FilterList(SLAPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<SLA> query)
+        {
+          
+          
+            return query;
+        }
+        private IEnumerable<SLA> SortList(SLAPageInputViewModel model, IEnumerable<SLA> query)
+        {
+            switch (model.SortValue)
+            {
+                case SLAPageInputSort.Priority:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.Priority);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.Priority);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SLAPageInputSort.Team:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.ServiceLine);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.ServiceLine);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SLAPageInputSort.SLAGoal:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.SLADuration);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.SLADuration);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SLAPageInputSort.SLAType:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.SLAType);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.SLAType);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SLAPageInputSort.ProductCtaegoryName:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.ProductCategoryName);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.ProductCategoryName);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => e.Id);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => e.Id);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
+            return query;
+        }
+        private void PagingList(SLAPageInputViewModel model, SLAResultViewModel result, IEnumerable<SLA> qurey)
+        {
+            result.TotalCount = qurey.Count();
+            if (!model.IsPrint)
+                qurey = qurey.Skip(model.PageNumber * model.PageSize).Take(model.PageSize);
+
+            foreach (var item in qurey)
+            {
+                result.PageData.Add(new SLAModel
+                {
+                   Id=item.Id,
+                   Priority=item.Priority,
+                   SLAType=item.SLAType,
+                   SLADuration=item.SLADuration,
+                   TeamName=item.ServiceLine,
+                    ProductCategoryName=item.ProductCategoryName
+                   
+
+
+                });
+            }
+        }
+
+        public SLAModel GetForEdit(long ID)
+        {
+           var sla=Find(r => r.Id == ID).FirstOrDefault();
+            return new SLAModel()
+            {
+                Id = sla.Id,
+                TeamName = sla.ServiceLine,
+                ProductCategoryName = sla.ProductCategoryName,
+                WorkingDays = sla.WorkingDays,
+                WorkingHours = sla.WorkingHours,
+                SLADuration = sla.SLADuration,
+                Priority = sla.Priority,
+                SLAType=sla.SLAType
+            };
+        }
+
+
         //public List<SLmMeasurement> UpdateTicketSlm(CreateTicketViewModel model, Ticket ticket, SLAType slaType)
         //{
         //    try
