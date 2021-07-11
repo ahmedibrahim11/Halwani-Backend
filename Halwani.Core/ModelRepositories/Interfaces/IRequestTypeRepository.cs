@@ -14,7 +14,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
 {
     public interface IRequestTypeRepository : IBaseRepository<RequestType>
     {
-        IEnumerable<RequestTypeListViewModel> List();
+        IEnumerable<RequestTypeListViewModel> List(string rootFile);
         RepositoryOutput Add(List<CreateRequestTypeModel> model);
         RepositoryOutput Add(CreateRequestTypeModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token);
         RepositoryOutput Update(CreateRequestTypeModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token);

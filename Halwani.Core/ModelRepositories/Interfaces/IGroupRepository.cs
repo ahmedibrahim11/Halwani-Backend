@@ -12,7 +12,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
 {
     public interface IGroupRepository : IBaseRepository<Group>
     {
-        IEnumerable<GroupListViewModel> List();
+        IEnumerable<GroupListViewModel> List(string rootFile);
         RepositoryOutput Add(List<CreateGroupModel> model);
         IEnumerable<GroupList> listTicketTypeGroups(int ticketType);
         IEnumerable<GroupList> listTicketTypeGroups(int ticketType, int RTID);

@@ -187,7 +187,7 @@ namespace Halwani.Core.ModelRepositories
         }
 
 
-        public IEnumerable<RequestTypeListViewModel> List()
+        public IEnumerable<RequestTypeListViewModel> List(string rootFile)
         {
             try
             {
@@ -202,7 +202,7 @@ namespace Halwani.Core.ModelRepositories
                         Id = a.Id,
                         Text = a.Name,
                         TicketType = a.TicketType,
-                        Icon = a.Icon,
+                        Icon = rootFile + "/" + a.Id + "/" + a.Icon,
                         Description = a.Description,
                         TeamName = a.TeamName,
                         Priority = a.Priority,
@@ -395,7 +395,7 @@ namespace Halwani.Core.ModelRepositories
                     Description = query.Description,
                     TicketType = (int)query.TicketType,
                     Team = query.TeamName,
-                    Icon = rootFile+ "/" + query.Id + "/" + query.Icon,
+                    Icon = rootFile + "/" + query.Id + "/" + query.Icon,
 
                 };
             }

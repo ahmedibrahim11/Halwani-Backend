@@ -3,6 +3,7 @@ using Halwani.Core.ViewModels.GroupModels;
 using Halwani.Data.Entities.ProductCategories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,12 @@ namespace Halwani.Controllers
     [Route("[controller]")]
     public class GroupController : ControllerBase
     {
-
         private IGroupRepository _groupRepositry;
+        private readonly IConfiguration configuration;
 
-        public GroupController(IGroupRepository GroupRepositry)
+        public GroupController(IGroupRepository GroupRepositry, IConfiguration _configuration)
         {
+            configuration = _configuration;
             _groupRepositry = GroupRepositry;
         }
 
@@ -26,7 +28,8 @@ namespace Halwani.Controllers
         [Route("getGroup")]
         public ActionResult GetAllGroup()
         {
-            var result = _groupRepositry.List();
+            string path = configuration["Url:BaseServiceUrl"] + @"/files/";
+            var result = _groupRepositry.List(path);
             if (result == null)
                 return Problem();
             return Ok(result);
