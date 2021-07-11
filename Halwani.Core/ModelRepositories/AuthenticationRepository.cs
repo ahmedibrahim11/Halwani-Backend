@@ -79,7 +79,7 @@ namespace Halwani.Core.ModelRepositories
             {
                 var permissions = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Permissions).Value;
                 var teams = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
-                var isAllTeams = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.AllTeams).Value;
+                //var isAllTeams = userClaims.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.AllTeams).Value;
 
                 return new UserSessionDataViewModel
                 {
@@ -90,7 +90,7 @@ namespace Halwani.Core.ModelRepositories
                     UserName = userClaims.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData).Value,
                     Permissions = permissions?.Split(",").ToList(),
                     TeamsIds = teams?.Split(",").ToList(),
-                    IsAllTeams = isAllTeams != null && bool.Parse(isAllTeams),
+                    IsAllTeams = false
                 };
             }
             catch (Exception ex)
