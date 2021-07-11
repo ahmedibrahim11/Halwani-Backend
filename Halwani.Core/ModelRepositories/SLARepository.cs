@@ -27,11 +27,11 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var team = _teamRepository.GetByName(model.TeamName);
-                if (team == null)
-                    return null;
+                //var team = _teamRepository.GetByName(model.TeamName);
+                //if (team == null)
+                //    return null;
 
-                var sla = Find(e => e.Priority == model.Priority && e.SLAType == slaType && e.ProductCategoryName == model.ProductCategoryName2 && e.ServiceLine == team.ServiceLine).FirstOrDefault();
+                var sla = Find(e => e.Priority == model.Priority && e.SLAType == slaType && e.ProductCategoryName == model.ProductCategoryName2 && e.ServiceLine == model.TeamName).FirstOrDefault();
                 if (sla == null)
                     return null;
 
