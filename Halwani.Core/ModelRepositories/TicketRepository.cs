@@ -158,7 +158,7 @@ namespace Halwani.Core.ModelRepositories
                     }
                 }
 
-                var userIds = _userRepository.Find(e => e.UserTeams.Any(t=> t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                 SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "NewTicket", userIds.ToList());
 
@@ -428,7 +428,7 @@ namespace Halwani.Core.ModelRepositories
                     RequestType = new RequestTypeModel
                     {
                         Id = ticket.RequestType.Id,
-                        Icon = ticket.RequestType.Icon,
+                        Icon = returnFilePath + "/" + ticket.RequestTypeId + "/" + ticket.RequestType.Icon,
                         Name = ticket.RequestType.Name,
                         TicketType = ticket.RequestType.TicketType
                     },
