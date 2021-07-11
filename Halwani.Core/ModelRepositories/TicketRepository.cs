@@ -158,7 +158,7 @@ namespace Halwani.Core.ModelRepositories
                     }
                 }
 
-                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.UserTeams.Any(t=> t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                 SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "NewTicket", userIds.ToList());
 
@@ -201,7 +201,7 @@ namespace Halwani.Core.ModelRepositories
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
 
-                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                 SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "UpdateTicket", userIds.ToList());
 
@@ -315,7 +315,7 @@ namespace Halwani.Core.ModelRepositories
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
 
-                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                 SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "UpdateTicketStatus", userIds.ToList());
 
@@ -345,7 +345,7 @@ namespace Halwani.Core.ModelRepositories
                     if (Save() < 1)
                         return RepositoryOutput.CreateErrorResponse("");
 
-                    var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                    var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                     SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "TicketAssignedToUser", userIds.ToList());
 
@@ -377,7 +377,7 @@ namespace Halwani.Core.ModelRepositories
                 if (Save() < 1)
                     return RepositoryOutput.CreateErrorResponse("");
 
-                var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                 SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "TicketAssignedToUser", userIds.ToList());
 
@@ -461,7 +461,7 @@ namespace Halwani.Core.ModelRepositories
                             Update(ticket);
                             Save();
 
-                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                            var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                             SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
                         }
@@ -476,7 +476,7 @@ namespace Halwani.Core.ModelRepositories
                             Update(ticket);
                             Save();
 
-                            var userIds = _userRepository.Find(e => e.Teams.Name == ticket.TeamName && e.Role.RoleName == RoleEnum.ItManager.ToString()).Select(e => e.Id.ToString());
+                            var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
                             SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
 

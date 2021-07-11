@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Halwani.Data.Entities.Team;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,6 +9,7 @@ namespace Halwani.Data.Entities.User
     {
         public User()
         {
+            UserTeams = new HashSet<UserTeams>();
         }
         public string Name { get; set; }
         public string UserName { get; set; }
@@ -15,6 +17,6 @@ namespace Halwani.Data.Entities.User
         public UserStatusEnum UserStatus { get; set; }
         public long RoleId { get; set; }
         public virtual Role Role { get; set; }
-        public virtual Team.Team Teams { get; set; }
+        public virtual ICollection<UserTeams> UserTeams { get; set; }
     }
 }

@@ -7,10 +7,10 @@ namespace Halwani.Data.Entities.User
     {
         public Role()
         {
-            TeamPermissions = new HashSet<TeamPermissions>();
+            TeamPermissions = new HashSet<UserTeams>();
         }
         public string RoleName { get; set; }
         public string Permissions { get; set; }
-        public virtual ICollection<TeamPermissions> TeamPermissions { get; set; }
+        public virtual ICollection<UserTeams> TeamPermissions { get; set; }
     }
 }

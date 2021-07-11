@@ -20,13 +20,13 @@ namespace Halwani.Core.ModelRepositories
             {
                 var teams = claimsIdentity.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
 
-                return Find(s=>teams.Contains(s.Teams.Name) && s.RoleId==1, null, "Teams").Select(e => new UserLookupViewModel
+                return Find(s => s.UserTeams.Any(ut => teams.Contains(ut.Team.Name)) && s.RoleId == 1, null, "Teams").Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,
                     Email = e.Email,
                     UserName = e.UserName,
-                    Team = e.Teams.Name
+                    Team = string.Join(",", e.UserTeams.Select(e => e.Team.Name))
                 });
             }
             catch (Exception ex)
