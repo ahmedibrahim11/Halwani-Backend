@@ -8,12 +8,12 @@ namespace Halwani.Data.Entities.Team
     {
         public Team()
         {
-            Users = new HashSet<User.User>();
+            UserTeams = new HashSet<UserTeams>();
         }
         public string Name { get; set; }
         public string Location { get; set; }
         public string ServiceLine { get; set; }
         public DateTime ModfiedDate { get; set; }
-        public virtual ICollection<User.User> Users { get; set; }
+        public virtual ICollection<UserTeams> UserTeams{ get; set; }
     }
 }

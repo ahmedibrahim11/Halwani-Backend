@@ -49,6 +49,7 @@ namespace Halwani.Data
 
         #region Team
         public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<UserTeams> UserTeams { get; set; }
         #endregion
 
         #region Notification

@@ -120,7 +120,7 @@ namespace Halwani.Core.ModelRepositories
 
         private List<Claim> FillUserClaims(User user)
         {
-            var teamPermission = user.Role.TeamPermissions.Where(e => e.UserId == user.Id);
+            var teamPermission = user.UserTeams.Where(e => e.UserId == user.Id);
             var teamClaim = string.Join(",", teamPermission.Select(e => e.Team.Name));
             var authClaims =
                 new List<Claim>
