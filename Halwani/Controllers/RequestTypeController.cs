@@ -39,7 +39,8 @@ namespace Halwani.Controllers
         [Route("getRequestType")]
         public ActionResult GetAllRequestType()
         {
-            var result = _requestTypeRepositry.List();
+            string path = configuration["Url:BaseServiceUrl"] + @"/files/";
+            var result = _requestTypeRepositry.List(path);
             if (result == null)
                 return Problem();
             return Ok(result);
