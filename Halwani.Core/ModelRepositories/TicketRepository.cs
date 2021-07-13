@@ -8,6 +8,7 @@ using Halwani.Core.ViewModels.TicketModels;
 using Halwani.Data;
 using Halwani.Data.Entities;
 using Halwani.Data.Entities.Incident;
+using Halwani.Data.Entities.SLA;
 using Halwani.Data.Entities.User;
 using Hangfire;
 using Microsoft.AspNetCore.Http;
@@ -131,7 +132,7 @@ namespace Halwani.Core.ModelRepositories
                         }
                     },
                     LastModifiedDate = DateTime.Now,
-                    SLmMeasurements = _slaRepository.LoadTicketSlm(model, Data.Entities.SLA.SLAType.Intervention),
+                    SLmMeasurements = _slaRepository.LoadTicketSlm(model),
                 };
                 Add(ticket);
                 using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -290,16 +291,21 @@ namespace Halwani.Core.ModelRepositories
                 }
                 if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
                 {
-                    var newSla = _slaRepository.LoadTicketSlm(new CreateTicketViewModel
-                    {
-                        TeamName = ticket.TeamName,
-                        Priority = ticket.Priority.Value,
-                        TicketSeverity = ticket.TicketSeverity.Value,
-                        ProductCategoryName1 = ticket.ProductCategoryName1,
-                        ProductCategoryName2 = ticket.ProductCategoryName2,
-                    }, Data.Entities.SLA.SLAType.Resolution);
+                    var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, model.Status, out List<SLA> closeSla);
                     if (newSla != null)
                         ticket.SLmMeasurements.Add(newSla.FirstOrDefault());
+
+                    if (closeSla != null)
+                    {
+                        foreach (var sla in closeSla)
+                        {
+                            var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
+                            foreach (var ticketSlm in ticketSlms)
+                            {
+                                ticketSlm.ModifiedDate = DateTime.Now;
+                            }
+                        }
+                    }
 
                     var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution);
                     if (slm != null)

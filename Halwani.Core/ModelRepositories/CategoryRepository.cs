@@ -45,6 +45,7 @@ namespace Halwani.Core.ModelRepositories
                     ProductCategories = item.SubCategory.Select(e => new ProductCategory
                     {
                         Name = e.SubCategoryName,
+                        Goal = e.Goal
                     }).ToList()
                 }).ToList());
 
@@ -72,13 +73,15 @@ namespace Halwani.Core.ModelRepositories
                 {
                     old.ProductCategories.Add(new ProductCategory
                     {
-                        Name = item.SubCategoryName
+                        Name = item.SubCategoryName,
+                        Goal = item.Goal
                     });
                 }
                 foreach (var item in model.SubCategory.Where(e=> e.SubCategoryId.HasValue && !e.IsDeleted))
                 {
                     var oldSub = old.ProductCategories.FirstOrDefault(e => e.Id == item.SubCategoryId);
                     oldSub.Name = item.SubCategoryName;
+                    oldSub.Goal = item.Goal;
                 }
                 foreach (var item in model.SubCategory.Where(e=> e.SubCategoryId.HasValue && e.IsDeleted))
                 {
@@ -97,5 +100,28 @@ namespace Halwani.Core.ModelRepositories
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
+
+        public IEnumerable<CategoryListViewModel> List(CategoryPageInputViewModel model)
+        {
+            try
+            {
+                return Find(e => !e.ParentCategoryId.HasValue, null, "ProductCategories").Select(e => new CategoryListViewModel
+                {
+                    Id = e.Id,
+                    Text = e.Name,
+                    Children = e.ProductCategories.Select(c => new LookupViewModel
+                    {
+                        Id = c.Id,
+                        Text = c.Name
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+        }
+
     }
 }

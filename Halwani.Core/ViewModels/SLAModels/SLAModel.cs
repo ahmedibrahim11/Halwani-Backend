@@ -11,10 +11,12 @@ namespace Halwani.Core.ViewModels.SLAModels
         public int Id { get; set; }
         public SLAType SLAType { get; set; }
         public Priority Priority { get; set; }
-        public string TeamName { get; set; }
+        //public string ServiceLine { get; set; }
         public string WorkingHours { get; set; }
-        public string WorkingDays { get; set; }
-        public double SLADuration { get; set; }
-        public string ProductCategoryName { get; set; }
+        public string RequestType { get; set; }
+        public string OpenStatus { get; set; }
+        public string CloseStatus { get; set; }
+        //public string WorkingDays { get; set; }
+        public double SLADuration { get; set; } 
     }
 }

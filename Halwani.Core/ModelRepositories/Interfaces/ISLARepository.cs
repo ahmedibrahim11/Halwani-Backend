@@ -12,7 +12,8 @@ namespace Halwani.Core.ModelRepositories.Interfaces
 {
     public interface ISLARepository
     {
-        List<SLmMeasurement> LoadTicketSlm(CreateTicketViewModel model, SLAType slaType);
+        List<SLmMeasurement> LoadTicketSlm(CreateTicketViewModel model);
+        List<SLmMeasurement> LoadTicketSlmPerStatus(Ticket ticket, Status status, out List<SLA> closeSla);
         RepositoryOutput Add(SLAModel model);
         RepositoryOutput Edit(SLAModel model);
         //List<SLmMeasurement> UpdateTicketSlm(CreateTicketViewModel model, long ticketId, SLAType slaType);
