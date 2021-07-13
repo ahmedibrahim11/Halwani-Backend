@@ -13,5 +13,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         IEnumerable<CategoryListViewModel> List();
         RepositoryOutput Add(List<CreateProductCategroyModel> model);
         RepositoryOutput Edit(CreateProductCategroyModel model);
+        CreateProductCategroyModel GetForEdit(long ID);
+        CategoryResultViewModel List(CategoryPageInputViewModel model, out RepositoryOutput response);
     }
 }

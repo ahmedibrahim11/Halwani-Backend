@@ -15,4 +15,9 @@ namespace Halwani.Core.ViewModels.CategoryModels
     {
         CreationDate = 0,
     }
+
+    public class CategoryResultViewModel : PageResult<CategoryListViewModel>
+    {
+
+    }
 }

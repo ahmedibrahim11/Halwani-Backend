@@ -1,5 +1,6 @@
 ﻿using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Core.ViewModels.CategoryModels;
+using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Data.Entities.ProductCategories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,10 +49,31 @@ namespace Halwani.Controllers
         {
             var result = _categoryRepositry.Edit(model);
             if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.Error)
-                return Problem();;
+                return Problem(); ;
             if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.NotFound)
                 return NotFound();
             return Ok();
+        }
+
+        [Route("List")]
+        public ActionResult<CategoryResultViewModel> List(CategoryPageInputViewModel model)
+        {
+            var result = _categoryRepositry.List(model, out RepositoryOutput response);
+            if (response.Code == RepositoryResponseStatus.Error)
+                return Problem(response.ErrorMessages.FirstOrDefault());
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("GetForEdit/{settingID:long}")]
+        public ActionResult GetForEdit(long settingID)
+        {
+            var result = _categoryRepositry.GetForEdit(settingID);
+            if (result == null)
+                return Problem();
+
+            return Ok(result);
         }
     }
 }
