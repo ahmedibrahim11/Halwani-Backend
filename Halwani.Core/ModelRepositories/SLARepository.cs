@@ -234,8 +234,8 @@ namespace Halwani.Core.ModelRepositories
         }
         private IEnumerable<SLA> FilterList(SLAPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<SLA> query)
         {
-          
-          
+
+
             return query;
         }
         private IEnumerable<SLA> SortList(SLAPageInputViewModel model, IEnumerable<SLA> query)
@@ -255,19 +255,19 @@ namespace Halwani.Core.ModelRepositories
                             break;
                     }
                     break;
-                case SLAPageInputSort.Team:
-                    switch (model.SortDirection)
-                    {
-                        case SortDirection.Asc:
-                            query = query.OrderBy(e => e.ServiceLine);
-                            break;
-                        case SortDirection.Des:
-                            query = query.OrderByDescending(e => e.ServiceLine);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
+                //case SLAPageInputSort.Team:
+                //    switch (model.SortDirection)
+                //    {
+                //        case SortDirection.Asc:
+                //            query = query.OrderBy(e => e.ServiceLine);
+                //            break;
+                //        case SortDirection.Des:
+                //            query = query.OrderByDescending(e => e.ServiceLine);
+                //            break;
+                //        default:
+                //            break;
+                //    }
+                //    break;
                 case SLAPageInputSort.SLAGoal:
                     switch (model.SortDirection)
                     {
@@ -294,14 +294,14 @@ namespace Halwani.Core.ModelRepositories
                             break;
                     }
                     break;
-                case SLAPageInputSort.ProductCtaegoryName:
+                case SLAPageInputSort.RequestType:
                     switch (model.SortDirection)
                     {
                         case SortDirection.Asc:
-                            query = query.OrderBy(e => e.ProductCategoryName);
+                            query = query.OrderBy(e => e.RequestType);
                             break;
                         case SortDirection.Des:
-                            query = query.OrderByDescending(e => e.ProductCategoryName);
+                            query = query.OrderByDescending(e => e.RequestType);
                             break;
                         default:
                             break;
@@ -333,32 +333,31 @@ namespace Halwani.Core.ModelRepositories
             {
                 result.PageData.Add(new SLAModel
                 {
-                   Id=item.Id,
-                   Priority=item.Priority,
-                   SLAType=item.SLAType,
-                   SLADuration=item.SLADuration,
-                   TeamName=item.ServiceLine,
-                    ProductCategoryName=item.ProductCategoryName
-                   
-
-
+                    Id = item.Id,
+                    Priority = item.Priority,
+                    SLAType = item.SLAType,
+                    SLADuration = item.SLADuration,
+                    OpenStatus = item.OpenStatus,
+                    CloseStatus = item.CloseStatus,
+                    RequestType = item.RequestType,
+                    WorkingHours = item.WorkingHours
                 });
             }
         }
 
         public SLAModel GetForEdit(long ID)
         {
-           var sla=Find(r => r.Id == ID).FirstOrDefault();
+            var sla = Find(r => r.Id == ID).FirstOrDefault();
             return new SLAModel()
             {
                 Id = sla.Id,
-                TeamName = sla.ServiceLine,
-                ProductCategoryName = sla.ProductCategoryName,
-                WorkingDays = sla.WorkingDays,
-                WorkingHours = sla.WorkingHours,
-                SLADuration = sla.SLADuration,
                 Priority = sla.Priority,
-                SLAType=sla.SLAType
+                SLAType = sla.SLAType,
+                SLADuration = sla.SLADuration,
+                OpenStatus = sla.OpenStatus,
+                CloseStatus = sla.CloseStatus,
+                RequestType = sla.RequestType,
+                WorkingHours = sla.WorkingHours
             };
         }
 
