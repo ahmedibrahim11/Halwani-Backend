@@ -8,7 +8,7 @@ namespace Halwani.Core.ViewModels.SLAModels
 {
     public class SLAModel
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public SLAType SLAType { get; set; }
         public Priority Priority { get; set; }
         //public string ServiceLine { get; set; }
