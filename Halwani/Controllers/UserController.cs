@@ -28,7 +28,7 @@ namespace Halwani.Controllers
 
 
         [HttpGet]
-        [Route("getItPersonal/{teamId:long}")]
+        [Route("getItPersonal/{teamName}")]
         public ActionResult GetItPersonal(string teamName)
         {
             var result = _userRepositry.ListItPersonal(teamName);

@@ -540,6 +540,7 @@ slm.TargetDate);
                     Status = item.TicketStatus,
                     TicketTopic = item.TicketName,
                     TicketNumber = item.TicketNumber,
+                    TeamName=item.TeamName, 
                     RequestType = new RequestTypeModel
                     {
                         Id = item.RequestType.Id,

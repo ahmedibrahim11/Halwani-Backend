@@ -21,9 +21,10 @@ namespace Halwani.Core.ModelRepositories
                 return Find(s => s.UserTeams.Any(t => t.Team.Name == teamName && t.User.RoleId == (int)RoleEnum.ItPersonal)).Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
+                    Text=e.Name,
                     UserName = e.UserName,
                     Email = e.Email
-                });
+                }).ToList();
 
             }
             catch (Exception ex)
