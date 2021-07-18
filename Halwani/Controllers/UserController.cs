@@ -31,7 +31,7 @@ namespace Halwani.Controllers
         [Route("getItPersonal/{teamId:long}")]
         public ActionResult GetItPersonal(string teamName)
         {
-            var result = _userRepositry.ListReporters(teamName);
+            var result = _userRepositry.ListItPersonal(teamName);
             if (result == null)
                 return Problem();
             return Ok(result);
