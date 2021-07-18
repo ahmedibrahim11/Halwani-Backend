@@ -45,6 +45,7 @@ namespace Halwani.Core.ModelRepositories
                     ProductCategories = item.SubCategory.Select(e => new ProductCategory
                     {
                         Name = e.SubCategoryName,
+                        Goal = e.Goal
                     }).ToList()
                 }).ToList());
 
@@ -68,19 +69,21 @@ namespace Halwani.Core.ModelRepositories
                     return RepositoryOutput.CreateNotFoundResponse();
 
                 old.Name = model.ParentCategory;
-                foreach (var item in model.SubCategory.Where(e=> !e.SubCategoryId.HasValue))
+                foreach (var item in model.SubCategory.Where(e => !e.SubCategoryId.HasValue))
                 {
                     old.ProductCategories.Add(new ProductCategory
                     {
-                        Name = item.SubCategoryName
+                        Name = item.SubCategoryName,
+                        Goal = item.Goal
                     });
                 }
-                foreach (var item in model.SubCategory.Where(e=> e.SubCategoryId.HasValue && !e.IsDeleted))
+                foreach (var item in model.SubCategory.Where(e => e.SubCategoryId.HasValue && !e.IsDeleted))
                 {
                     var oldSub = old.ProductCategories.FirstOrDefault(e => e.Id == item.SubCategoryId);
                     oldSub.Name = item.SubCategoryName;
+                    oldSub.Goal = item.Goal;
                 }
-                foreach (var item in model.SubCategory.Where(e=> e.SubCategoryId.HasValue && e.IsDeleted))
+                foreach (var item in model.SubCategory.Where(e => e.SubCategoryId.HasValue && e.IsDeleted))
                 {
                     var oldSub = old.ProductCategories.FirstOrDefault(e => e.Id == item.SubCategoryId);
                     old.ProductCategories.Remove(oldSub);
@@ -97,5 +100,77 @@ namespace Halwani.Core.ModelRepositories
                 return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
+
+        public CreateProductCategroyModel GetForEdit(long ID)
+        {
+            var category = Find(r => r.Id == ID).FirstOrDefault();
+            return new CreateProductCategroyModel()
+            {
+                ParentCategoryId = category.Id,
+                ParentCategory = category.Name,
+                SubCategory = category.ProductCategories.Select(e=> new SubCateogryModel
+                {
+                    Goal = e.Goal,
+                    SubCategoryId = e.Id,
+                    SubCategoryName = e.Name
+                }).ToList()
+            };
+        }
+
+        public CategoryResultViewModel List(CategoryPageInputViewModel model, out RepositoryOutput response)
+        {
+            try
+            {
+                response = new RepositoryOutput();
+                CategoryResultViewModel result = new CategoryResultViewModel();
+
+                var qurey = Find(null, null, "");
+
+                qurey = FilterList(model, qurey);
+                qurey = SortList(model, qurey);
+                PagingList(model, result, qurey);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                response = RepositoryOutput.CreateErrorResponse(ex.Message);
+                return null;
+            }
+        }
+
+        #region Private
+
+        private IEnumerable<ProductCategory> FilterList(CategoryPageInputViewModel model, IEnumerable<ProductCategory> query)
+        {
+            return query;
+        }
+        private IEnumerable<ProductCategory> SortList(CategoryPageInputViewModel model, IEnumerable<ProductCategory> query)
+        {
+            return query;
+        }
+        private void PagingList(CategoryPageInputViewModel model, CategoryResultViewModel result, IEnumerable<ProductCategory> qurey)
+        {
+            result.TotalCount = qurey.Count();
+            if (!model.IsPrint)
+                qurey = qurey.Skip(model.PageNumber * model.PageSize).Take(model.PageSize);
+
+            foreach (var item in qurey)
+            {
+                result.PageData.Add(new CategoryListViewModel
+                {
+                    Id = item.Id,
+                    Text = item.Name,
+                    Children = item.ProductCategories.Select(e => new LookupViewModel
+                    {
+                        Id = e.Id,
+                        Text = e.Name,
+                    })
+                });
+            }
+        }
+
+        #endregion
     }
 }

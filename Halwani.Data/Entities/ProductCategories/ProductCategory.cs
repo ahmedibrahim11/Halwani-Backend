@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Halwani.Data.Entities.ProductCategories
 {
-   public class ProductCategory:Entity<long>
+    public class ProductCategory : Entity<long>
     {
         public ProductCategory()
         {
@@ -12,6 +12,7 @@ namespace Halwani.Data.Entities.ProductCategories
         }
         public string Name { get; set; }
         public long? ParentCategoryId { get; set; }
+        public double? Goal { get; set; }
         public virtual ProductCategory Parent { get; set; }
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
     }

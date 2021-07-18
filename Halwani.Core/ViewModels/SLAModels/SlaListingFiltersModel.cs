@@ -17,7 +17,7 @@ namespace Halwani.Core.ViewModels.SLAModels
         Priority = 1,
         Team = 2,
         SLAGoal = 3,
-        ProductCtaegoryName=4
+        RequestType=4
     }
     public class SLAResultViewModel : PageResult<SLAModel>
     {

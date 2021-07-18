@@ -19,81 +19,56 @@ namespace Halwani.Core.ModelRepositories
 {
     public class SLARepository : BaseRepository<SLA>, ISLARepository
     {
+        private readonly IRequestTypeRepository _requestTypeRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly ITeamRepository _teamRepository;
         private readonly IAuthenticationRepository _authenticationRepository;
 
-        public SLARepository(ITeamRepository teamRepository, IAuthenticationRepository authenticationRepository)
+        public SLARepository(ITeamRepository teamRepository, IRequestTypeRepository requestTypeRepository, ICategoryRepository categoryRepository, IAuthenticationRepository authenticationRepository)
         {
+            _categoryRepository = categoryRepository;
+            _requestTypeRepository = requestTypeRepository;
             _teamRepository = teamRepository;
             _authenticationRepository = authenticationRepository;
         }
 
-        public List<SLmMeasurement> LoadTicketSlm(CreateTicketViewModel model, SLAType slaType)
+        public List<SLmMeasurement> LoadTicketSlm(CreateTicketViewModel model)
         {
             try
             {
-                //var team = _teamRepository.GetByName(model.TeamName);
-                //if (team == null)
-                //    return null;
+                var productCategory = _categoryRepository.Find(e => e.Name == model.ProductCategoryName2).FirstOrDefault();
+                if (productCategory == null)
+                    return null;
 
-                var sla = Find(e => e.Priority == model.Priority && e.SLAType == slaType && e.ProductCategoryName == model.ProductCategoryName2 && e.ServiceLine == model.TeamName).FirstOrDefault();
+                var requestType = _requestTypeRepository.GetById(model.RequestTypeId);
+                if (requestType == null)
+                    return null;
+
+                var sla = Find(e => e.Priority == model.Priority && e.RequestType == requestType.Name && e.OpenStatus.Contains(Status.Created.ToString())).FirstOrDefault();
                 if (sla == null)
                     return null;
 
-                var allWeekDays = new List<DayOfWeek> { DayOfWeek.Saturday, DayOfWeek.Sunday, DayOfWeek.Monday, DayOfWeek.Tuesday,
-                    DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
-                var workingDays = sla.WorkingDays.Split(",").Select(e => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), e)).ToList();
                 var totalWorkingHours = int.Parse(sla.WorkingHours.Split(",")[1]) - int.Parse(sla.WorkingHours.Split(",")[0]);
-                var currentDay = DateTime.Now.DayOfWeek;
-                var currentDayIndex = allWeekDays.IndexOf(currentDay);
-                var workDuration = sla.SLADuration;
+                var workDuration = productCategory.Goal.HasValue ? sla.SLADuration + productCategory.Goal : sla.SLADuration;
                 double totalHours = 0;
-                var currentLoopDay = currentDay;
-                var today = true;
 
                 while (true)
                 {
-                    if (today)
+                    if (workDuration < totalWorkingHours && int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
                     {
-                        if (workDuration < totalWorkingHours && int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
-                        {
-                            totalHours = int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
+                        totalHours = int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
 
-                            if (workDuration == 0)
-                                break;
-                        }
-                        else
-                        {
-                            if (int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
-                            {
-                                workDuration -= int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
-                            }
-                            totalHours += 24 - DateTime.Now.Hour;
-                        }
+                        if (workDuration == 0)
+                            break;
                     }
                     else
                     {
-                        if (!workingDays.Contains(currentLoopDay))
+                        if (int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
                         {
-                            totalHours += 24;
+                            workDuration -= int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
                         }
-                        else
-                        {
-                            if (workDuration <= totalWorkingHours)
-                            {
-                                totalHours += int.Parse(sla.WorkingHours.Split(",")[0]) + workDuration;
-                                break;
-                            }
-                            else
-                                totalHours += 24;
-                            workDuration -= totalWorkingHours;
-                        }
-                        var indexOfCurrentLoopDay = allWeekDays.IndexOf(currentLoopDay);
-                        if (indexOfCurrentLoopDay == allWeekDays.Count - 1)
-                            indexOfCurrentLoopDay = -1;
-                        currentLoopDay = allWeekDays.ElementAt(++indexOfCurrentLoopDay);
+                        totalHours += 24 - DateTime.Now.Hour;
                     }
-                    today = false;
                 }
 
                 return new List<SLmMeasurement>
@@ -101,6 +76,65 @@ namespace Halwani.Core.ModelRepositories
                     new SLmMeasurement
                     {
                         SLAId = sla.Id,
+                        ModifiedDate = DateTime.Now,
+                        TargetDate = DateTime.Now.AddHours(totalHours)
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                throw ex;
+            }
+        }
+
+        public List<SLmMeasurement> LoadTicketSlmPerStatus(Ticket ticket, Status status, out List<SLA> closeSla)
+        {
+            closeSla = null;
+            try
+            {
+                var productCategory = _categoryRepository.Find(e => e.Name == ticket.ProductCategoryName2).FirstOrDefault();
+                if (productCategory == null)
+                    return null;
+
+                var requestType = _requestTypeRepository.GetById(ticket.RequestTypeId);
+                if (requestType == null)
+                    return null;
+
+                var openSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.OpenStatus.Contains(status.ToString())).FirstOrDefault();
+                if (openSla == null)
+                    return null;
+
+                closeSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.CloseStatus.Contains(status.ToString())).ToList();
+
+                var totalWorkingHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - int.Parse(openSla.WorkingHours.Split(",")[0]);
+                var workDuration = productCategory.Goal.HasValue ? openSla.SLADuration + productCategory.Goal : openSla.SLADuration;
+                double totalHours = 0;
+
+                while (true)
+                {
+                    if (workDuration < totalWorkingHours && int.Parse(openSla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                    {
+                        totalHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
+
+                        if (workDuration == 0)
+                            break;
+                    }
+                    else
+                    {
+                        if (int.Parse(openSla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                        {
+                            workDuration -= int.Parse(openSla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                        }
+                        totalHours += 24 - DateTime.Now.Hour;
+                    }
+                }
+
+                return new List<SLmMeasurement>
+                {
+                    new SLmMeasurement
+                    {
+                        SLAId = openSla.Id,
                         ModifiedDate = DateTime.Now,
                         TargetDate = DateTime.Now.AddHours(totalHours)
                     }
@@ -121,12 +155,11 @@ namespace Halwani.Core.ModelRepositories
                 if (old == null)
                     return RepositoryOutput.CreateNotFoundResponse();
                 old.Priority = model.Priority;
-                old.ProductCategoryName = model.ProductCategoryName;
-                old.ServiceLine = model.TeamName;
+                old.RequestType = model.RequestType;
                 old.SLADuration = model.SLADuration;
-                old.SLAName = "";
                 old.SLAType = model.SLAType;
-                old.WorkingDays = model.WorkingDays;
+                old.CloseStatus = model.CloseStatus;
+                old.OpenStatus = model.OpenStatus;
                 old.WorkingHours = model.WorkingHours;
 
                 Update(old);
@@ -155,12 +188,11 @@ namespace Halwani.Core.ModelRepositories
                 Add(new SLA
                 {
                     Priority = model.Priority,
-                    ProductCategoryName = model.ProductCategoryName,
-                    ServiceLine = model.TeamName,
+                    RequestType = model.RequestType,
                     SLADuration = model.SLADuration,
-                    SLAName = "",
                     SLAType = model.SLAType,
-                    WorkingDays = workDays,
+                    CloseStatus = model.CloseStatus,
+                    OpenStatus = model.OpenStatus,
                     WorkingHours = model.WorkingHours
                 });
                 if (Save() < 1)
@@ -209,8 +241,8 @@ namespace Halwani.Core.ModelRepositories
         }
         private IEnumerable<SLA> FilterList(SLAPageInputViewModel model, ClaimsIdentity userClaims, IEnumerable<SLA> query)
         {
-          
-          
+
+
             return query;
         }
         private IEnumerable<SLA> SortList(SLAPageInputViewModel model, IEnumerable<SLA> query)
@@ -230,19 +262,19 @@ namespace Halwani.Core.ModelRepositories
                             break;
                     }
                     break;
-                case SLAPageInputSort.Team:
-                    switch (model.SortDirection)
-                    {
-                        case SortDirection.Asc:
-                            query = query.OrderBy(e => e.ServiceLine);
-                            break;
-                        case SortDirection.Des:
-                            query = query.OrderByDescending(e => e.ServiceLine);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
+                //case SLAPageInputSort.Team:
+                //    switch (model.SortDirection)
+                //    {
+                //        case SortDirection.Asc:
+                //            query = query.OrderBy(e => e.ServiceLine);
+                //            break;
+                //        case SortDirection.Des:
+                //            query = query.OrderByDescending(e => e.ServiceLine);
+                //            break;
+                //        default:
+                //            break;
+                //    }
+                //    break;
                 case SLAPageInputSort.SLAGoal:
                     switch (model.SortDirection)
                     {
@@ -269,14 +301,14 @@ namespace Halwani.Core.ModelRepositories
                             break;
                     }
                     break;
-                case SLAPageInputSort.ProductCtaegoryName:
+                case SLAPageInputSort.RequestType:
                     switch (model.SortDirection)
                     {
                         case SortDirection.Asc:
-                            query = query.OrderBy(e => e.ProductCategoryName);
+                            query = query.OrderBy(e => e.RequestType);
                             break;
                         case SortDirection.Des:
-                            query = query.OrderByDescending(e => e.ProductCategoryName);
+                            query = query.OrderByDescending(e => e.RequestType);
                             break;
                         default:
                             break;
@@ -308,32 +340,31 @@ namespace Halwani.Core.ModelRepositories
             {
                 result.PageData.Add(new SLAModel
                 {
-                   Id=item.Id,
-                   Priority=item.Priority,
-                   SLAType=item.SLAType,
-                   SLADuration=item.SLADuration,
-                   TeamName=item.ServiceLine,
-                    ProductCategoryName=item.ProductCategoryName
-                   
-
-
+                    Id = item.Id,
+                    Priority = item.Priority,
+                    SLAType = item.SLAType,
+                    SLADuration = item.SLADuration,
+                    OpenStatus = item.OpenStatus,
+                    CloseStatus = item.CloseStatus,
+                    RequestType = item.RequestType,
+                    WorkingHours = item.WorkingHours
                 });
             }
         }
 
         public SLAModel GetForEdit(long ID)
         {
-           var sla=Find(r => r.Id == ID).FirstOrDefault();
+            var sla = Find(r => r.Id == ID).FirstOrDefault();
             return new SLAModel()
             {
                 Id = sla.Id,
-                TeamName = sla.ServiceLine,
-                ProductCategoryName = sla.ProductCategoryName,
-                WorkingDays = sla.WorkingDays,
-                WorkingHours = sla.WorkingHours,
-                SLADuration = sla.SLADuration,
                 Priority = sla.Priority,
-                SLAType=sla.SLAType
+                SLAType = sla.SLAType,
+                SLADuration = sla.SLADuration,
+                OpenStatus = sla.OpenStatus,
+                CloseStatus = sla.CloseStatus,
+                RequestType = sla.RequestType,
+                WorkingHours = sla.WorkingHours
             };
         }
 
