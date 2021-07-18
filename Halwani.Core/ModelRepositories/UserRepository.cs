@@ -20,7 +20,7 @@ namespace Halwani.Core.ModelRepositories
             {
                 var teams = claimsIdentity.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
 
-                return Find(s => s.UserTeams.Any(ut => teams.Contains(ut.Team.Name)) && s.RoleId == 1).Select(e => new UserLookupViewModel
+                return Find(s => s.UserTeams.Any(ut => teams.Contains(ut.Team.Name)) && s.RoleId == (int)RoleEnum.User).Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,
