@@ -13,6 +13,26 @@ namespace Halwani.Core.ModelRepositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
+        public IEnumerable<UserLookupViewModel> ListItPersonal(string teamName)
+        {
+
+            try
+            {
+                return Find(s => s.UserTeams.Any(t => t.Team.Name == teamName && t.User.RoleId == (int)RoleEnum.ItPersonal)).Select(e => new UserLookupViewModel
+                {
+                    Id = e.Id,
+                    UserName = e.UserName,
+                    Email = e.Email
+                });
+
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return null;
+            }
+
+        }
 
         public IEnumerable<UserLookupViewModel> ListReporters(ClaimsIdentity claimsIdentity)
         {

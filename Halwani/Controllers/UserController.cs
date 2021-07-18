@@ -26,5 +26,16 @@ namespace Halwani.Controllers
             return Ok(result);
         }
 
+
+        [HttpGet]
+        [Route("getItPersonal/{teamId:long}")]
+        public ActionResult GetItPersonal(string teamName)
+        {
+            var result = _userRepositry.ListReporters(teamName);
+            if (result == null)
+                return Problem();
+            return Ok(result);
+        }
+
     }
 }

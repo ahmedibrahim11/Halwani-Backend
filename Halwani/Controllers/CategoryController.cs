@@ -55,8 +55,9 @@ namespace Halwani.Controllers
             return Ok();
         }
 
+        [HttpPost]
         [Route("List")]
-        public ActionResult<CategoryResultViewModel> List(CategoryPageInputViewModel model)
+        public ActionResult List(CategoryPageInputViewModel model)
         {
             var result = _categoryRepositry.List(model, out RepositoryOutput response);
             if (response.Code == RepositoryResponseStatus.Error)

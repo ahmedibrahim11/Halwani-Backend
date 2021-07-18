@@ -10,5 +10,8 @@ namespace Halwani.Core.ModelRepositories.Interfaces
     public interface IUserRepository : IBaseRepository<User>
     {
         IEnumerable<UserLookupViewModel> ListReporters(ClaimsIdentity claimsIdentity);
+
+        IEnumerable<UserLookupViewModel> ListItPersonal(string teamName);
+
     }
 }

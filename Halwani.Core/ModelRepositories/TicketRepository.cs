@@ -302,13 +302,14 @@ namespace Halwani.Core.ModelRepositories
                             var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
                             foreach (var ticketSlm in ticketSlms)
                             {
+                                if (ticketSlm.SLAStatus != SLAStatus.Deattached)
+                                    ticketSlm.SLAStatus = SLAStatus.Meet;
                                 ticketSlm.ModifiedDate = DateTime.Now;
                             }
                         }
                     }
 
-                    var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution);
-                    if (slm != null)
+                    if (ticket.SLmMeasurements.Any())
                     {
                         var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Resolution, token),
         slm.TargetDate);
