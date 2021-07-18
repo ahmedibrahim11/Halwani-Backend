@@ -151,11 +151,10 @@ namespace Halwani.Core.ModelRepositories
 
                 if (ticket.SLmMeasurements != null)
                 {
-                    var slm = ticket.SLmMeasurements.FirstOrDefault();
-                    if (slm != null)
+                    foreach (var slm in ticket.SLmMeasurements)
                     {
-                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Intervention, token),
-        slm.TargetDate);
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
+slm.TargetDate);
                     }
                 }
 
@@ -293,7 +292,12 @@ namespace Halwani.Core.ModelRepositories
                 {
                     var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, model.Status, out List<SLA> closeSla);
                     if (newSla != null)
-                        ticket.SLmMeasurements.Add(newSla.FirstOrDefault());
+                    {
+                        foreach (var slm in newSla)
+                        {
+                            ticket.SLmMeasurements.Add(slm);
+                        }
+                    }
 
                     if (closeSla != null)
                     {
@@ -309,9 +313,9 @@ namespace Halwani.Core.ModelRepositories
                         }
                     }
 
-                    if (ticket.SLmMeasurements.Any())
+                    foreach (var slm in newSla)
                     {
-                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, SLMType.Resolution, token),
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
         slm.TargetDate);
                     }
                 }
@@ -450,49 +454,25 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        public void IsMet(long ticketId, SLMType slMType, string token)
+        public void IsMet(long ticketId, long ticketSLMId, string token)
         {
             try
             {
                 var ticket = Find(e => e.Id == ticketId).FirstOrDefault();
-                switch (slMType)
+
+                var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.Id == ticketSLMId);
+                if (slm != null && slm.SLA.OpenStatus.Contains(ticket.TicketStatus.ToString()))
                 {
-                    case SLMType.Intervention:
-                        if (ticket.TicketStatus == Status.Created)
-                        {
-                            var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention);
-                            if (slm != null)
-                                slm.SLAStatus = SLAStatus.Deattached;
-                            ticket.TicketStatus = Status.OverDue;
+                    slm.SLAStatus = SLAStatus.Deattached;
+                    ticket.TicketStatus = Status.OverDue;
 
-                            Update(ticket);
-                            Save();
+                    Update(ticket);
+                    Save();
 
-                            var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
+                    var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
 
-                            SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
-                        }
-                        break;
-                    case SLMType.Resolution:
-                        if (ticket.TicketStatus != Status.Resolved)
-                        {
-                            var slm = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution);
-                            if (slm != null)
-                                slm.SLAStatus = SLAStatus.Deattached;
-                            ticket.TicketStatus = Status.OverDue;
-                            Update(ticket);
-                            Save();
-
-                            var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
-
-                            SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
-
-                        }
-                        break;
-                    default:
-                        break;
+                    SendNotification(ticket.Id, NotificationType.NewTicket, "", token, "TicketLate", userIds.ToList());
                 }
-
             }
             catch (Exception ex)
             {
