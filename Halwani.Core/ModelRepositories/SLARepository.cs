@@ -178,6 +178,13 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
+                //var workDays = "";
+                //var days = model.WorkingDays.Split(",");
+                //foreach (var day in days)
+                //{
+                //    workDays += (Enum.Parse(typeof(DayOfWeek),day)).ToString()+",";
+                //}
+                //workDays = workDays.Substring(0, workDays.Length - 1);
                 Add(new SLA
                 {
                     Priority = model.Priority,
