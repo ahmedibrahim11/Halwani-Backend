@@ -49,7 +49,7 @@ namespace Halwani.Core.ModelRepositories
                     return null;
 
                 var totalWorkingHours = int.Parse(sla.WorkingHours.Split(",")[1]) - int.Parse(sla.WorkingHours.Split(",")[0]);
-                var workDuration = productCategory.Goal.HasValue ? sla.SLADuration + productCategory.Goal : sla.SLADuration;
+                var workDuration = productCategory.Goal.HasValue ? sla.SLADuration +(double) productCategory.Goal : sla.SLADuration;
                 double totalHours = 0;
 
                 while (true)
@@ -108,7 +108,7 @@ namespace Halwani.Core.ModelRepositories
                 closeSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.CloseStatus.Contains(status.ToString())).ToList();
 
                 var totalWorkingHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - int.Parse(openSla.WorkingHours.Split(",")[0]);
-                var workDuration = productCategory.Goal.HasValue ? openSla.SLADuration + productCategory.Goal : openSla.SLADuration;
+                var workDuration = productCategory.Goal.HasValue ?openSla.SLADuration + (double)productCategory.Goal : openSla.SLADuration;
                 double totalHours = 0;
 
                 while (true)

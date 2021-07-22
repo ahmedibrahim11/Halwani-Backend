@@ -69,7 +69,7 @@ namespace Halwani.Core.ModelRepositories
                     return RepositoryOutput.CreateNotFoundResponse();
 
                 old.Name = model.ParentCategory;
-                foreach (var item in model.SubCategory.Where(e => !e.SubCategoryId.HasValue))
+                foreach (var item in model.SubCategory.Where(e => !e.SubCategoryId.HasValue||e.SubCategoryId==0))
                 {
                     old.ProductCategories.Add(new ProductCategory
                     {
@@ -80,8 +80,12 @@ namespace Halwani.Core.ModelRepositories
                 foreach (var item in model.SubCategory.Where(e => e.SubCategoryId.HasValue && !e.IsDeleted))
                 {
                     var oldSub = old.ProductCategories.FirstOrDefault(e => e.Id == item.SubCategoryId);
-                    oldSub.Name = item.SubCategoryName;
-                    oldSub.Goal = item.Goal;
+                    if (oldSub != null)
+                    {
+                        oldSub.Name = item.SubCategoryName;
+                        oldSub.Goal = item.Goal;
+                    }
+                   
                 }
                 foreach (var item in model.SubCategory.Where(e => e.SubCategoryId.HasValue && e.IsDeleted))
                 {
@@ -124,7 +128,7 @@ namespace Halwani.Core.ModelRepositories
                 response = new RepositoryOutput();
                 CategoryResultViewModel result = new CategoryResultViewModel();
 
-                var qurey = Find(null, null, "");
+                var qurey = Find(r=>r.ProductCategories.Count>0, null, "");
 
                 qurey = FilterList(model, qurey);
                 qurey = SortList(model, qurey);
@@ -166,6 +170,8 @@ namespace Halwani.Core.ModelRepositories
                     {
                         Id = e.Id,
                         Text = e.Name,
+                        Goal=e.Goal
+                       
                     })
                 });
             }
