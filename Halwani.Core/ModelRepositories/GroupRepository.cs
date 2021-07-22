@@ -77,6 +77,25 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
+        public IEnumerable<GroupList> GetAllGroups()
+        {
+            try
+            {
+                return Find(null, null, null).Select(s => new GroupList
+                {
+                    ID = s.Id,
+                    Name = s.Name,
+                    Selected = false
+                });
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public IEnumerable<GroupList> listTicketTypeGroups(int ticketType)
         {
             try
