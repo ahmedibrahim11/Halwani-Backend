@@ -9,7 +9,7 @@ namespace Halwani.Core.ViewModels.TicketModels
     public class TicketPageInputViewModel  : PaginationViewModel
     {
         public TicketPageInputFilter Filter { get; set; }
-        public TicketPageInputSort SortValue { get; set; }
+        public TicketPageInputSort? SortValue { get; set; }
     }
     public class TicketPageInputFilter
     {

@@ -15,32 +15,45 @@
 //using System.Security.Claims;
 //using Halwani.Data.Entities.User;
 //using Halwani.Core.ViewModels.TicketModels;
+//using Microsoft.Extensions.Configuration;
+//using Halwani.Utilites.Email;
 
 //namespace Halwani.Core.ModelRepositories
 //{
 //    public class UserRequestRepository
 //    {
-//        public RepositoryOutput Add(List<CreateRequestTypeModel> model)
+//        private readonly IConfiguration configuration;
+//        private readonly IEmailService emailService;
+//        public UserRequestRepository(IConfiguration _configuration, IEmailService _emailService)
+//        {
+//            configuration = _configuration;
+//            emailService = _emailService;
+//        }
+//        public RepositoryOutput AskForSupport(AskForSupportViewModel model, ClaimsIdentity userClaims)
 //        {
 //            try
 //            {
-//                AddRange(model.Select(item => new RequestType()
+//                var email = configuration["Request:Support"];
+//                var userName = 
+//                Dictionary<string, string> Variables = new Dictionary<string, string>
+//                                            {
+//                                                { "[UserName]", userClaims}
+//                                            };
+//                try
 //                {
-//                    Name = item.Name,
-//                    Icon = item.Icon,
-//                    TicketType = item.TicketType,
-//                    Description = item.Description,
-//                    TeamName = item.TeamName,
-//                    Priority = item.Priority,
-//                    Severity = item.Severity,
-//                    RequestTypeGroups = item.GroupIds.Select(e => new RequestTypeGroups
+//                    _emailService.SendEmail(new EmailContentModel
 //                    {
-//                        GroupId = e
-//                    }).ToList()
-//                }).ToList());
-
-//                if (Save() < 1)
-//                    return RepositoryOutput.CreateErrorResponse("");
+//                        Body = "",
+//                        subject = "Email Confirmed",
+//                        ToList = appUser.Email,
+//                        HtmlFilePath = "confirmEmail.html",
+//                        Variables = Variables
+//                    });
+//                }
+//                catch (Exception ex)
+//                {
+//                    //RepositoryHelper.LogException(ex);
+//                }
 //                return RepositoryOutput.CreateSuccessResponse();
 //            }
 //            catch (Exception ex)
