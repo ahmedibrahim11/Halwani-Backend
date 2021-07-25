@@ -536,6 +536,12 @@ slm.TargetDate);
                         Name = ticket.RequestType.Name,
                         TicketType = ticket.RequestType.TicketType
                     },
+                    TicketSlms = ticket.SLmMeasurements.Select(e=> new TicketSLAModel
+                    {
+                        TargetDate = e.TargetDate,
+                        CloseDate = e.ModifiedDate,
+                        SLAType = e.SLA.SLAType
+                    }).ToList(),
                     InterventionSLA = interventionTime.HasValue ? interventionTime.Value.TotalHours.ToString() : "",
                     ResolutionSLA = resolutionTime.HasValue ? resolutionTime.Value.TotalHours.ToString() : ""
                 };

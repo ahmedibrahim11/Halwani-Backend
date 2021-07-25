@@ -105,7 +105,7 @@ namespace Halwani.Core.ModelRepositories
                     new SLmMeasurement
                     {
                         SLAId = sla.Id,
-                        ModifiedDate = DateTime.Now,
+                        ModifiedDate = null,
                         TargetDate = DateTime.Now.AddHours(totalHours)
                     }
                 };
@@ -164,7 +164,7 @@ namespace Halwani.Core.ModelRepositories
                     new SLmMeasurement
                     {
                         SLAId = openSla.Id,
-                        ModifiedDate = DateTime.Now,
+                        ModifiedDate = null,
                         TargetDate = DateTime.Now.AddHours(totalHours)
                     }
                 };
