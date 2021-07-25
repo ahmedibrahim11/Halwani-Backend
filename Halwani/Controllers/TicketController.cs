@@ -132,6 +132,21 @@ namespace Halwani.Controllers
 
             return Ok();
         }
+        
+        [HttpPost]
+        [Route("EsclateTicket")]
+        public ActionResult EsclateTicket(EsclateTicketViewModel model)
+        {
+            var result = _TicketRepository.EsclateTicket(model, User.FindFirstValue(ClaimTypes.NameIdentifier), HeadersHelper.GetAuthToken(Request));
+
+            if (result.Code == RepositoryResponseStatus.Error)
+                return Problem();
+
+            if (result.Code == RepositoryResponseStatus.NotFound)
+                return NotFound();
+
+            return Ok();
+        }
 
         [HttpPut]
         [Route("UpdateTicket")]

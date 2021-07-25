@@ -21,6 +21,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         public RequestTypeModel RequestType { get; set; }
         public TicketSeverity? Severity { get; set; }
         public Status? Status { get; set; }
+        public bool CanEsclate { get; set; }
         public bool CanView { get; set; }
         public bool CanDelete { get; set; }
         public bool CanAssign { get; set; }

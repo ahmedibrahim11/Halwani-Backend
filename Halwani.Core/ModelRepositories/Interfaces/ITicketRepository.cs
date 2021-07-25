@@ -19,6 +19,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         RepositoryOutput Add(CreateTicketViewModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token); 
         RepositoryOutput UpdateTicket(UpdateTicketModel model, IEnumerable<IFormFile> attachments, string saveFilePath, string loggedUserId, string token);
         RepositoryOutput UpdateStatus(UpdateStatusViewModel model, string loggedUserId, string token);
+        RepositoryOutput EsclateTicket(EsclateTicketViewModel model, string loggedUserId, string token);
         RepositoryOutput AssignTicket(AssignTicketViewModel model, string loggedUserId, string token);
         RepositoryOutput AssignTicket(AssignMulipleTicketViewModel model, string loggedUserId, string token);
         int GetCount();

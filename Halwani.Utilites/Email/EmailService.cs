@@ -15,7 +15,29 @@ namespace Halwani.Utilites.Email
             _configuration = configuration;
         }
 
-        public bool SendEmail(EmailContentModel emailContent)
+//        string resetPasswordUrl = _configuration["ResetPasswordUrl:ResetPassUrl"] + "/" + appUser.Id + "/" + token;
+
+//        Dictionary<string, string> Variables = new Dictionary<string, string>
+//                            {
+//                                { "[UserName]", model.FirstName + " " + model.FatherName + " " + model.GrandFatherName + " " +              model.FamilyName},
+//                                { "[URL]", resetPasswordUrl }
+//                            };
+//                try
+//                {
+//                    _emailService.SendEmail(new EmailContentModel
+//                    {
+//                        Body = "",
+//                        subject = "Email Confirmed",
+//                        ToList = appUser.Email,
+//                        HtmlFilePath = "confirmEmail.html",
+//                        Variables = Variables
+//    });
+//                }
+//                catch (Exception ex)
+//{
+//    //RepositoryHelper.LogException(ex);
+//}
+public bool SendEmail(EmailContentModel emailContent)
         {
             try
             {

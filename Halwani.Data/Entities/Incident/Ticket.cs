@@ -20,6 +20,7 @@ namespace Halwani.Data.Entities.Incident
         public string TicketNumber { get; set; }
         public string TicketName { get; set; }
         public string ResolveText { get; set; }
+        public string EsclationReason { get; set; }
         public string AssignedUser { get; set; }
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }
