@@ -44,31 +44,60 @@ namespace Halwani.Core.ModelRepositories
                 if (requestType == null)
                     return null;
 
-                var sla = Find(e => e.Priority == model.Priority && e.RequestType == requestType.Name && e.OpenStatus.Contains(Status.Created.ToString())).FirstOrDefault();
+                var sla = Find(e => e.Priority == model.Priority && e.RequestType == requestType.Name && e.OpenStatus.Contains(((int)Status.Created).ToString())).FirstOrDefault();
                 if (sla == null)
                     return null;
 
                 var totalWorkingHours = int.Parse(sla.WorkingHours.Split(",")[1]) - int.Parse(sla.WorkingHours.Split(",")[0]);
-                var workDuration = productCategory.Goal.HasValue ? sla.SLADuration +(double) productCategory.Goal : sla.SLADuration;
+                var workDuration = productCategory.Goal.HasValue ? sla.SLADuration + (double)productCategory.Goal : sla.SLADuration;
                 double totalHours = 0;
+                bool firstIteration = true;
 
                 while (true)
                 {
-                    if (workDuration < totalWorkingHours && int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                    if (workDuration < totalWorkingHours)
                     {
-                        totalHours = int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
-
                         if (workDuration == 0)
                             break;
+
+                        if (firstIteration)
+                        {
+                            if (int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                            {
+                                totalHours = int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                                workDuration -= totalHours;
+                                if (workDuration > 0)
+                                    totalHours += int.Parse(sla.WorkingHours.Split(",")[0]);
+                            }
+                            else
+                            {
+                                totalHours += 24 - DateTime.Now.Hour + workDuration;
+                                workDuration = 0;
+                            }
+                        }
+                        else
+                        {
+                            totalHours += workDuration;
+                            workDuration = 0;
+                        }
                     }
                     else
                     {
-                        if (int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                        if (firstIteration)
                         {
-                            workDuration -= int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                            if (int.Parse(sla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                            {
+                                workDuration -= int.Parse(sla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                            }
+                            totalHours += 24 - DateTime.Now.Hour + int.Parse(sla.WorkingHours.Split(",")[0]);
                         }
-                        totalHours += 24 - DateTime.Now.Hour;
+                        else
+                        {
+                            workDuration -= totalWorkingHours;
+                            totalHours += 24;
+                        }
                     }
+                    firstIteration = false;
                 }
 
                 return new List<SLmMeasurement>
@@ -108,7 +137,7 @@ namespace Halwani.Core.ModelRepositories
                 closeSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.CloseStatus.Contains(status.ToString())).ToList();
 
                 var totalWorkingHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - int.Parse(openSla.WorkingHours.Split(",")[0]);
-                var workDuration = productCategory.Goal.HasValue ?openSla.SLADuration + (double)productCategory.Goal : openSla.SLADuration;
+                var workDuration = productCategory.Goal.HasValue ? openSla.SLADuration + (double)productCategory.Goal : openSla.SLADuration;
                 double totalHours = 0;
 
                 while (true)

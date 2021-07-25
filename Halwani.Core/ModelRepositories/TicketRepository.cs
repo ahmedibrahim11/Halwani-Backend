@@ -540,7 +540,7 @@ slm.TargetDate);
                     Status = item.TicketStatus,
                     TicketTopic = item.TicketName,
                     TicketNumber = item.TicketNumber,
-                    TeamName=item.TeamName, 
+                    TeamName = item.TeamName,
                     RequestType = new RequestTypeModel
                     {
                         Id = item.RequestType.Id,
@@ -614,17 +614,17 @@ slm.TargetDate);
                     }
                     break;
                 default:
-                    switch (model.SortDirection)
-                    {
-                        case SortDirection.Asc:
-                            query = query.OrderBy(e => e.SubmitDate);
-                            break;
-                        case SortDirection.Des:
-                            query = query.OrderByDescending(e => e.SubmitDate);
-                            break;
-                        default:
-                            break;
-                    }
+                //switch (model.SortDirection)
+                //{
+                //    case SortDirection.Asc:
+                //        query = query.OrderBy(e => e.SubmitDate);
+                //        break;
+                //case SortDirection.Des:
+                    query = query.OrderByDescending(e => e.SubmitDate);
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
                     break;
             }
             return query;
