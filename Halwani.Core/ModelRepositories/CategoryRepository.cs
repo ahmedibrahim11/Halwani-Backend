@@ -147,7 +147,8 @@ namespace Halwani.Core.ModelRepositories
         #region Private
 
         private IEnumerable<ProductCategory> FilterList(CategoryPageInputViewModel model, IEnumerable<ProductCategory> query)
-        {
+        {if (model.SearchText.Length != 0)
+                return query.Where(r => r.Name.Contains(model.SearchText[0]));
             return query;
         }
         private IEnumerable<ProductCategory> SortList(CategoryPageInputViewModel model, IEnumerable<ProductCategory> query)
