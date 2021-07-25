@@ -188,6 +188,13 @@ slm.TargetDate);
                 ticket.RequestTypeId = model.RequestTypeId;
                 ticket.ReportedSource = model.ReportedSource;
                 ticket.Source = model.Source;
+                if (ticket.TeamName != model.TeamName)
+                    ticket.TicketHistories.Add(new TicketHistory
+                    {
+                        FromTeam = ticket.TeamName,
+                        ModifiedDate = DateTime.Now,
+                        ToTeam = model.TeamName
+                    });
                 ticket.TeamName = model.TeamName;
                 ticket.SubmitterName = model.SubmitterName;
                 ticket.SubmitterEmail = model.SubmitterEmail;
@@ -282,45 +289,118 @@ slm.TargetDate);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
 
-                if (model.Status == Status.InProgress)
+                //if (model.Status == Status.InProgress)
+                //{
+                //    var intervention = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention);
+                //    if (intervention != null && intervention.TargetDate < DateTime.Now)
+                //        intervention.SLAStatus = SLAStatus.Meet;
+                //}
+                //if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
+                //{
+                var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, model.Status, out List<SLA> closeSla);
+                if (newSla != null)
                 {
-                    var intervention = ticket.SLmMeasurements.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention);
-                    if (intervention != null && intervention.TargetDate < DateTime.Now)
-                        intervention.SLAStatus = SLAStatus.Meet;
-                }
-                if ((ticket.TicketStatus.Value == Status.Created || ticket.TicketStatus.Value == Status.Assigned) && model.Status == Status.InProgress)
-                {
-                    var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, model.Status, out List<SLA> closeSla);
-                    if (newSla != null)
-                    {
-                        foreach (var slm in newSla)
-                        {
-                            ticket.SLmMeasurements.Add(slm);
-                        }
-                    }
-
-                    if (closeSla != null)
-                    {
-                        foreach (var sla in closeSla)
-                        {
-                            var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
-                            foreach (var ticketSlm in ticketSlms)
-                            {
-                                if (ticketSlm.SLAStatus != SLAStatus.Deattached)
-                                    ticketSlm.SLAStatus = SLAStatus.Meet;
-                                ticketSlm.ModifiedDate = DateTime.Now;
-                            }
-                        }
-                    }
-
                     foreach (var slm in newSla)
                     {
-                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
-        slm.TargetDate);
+                        ticket.SLmMeasurements.Add(slm);
                     }
                 }
+
+                if (closeSla != null)
+                {
+                    foreach (var sla in closeSla)
+                    {
+                        var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
+                        foreach (var ticketSlm in ticketSlms)
+                        {
+                            if (ticketSlm.SLAStatus != SLAStatus.Deattached)
+                                ticketSlm.SLAStatus = SLAStatus.Meet;
+                            ticketSlm.ModifiedDate = DateTime.Now;
+                        }
+                    }
+                }
+
+                foreach (var slm in newSla)
+                {
+                    var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
+    slm.TargetDate);
+                }
+                //}
+
+                ticket.TicketHistories.Add(new TicketHistory
+                {
+                    OldStatus = ticket.TicketStatus,
+                    ModifiedDate = DateTime.Now,
+                    NewStatus = model.Status
+                });
+
                 ticket.TicketStatus = model.Status;
-                ticket.ResolveText = model.ResolveText;
+                if (model.Status == Status.Resolved)
+                    ticket.ResolveText = model.ResolveText;
+
+                Update(ticket);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                var userIds = _userRepository.Find(e => e.UserTeams.Any(t => t.Team.Name == ticket.TeamName)).Select(e => e.Id.ToString());
+
+                SendNotification(ticket.Id, NotificationType.NewTicket, loggedUserId, token, "UpdateTicketStatus", userIds.ToList());
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
+            }
+        }
+
+        public RepositoryOutput EsclateTicket(EsclateTicketViewModel model, string loggedUserId, string token)
+        {
+            try
+            {
+                var ticket = Find(e => e.Id == model.TicketId, null, "SLmMeasurements").FirstOrDefault();
+                if (ticket == null)
+                    return RepositoryOutput.CreateNotFoundResponse();
+
+                var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, Status.Esclated, out List<SLA> closeSla);
+                if (newSla != null)
+                {
+                    foreach (var slm in newSla)
+                    {
+                        ticket.SLmMeasurements.Add(slm);
+                    }
+                }
+
+                if (closeSla != null)
+                {
+                    foreach (var sla in closeSla)
+                    {
+                        var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
+                        foreach (var ticketSlm in ticketSlms)
+                        {
+                            if (ticketSlm.SLAStatus != SLAStatus.Deattached)
+                                ticketSlm.SLAStatus = SLAStatus.Meet;
+                            ticketSlm.ModifiedDate = DateTime.Now;
+                        }
+                    }
+                }
+
+                foreach (var slm in newSla)
+                {
+                    var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
+    slm.TargetDate);
+                }
+
+                ticket.TicketHistories.Add(new TicketHistory
+                {
+                    OldStatus = ticket.TicketStatus,
+                    ModifiedDate = DateTime.Now,
+                    NewStatus = Status.Esclated
+                });
+
+                ticket.TicketStatus = Status.Esclated;
+                ticket.EsclationReason = model.EsclationReason;
 
                 Update(ticket);
                 if (Save() < 1)
@@ -349,6 +429,13 @@ slm.TargetDate);
 
                     if (ticket == null)
                         return RepositoryOutput.CreateNotFoundResponse();
+
+                    ticket.TicketHistories.Add(new TicketHistory
+                    {
+                        FromTeam = ticket.AssignedUser,
+                        ModifiedDate = DateTime.Now,
+                        ToTeam = model.UserName
+                    });
 
                     ticket.AssignedUser = model.UserName;
                     ticket.TicketStatus = Status.Assigned;
@@ -382,6 +469,12 @@ slm.TargetDate);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
 
+                ticket.TicketHistories.Add(new TicketHistory
+                {
+                    FromTeam = ticket.AssignedUser,
+                    ModifiedDate = DateTime.Now,
+                    ToTeam = model.UserName
+                });
                 ticket.AssignedUser = model.UserName;
                 ticket.TicketStatus = Status.Assigned;
                 Update(ticket);
@@ -532,6 +625,7 @@ slm.TargetDate);
                 result.PageData.Add(new TicketPageData
                 {
                     ID = item.Id,
+                    CanEsclate = true,
                     CanAssign = true,
                     CanView = true,
                     CanDelete = true,
@@ -540,7 +634,7 @@ slm.TargetDate);
                     Status = item.TicketStatus,
                     TicketTopic = item.TicketName,
                     TicketNumber = item.TicketNumber,
-                    TeamName=item.TeamName, 
+                    TeamName = item.TeamName,
                     RequestType = new RequestTypeModel
                     {
                         Id = item.RequestType.Id,
@@ -614,17 +708,17 @@ slm.TargetDate);
                     }
                     break;
                 default:
-                    switch (model.SortDirection)
-                    {
-                        case SortDirection.Asc:
-                            query = query.OrderBy(e => e.SubmitDate);
-                            break;
-                        case SortDirection.Des:
-                            query = query.OrderByDescending(e => e.SubmitDate);
-                            break;
-                        default:
-                            break;
-                    }
+                    //switch (model.SortDirection)
+                    //{
+                    //    case SortDirection.Asc:
+                    //        query = query.OrderBy(e => e.SubmitDate);
+                    //        break;
+                    //case SortDirection.Des:
+                    query = query.OrderByDescending(e => e.SubmitDate);
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
                     break;
             }
             return query;

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Halwani.Utilites.Email
 {
-    public class EmailService: IEmailService
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
         public EmailService(IConfiguration configuration)

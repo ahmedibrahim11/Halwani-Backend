@@ -112,6 +112,7 @@ namespace Halwani
 
             services.AddHttpContextAccessor();
          
+            services.AddScoped<IUserRequestRepository, UserRequestRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ISLARepository, SLARepository>();
             services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();

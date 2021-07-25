@@ -4,6 +4,7 @@
     {
         ItManager = 0,
         ItPersonal = 1,
-        User = 2
+        User = 2,
+        SuperAdmin = 3
     }
 }
