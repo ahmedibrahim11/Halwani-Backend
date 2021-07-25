@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Halwani.Core.ViewModels.RequestTypeModels
 {
-   public class AskForSupportViewModel
+   public class UserRequestViewModel
     {
         public string Text { get; set;}
     }
