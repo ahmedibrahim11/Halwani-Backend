@@ -2,6 +2,7 @@ using Halwani.Core.ModelRepositories;
 using Halwani.Core.ModelRepositories.Interfaces;
 using Halwani.Data;
 using Halwani.Hubs;
+using Halwani.Utilites.Email;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -112,6 +113,7 @@ namespace Halwani
 
             services.AddHttpContextAccessor();
          
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserRequestRepository, UserRequestRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ISLARepository, SLARepository>();

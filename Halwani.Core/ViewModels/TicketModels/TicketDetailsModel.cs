@@ -1,4 +1,5 @@
 ﻿using Halwani.Data.Entities.Incident;
+using Halwani.Data.Entities.SLA;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,6 +34,13 @@ namespace Halwani.Core.ViewModels.TicketModels
         public DateTime? LastModifiedDate { get; set; }
         public string ResolutionSLA { get; set; }
         public string InterventionSLA { get; set; }
+        public List<TicketSLAModel> TicketSlms { get; set; }
+    }
+    public class TicketSLAModel
+    {
+        public DateTime? CloseDate { get; set; }
+        public DateTime TargetDate { get; set; }
+        public SLAType SLAType { get; set; }
     }
 
 }
