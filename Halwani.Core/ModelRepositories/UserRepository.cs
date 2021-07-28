@@ -70,13 +70,10 @@ namespace Halwani.Core.ModelRepositories
                     //create the object for workbook part  
                     WorkbookPart workbookPart = doc.WorkbookPart;
                     Sheets thesheetcollection = workbookPart.Workbook.GetFirstChild<Sheets>();
-                    StringBuilder excelResult = new StringBuilder();
 
                     //using for each loop to get the sheet from the sheetcollection  
                     foreach (Sheet thesheet in thesheetcollection)
                     {
-                        excelResult.AppendLine("Excel Sheet Name : " + thesheet.Name);
-                        excelResult.AppendLine("----------------------------------------------- ");
                         //statement to get the worksheet object by using the sheet id  
                         Worksheet theWorksheet = ((WorksheetPart)workbookPart.GetPartById(thesheet.Id)).Worksheet;
 
