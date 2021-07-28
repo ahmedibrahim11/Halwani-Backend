@@ -26,6 +26,16 @@ namespace Halwani.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [Route("ReadUsersExcel")]
+        public ActionResult ReadUsersExcel()
+        {
+            var result = _userRepositry.ReadUsersExcel(Request.Form.Files[0]);
+            if (result == null)
+                return Problem();
+            return Ok(result);
+        }
+        
 
         [HttpGet]
         [Route("getItPersonal/{teamName}")]

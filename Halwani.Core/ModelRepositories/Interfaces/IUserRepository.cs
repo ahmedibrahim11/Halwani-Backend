@@ -2,6 +2,7 @@
 using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.UserModels;
 using Halwani.Data.Entities.User;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -13,5 +14,6 @@ namespace Halwani.Core.ModelRepositories.Interfaces
 
         IEnumerable<UserLookupViewModel> ListItPersonal(string teamName);
 
+        RepositoryOutput ReadUsersExcel(IFormFile attachement);
     }
 }

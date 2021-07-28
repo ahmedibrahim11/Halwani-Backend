@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halwani.Data", "Halwani.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halwani.Utilites", "Halwani.Utilites\Halwani.Utilites.csproj", "{256DF93E-10C9-49FB-B81F-198AD37F70DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Halwani.Core", "Halwani.Core\Halwani.Core.csproj", "{65F6EF26-E709-4187-B68A-B1FE8FE6CB16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halwani.Core", "Halwani.Core\Halwani.Core.csproj", "{65F6EF26-E709-4187-B68A-B1FE8FE6CB16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Halwani.CoreTests", "Halwani.CoreTests\Halwani.CoreTests.csproj", "{64B373E6-053D-4266-AECD-61A4332F8EEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{65F6EF26-E709-4187-B68A-B1FE8FE6CB16}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65F6EF26-E709-4187-B68A-B1FE8FE6CB16}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65F6EF26-E709-4187-B68A-B1FE8FE6CB16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64B373E6-053D-4266-AECD-61A4332F8EEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64B373E6-053D-4266-AECD-61A4332F8EEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64B373E6-053D-4266-AECD-61A4332F8EEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64B373E6-053D-4266-AECD-61A4332F8EEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
