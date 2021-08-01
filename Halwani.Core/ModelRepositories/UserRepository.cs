@@ -87,7 +87,7 @@ namespace Halwani.Core.ModelRepositories
                                 firstRow = false;
                                 continue;
                             }
-                            var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out Priority priority);
+                            var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out bool priority);
                             if (result == true)
                             {
                                 var checkExistance = Find(e => e.UserName == userNameText || e.Email == emailText).FirstOrDefault();
@@ -99,7 +99,7 @@ namespace Halwani.Core.ModelRepositories
                                         UserName = userNameText,
                                         UserStatus = UserStatusEnum.Active,
                                         RoleId = (int)securityGroupText,
-                                        Priority = priority,
+                                        SetTicketHigh = priority,
                                         UserTeams = teamIdsText.Select(e => new Data.Entities.Team.UserTeams
                                         {
                                             TeamId = e
@@ -119,14 +119,14 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        private bool ExtractDataFromRow(WorkbookPart workbookPart, Row thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out Priority priority)
+        private bool ExtractDataFromRow(WorkbookPart workbookPart, Row thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out bool priority)
         {
             nameText = "";
             emailText = "";
             userNameText = "";
             teamIdsText = new List<int>();
             securityGroupText = RoleEnum.User;
-            priority = Priority.Low;
+            priority = false;
             var name = thecurrentrow.ChildElements.ElementAt(0);
             int id;
             if (Int32.TryParse(name.InnerText, out id))
@@ -190,16 +190,13 @@ namespace Halwani.Core.ModelRepositories
                 switch (item.Text.InnerText.ToString())
                 {
                     case "0":
-                        priority = Priority.Low;
+                        priority = false;
                         break;
                     case "1":
-                        priority = Priority.Medium;
-                        break;
-                    case "2":
-                        priority = Priority.High;
+                        priority = true;
                         break;
                     default:
-                        priority = Priority.Low;
+                        priority = false;
                         break;
                 }
             }
