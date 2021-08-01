@@ -5,17 +5,18 @@ using System.Text;
 
 namespace Halwani.Core.ViewModels.TicketModels
 {
-   public class CreateTicketViewModel
+    public class CreateTicketViewModel
     {
-        
+
         public string Summary { get; set; }
         public string SubmitterTeam { get; set; }
         public string SubmitterEmail { get; set; }
+        public string Reporter { get; set; }
         public string SubmitterName { get; set; }
         public string TeamName { get; set; }
-        public string  Location { get; set; }
+        public string Location { get; set; }
         public Priority Priority { get; set; }
-        public  Source Source { get; set; }
+        public Source Source { get; set; }
         public string ReportedSource { get; set; }
         public int RequestTypeId { get; set; }
         public TicketSeverity TicketSeverity { get; set; }
