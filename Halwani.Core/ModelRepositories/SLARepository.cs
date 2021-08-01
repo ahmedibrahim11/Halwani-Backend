@@ -37,8 +37,8 @@ namespace Halwani.Core.ModelRepositories
             try
             {
                 var productCategory = _categoryRepository.Find(e => e.Name == model.ProductCategoryName2).FirstOrDefault();
-                if (productCategory == null)
-                    return null;
+                //if (productCategory == null)
+                //    return null;
 
                 var requestType = _requestTypeRepository.GetById(model.RequestTypeId);
                 if (requestType == null)
@@ -49,7 +49,7 @@ namespace Halwani.Core.ModelRepositories
                     return null;
 
                 var totalWorkingHours = int.Parse(sla.WorkingHours.Split(",")[1]) - int.Parse(sla.WorkingHours.Split(",")[0]);
-                var workDuration = productCategory.Goal.HasValue ? sla.SLADuration + (double)productCategory.Goal : sla.SLADuration;
+                var workDuration = productCategory != null && productCategory.Goal.HasValue ? sla.SLADuration + (double)productCategory.Goal : sla.SLADuration;
                 double totalHours = 0;
                 bool firstIteration = true;
 
