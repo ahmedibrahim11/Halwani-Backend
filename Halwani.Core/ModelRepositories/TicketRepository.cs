@@ -104,16 +104,17 @@ namespace Halwani.Core.ModelRepositories
             try
             {
                 Random rnd = new Random();
+                var userData = new UserRepository().GetById(loggedUserId);
                 var ticket = new Ticket()
                 {
                     Description = model.Description,
                     TicketStatus = model.TicketStatus,
                     SubmitterTeam = model.SubmitterTeam,
-                    SubmitterEmail = model.SubmitterEmail,
-                    ReportedSource = model.SubmitterEmail,
+                    SubmitterEmail = userData.Email,
+                    ReportedSource = model.ReportedSource,
                     TeamName = model.TeamName,
                     Location = model.Location,
-                    SubmitterName = model.SubmitterName,
+                    SubmitterName = userData.Name,
                     TicketName = model.Summary,
                     SubmitDate = DateTime.Now,
                     RequestTypeId = model.RequestTypeId,
