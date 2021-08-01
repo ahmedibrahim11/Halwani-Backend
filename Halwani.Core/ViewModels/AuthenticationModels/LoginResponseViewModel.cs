@@ -9,6 +9,7 @@ namespace Halwani.Core.ViewModels.Authentication
     public class LoginResponseViewModel
     {
         public string Token { get; set; }
+        public bool SetTicketHigh { get; set; }
         public DateTime Expiration { get; set; }
         public RepositoryOutput Result { set; get; }
         public UserProfileModel UserProfile { set; get; }

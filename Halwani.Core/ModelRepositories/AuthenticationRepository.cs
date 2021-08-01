@@ -45,6 +45,7 @@ namespace Halwani.Core.ModelRepositories
                     return new LoginResponseViewModel
                     {
                         Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        SetTicketHigh = user.SetTicketHigh,
                         Expiration = token.ValidTo,
                         Permissions = permissions,
                         UserProfile = new UserProfileModel
