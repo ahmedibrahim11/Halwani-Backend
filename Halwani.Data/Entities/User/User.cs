@@ -1,4 +1,5 @@
-﻿using Halwani.Data.Entities.Team;
+﻿using Halwani.Data.Entities.Incident;
+using Halwani.Data.Entities.Team;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Halwani.Data.Entities.User
         public string Email { get; set; }
         public UserStatusEnum UserStatus { get; set; }
         public long RoleId { get; set; }
+        public Priority Priority { get; set; }
         public virtual Role Role { get; set; }
         public virtual ICollection<UserTeams> UserTeams { get; set; }
     }

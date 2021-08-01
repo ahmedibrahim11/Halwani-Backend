@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Text;
+using Halwani.Data.Entities.Incident;
 
 namespace Halwani.Core.ModelRepositories
 {
@@ -86,7 +87,7 @@ namespace Halwani.Core.ModelRepositories
                                 firstRow = false;
                                 continue;
                             }
-                            var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out string teamIdsText, out RoleEnum securityGroupText);
+                            var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out Priority priority);
                             if (result == true)
                             {
                                 var checkExistance = Find(e => e.UserName == userNameText || e.Email == emailText).FirstOrDefault();
@@ -98,9 +99,10 @@ namespace Halwani.Core.ModelRepositories
                                         UserName = userNameText,
                                         UserStatus = UserStatusEnum.Active,
                                         RoleId = (int)securityGroupText,
-                                        UserTeams = teamIdsText.Split(",").Select(e => new Data.Entities.Team.UserTeams
+                                        Priority = priority,
+                                        UserTeams = teamIdsText.Select(e => new Data.Entities.Team.UserTeams
                                         {
-                                            TeamId = int.Parse(e)
+                                            TeamId = e
                                         }).ToList()
                                     });
                             }
@@ -117,13 +119,14 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        private bool ExtractDataFromRow(WorkbookPart workbookPart, Row thecurrentrow, out string nameText, out string emailText, out string userNameText, out string teamIdsText, out RoleEnum securityGroupText)
+        private bool ExtractDataFromRow(WorkbookPart workbookPart, Row thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out Priority priority)
         {
             nameText = "";
             emailText = "";
             userNameText = "";
-            teamIdsText = "";
+            teamIdsText = new List<int>();
             securityGroupText = RoleEnum.User;
+            priority = Priority.Low;
             var name = thecurrentrow.ChildElements.ElementAt(0);
             int id;
             if (Int32.TryParse(name.InnerText, out id))
@@ -153,15 +156,18 @@ namespace Halwani.Core.ModelRepositories
             if (Int32.TryParse(teamIds.InnerText, out id))
             {
                 SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
-                teamIdsText = item.Text.InnerText.ToString().Trim();
-                if (!string.IsNullOrEmpty(teamIdsText))
+                var teamText = item.Text.InnerText.ToString().Trim();
+                if (!string.IsNullOrEmpty(teamText))
                 {
-                    foreach (var team in teamIdsText.Split(","))
+                    foreach (var team in teamText.Split(","))
                     {
                         if (!int.TryParse(team, out int teamId))
                         {
-                            teamIdsText = "";
                             break;
+                        }
+                        else
+                        {
+                            teamIdsText.Add(int.Parse(team));
                         }
                     }
                 }
@@ -176,6 +182,26 @@ namespace Halwani.Core.ModelRepositories
                     securityGroupText = RoleEnum.ItPersonal;
                 if (item.Text.InnerText.ToString().Contains("user"))
                     securityGroupText = RoleEnum.User;
+            }
+            var priorityCell = thecurrentrow.ChildElements.ElementAt(5);
+            if (int.TryParse(priorityCell.InnerText, out id))
+            {
+                SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+                switch (item.Text.InnerText.ToString())
+                {
+                    case "0":
+                        priority = Priority.Low;
+                        break;
+                    case "1":
+                        priority = Priority.Medium;
+                        break;
+                    case "2":
+                        priority = Priority.High;
+                        break;
+                    default:
+                        priority = Priority.Low;
+                        break;
+                }
             }
             return true;
         }
