@@ -76,5 +76,16 @@ namespace Halwani.Controllers
 
             return Ok(result);
         }
+
+
+        [HttpGet]
+        [Route("UpdateVisiblity")]
+        public ActionResult UpdateVisibility(int id, bool isVisible)
+        {
+            var result = _categoryRepositry.UpdateVisiblity(id, isVisible);
+            if (!result.Success)
+                return Problem("");
+            return Ok(result);
+        }
     }
 }

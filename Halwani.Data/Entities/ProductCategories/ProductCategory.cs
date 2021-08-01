@@ -13,6 +13,8 @@ namespace Halwani.Data.Entities.ProductCategories
         public string Name { get; set; }
         public long? ParentCategoryId { get; set; }
         public decimal? Goal { get; set; }
+        public bool IsVisible { get; set; }
+
         public virtual ProductCategory Parent { get; set; }
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
     }

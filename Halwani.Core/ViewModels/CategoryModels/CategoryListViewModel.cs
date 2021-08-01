@@ -7,6 +7,7 @@ namespace Halwani.Core.ViewModels.CategoryModels
 {
     public class CategoryListViewModel : LookupViewModel
     {
+        public bool IsVisible { get; set; }
         public IEnumerable<LookupViewModel> Children { get; set; }
     }
 }
