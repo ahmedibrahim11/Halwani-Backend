@@ -128,7 +128,7 @@ namespace Halwani.Core.ModelRepositories
                 response = new RepositoryOutput();
                 CategoryResultViewModel result = new CategoryResultViewModel();
 
-                var qurey = Find(r=>r.ProductCategories.Count>0, null, "");
+                var qurey = Find(/*r=>r.ProductCategories.Count>0, null, ""*/);
 
                 qurey = FilterList(model, qurey);
                 qurey = SortList(model, qurey);
