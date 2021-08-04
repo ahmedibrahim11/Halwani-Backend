@@ -203,7 +203,7 @@ slm.TargetDate);
                 List<string> result = StoreFiles(attachments, old.ToList(), saveFilePath, ticket);
 
                 ticket.Attachement = string.Join(",", result);
-
+                ticket.TicketName = model.Summary;
                 //ticket.Attachement = model.Attachement + (result.Any() ? "," + string.Join(",", result) : "");
                 Update(ticket);
                 if (Save() < 1)
@@ -537,7 +537,7 @@ slm.TargetDate);
                         Name = ticket.RequestType.Name,
                         TicketType = ticket.RequestType.TicketType
                     },
-                    TicketSlms = ticket.SLmMeasurements.Select(e=> new TicketSLAModel
+                    TicketSlms = ticket.SLmMeasurements.Select(e => new TicketSLAModel
                     {
                         TargetDate = e.TargetDate,
                         CloseDate = e.ModifiedDate,
