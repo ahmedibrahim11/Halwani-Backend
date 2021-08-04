@@ -123,8 +123,8 @@ namespace Halwani.Core.ModelRepositories
             try
             {
                 var productCategory = _categoryRepository.Find(e => e.Name == ticket.ProductCategoryName2).FirstOrDefault();
-                if (productCategory == null)
-                    return null;
+                //if (productCategory == null)
+                //    return null;
 
                 var requestType = _requestTypeRepository.GetById(ticket.RequestTypeId);
                 if (requestType == null)
@@ -137,7 +137,7 @@ namespace Halwani.Core.ModelRepositories
                 closeSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.CloseStatus.Contains(status.ToString())).ToList();
 
                 var totalWorkingHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - int.Parse(openSla.WorkingHours.Split(",")[0]);
-                var workDuration = productCategory.Goal.HasValue ? openSla.SLADuration + (double)productCategory.Goal : openSla.SLADuration;
+                var workDuration = productCategory != null && productCategory.Goal.HasValue ? openSla.SLADuration + (double)productCategory.Goal : openSla.SLADuration;
                 double totalHours = 0;
 
                 while (true)
