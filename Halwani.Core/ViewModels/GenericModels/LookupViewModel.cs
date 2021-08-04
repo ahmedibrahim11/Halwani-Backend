@@ -9,5 +9,6 @@ namespace Halwani.Core.ViewModels.GenericModels
         public long Id { get; set; }
         public string Text { get; set; }
         public decimal? Goal { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

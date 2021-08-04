@@ -15,5 +15,7 @@ namespace Halwani.Core.ModelRepositories.Interfaces
         RepositoryOutput Edit(CreateProductCategroyModel model);
         CreateProductCategroyModel GetForEdit(long ID);
         CategoryResultViewModel List(CategoryPageInputViewModel model, out RepositoryOutput response);
+        RepositoryOutput UpdateVisiblity(int id, bool isVisible);
+
     }
 }

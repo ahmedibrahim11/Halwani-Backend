@@ -21,6 +21,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     Id = e.Id,
                     Text = e.Name,
+                    IsVisible=e.IsVisible,
                     Children = e.ProductCategories.Select(c => new LookupViewModel
                     {
                         Id = c.Id,
@@ -173,8 +174,28 @@ namespace Halwani.Core.ModelRepositories
                         Text = e.Name,
                         Goal=e.Goal
                        
-                    })
+                    }),
+                    IsVisible=item.IsVisible
                 });
+            }
+        }
+
+        public RepositoryOutput UpdateVisiblity(int id, bool isVisible)
+        {
+            try
+            {
+                var RT = Find(e => e.Id == id).FirstOrDefault();
+                RT.IsVisible = isVisible;
+                Update(RT);
+                if (Save() < 1)
+                    return RepositoryOutput.CreateErrorResponse("");
+
+                return RepositoryOutput.CreateSuccessResponse();
+            }
+            catch (Exception ex)
+            {
+                RepositoryHelper.LogException(ex);
+                return RepositoryOutput.CreateErrorResponse(ex.Message);
             }
         }
 
