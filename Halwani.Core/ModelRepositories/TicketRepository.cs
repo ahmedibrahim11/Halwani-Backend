@@ -178,7 +178,7 @@ slm.TargetDate);
         {
             try
             {
-                var ticket = GetById(model.Id);
+                var ticket = Find(e => e.Id == model.Id).FirstOrDefault();
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
                 ticket.Description = model.Description;
@@ -437,7 +437,34 @@ slm.TargetDate);
                         ModifiedDate = DateTime.Now,
                         ToTeam = model.UserName
                     });
+                    var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, Status.Assigned, out List<SLA> closeSla);
+                    if (newSla != null)
+                    {
+                        foreach (var slm in newSla)
+                        {
+                            ticket.SLmMeasurements.Add(slm);
+                        }
+                    }
 
+                    if (closeSla != null)
+                    {
+                        foreach (var sla in closeSla)
+                        {
+                            var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
+                            foreach (var ticketSlm in ticketSlms)
+                            {
+                                if (ticketSlm.SLAStatus != SLAStatus.Deattached)
+                                    ticketSlm.SLAStatus = SLAStatus.Meet;
+                                ticketSlm.ModifiedDate = DateTime.Now;
+                            }
+                        }
+                    }
+
+                    foreach (var slm in newSla)
+                    {
+                        var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
+        slm.TargetDate);
+                    }
                     ticket.AssignedUser = model.UserName;
                     ticket.TicketStatus = Status.Assigned;
                     Update(ticket);
@@ -465,8 +492,7 @@ slm.TargetDate);
         {
             try
             {
-
-                var ticket = GetById(model.TicketId);
+                var ticket = Find(e=> e.Id == model.TicketId).FirstOrDefault();
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
 
@@ -476,6 +502,34 @@ slm.TargetDate);
                     ModifiedDate = DateTime.Now,
                     ToTeam = model.UserName
                 });
+                var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, Status.Assigned, out List<SLA> closeSla);
+                if (newSla != null)
+                {
+                    foreach (var slm in newSla)
+                    {
+                        ticket.SLmMeasurements.Add(slm);
+                    }
+                }
+
+                if (closeSla != null)
+                {
+                    foreach (var sla in closeSla)
+                    {
+                        var ticketSlms = ticket.SLmMeasurements.Where(e => e.SLAId == sla.Id);
+                        foreach (var ticketSlm in ticketSlms)
+                        {
+                            if (ticketSlm.SLAStatus != SLAStatus.Deattached)
+                                ticketSlm.SLAStatus = SLAStatus.Meet;
+                            ticketSlm.ModifiedDate = DateTime.Now;
+                        }
+                    }
+                }
+
+                foreach (var slm in newSla)
+                {
+                    var jobId = BackgroundJob.Schedule(() => IsMet(ticket.Id, slm.Id, token),
+    slm.TargetDate);
+                }
                 ticket.AssignedUser = model.UserName;
                 ticket.TicketStatus = Status.Assigned;
                 Update(ticket);
