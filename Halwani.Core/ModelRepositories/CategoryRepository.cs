@@ -174,7 +174,8 @@ namespace Halwani.Core.ModelRepositories
                         Text = e.Name,
                         Goal=e.Goal
                        
-                    })
+                    }),
+                    IsVisible=item.IsVisible
                 });
             }
         }
