@@ -104,7 +104,7 @@ namespace Halwani.Core.ModelRepositories
             try
             {
                 Random rnd = new Random();
-                var userData = new UserRepository().GetById(loggedUserId);
+                var userData = new UserRepository().GetById(long.Parse(loggedUserId));
                 var ticket = new Ticket()
                 {
                     Description = model.Description,
