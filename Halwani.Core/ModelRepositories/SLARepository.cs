@@ -71,7 +71,7 @@ namespace Halwani.Core.ModelRepositories
                             }
                             else
                             {
-                                totalHours += 24 - DateTime.Now.Hour + workDuration;
+                                totalHours += 24 - DateTime.Now.Hour + workDuration + int.Parse(sla.WorkingHours.Split(",")[0]);
                                 workDuration = 0;
                             }
                         }
@@ -123,40 +123,67 @@ namespace Halwani.Core.ModelRepositories
             try
             {
                 var productCategory = _categoryRepository.Find(e => e.Name == ticket.ProductCategoryName2).FirstOrDefault();
-                //if (productCategory == null)
-                //    return null;
 
                 var requestType = _requestTypeRepository.GetById(ticket.RequestTypeId);
                 if (requestType == null)
                     return null;
 
-                var openSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.OpenStatus.Contains(status.ToString())).FirstOrDefault();
-                if (openSla == null)
-                    return null;
+                closeSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.CloseStatus.Contains(((int)status).ToString())).ToList();
 
-                closeSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.CloseStatus.Contains(status.ToString())).ToList();
+                var openSla = Find(e => e.Priority == ticket.Priority && e.RequestType == requestType.Name && e.OpenStatus.Contains(((int)status).ToString())).FirstOrDefault();
+                if (openSla == null)
+                    return new List<SLmMeasurement>();
 
                 var totalWorkingHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - int.Parse(openSla.WorkingHours.Split(",")[0]);
                 var workDuration = productCategory != null && productCategory.Goal.HasValue ? openSla.SLADuration + (double)productCategory.Goal : openSla.SLADuration;
                 double totalHours = 0;
+                bool firstIteration = true;
 
                 while (true)
                 {
-                    if (workDuration < totalWorkingHours && int.Parse(openSla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                    if (workDuration < totalWorkingHours)
                     {
-                        totalHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour; workDuration -= totalHours;
-
                         if (workDuration == 0)
                             break;
+
+                        if (firstIteration)
+                        {
+                            if (int.Parse(openSla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                            {
+                                totalHours = int.Parse(openSla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                                workDuration -= totalHours;
+                                if (workDuration > 0)
+                                    totalHours += int.Parse(openSla.WorkingHours.Split(",")[0]);
+                            }
+                            else
+                            {
+                                totalHours += 24 - DateTime.Now.Hour + workDuration + int.Parse(openSla.WorkingHours.Split(",")[0]);
+                                workDuration = 0;
+                            }
+                        }
+                        else
+                        {
+                            totalHours += workDuration;
+                            workDuration = 0;
+                        }
                     }
                     else
                     {
-                        if (int.Parse(openSla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                        if (firstIteration)
                         {
-                            workDuration -= int.Parse(openSla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                            if (int.Parse(openSla.WorkingHours.Split(",")[1]) > DateTime.Now.Hour)
+                            {
+                                workDuration -= int.Parse(openSla.WorkingHours.Split(",")[1]) - DateTime.Now.Hour;
+                            }
+                            totalHours += 24 - DateTime.Now.Hour + int.Parse(openSla.WorkingHours.Split(",")[0]);
                         }
-                        totalHours += 24 - DateTime.Now.Hour;
+                        else
+                        {
+                            workDuration -= totalWorkingHours;
+                            totalHours += 24;
+                        }
                     }
+                    firstIteration = false;
                 }
 
                 return new List<SLmMeasurement>
