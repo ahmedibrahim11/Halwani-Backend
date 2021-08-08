@@ -595,7 +595,8 @@ slm.TargetDate);
                     {
                         TargetDate = e.TargetDate,
                         CloseDate = e.ModifiedDate,
-                        SLAType = e.SLA.SLAType
+                        SLAType = e.SLA.SLAType,
+                        Status = e.SLAStatus
                     }).ToList(),
                     InterventionSLA = interventionTime.HasValue ? interventionTime.Value.TotalHours.ToString() : "",
                     ResolutionSLA = resolutionTime.HasValue ? resolutionTime.Value.TotalHours.ToString() : ""

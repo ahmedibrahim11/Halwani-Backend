@@ -41,6 +41,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         public DateTime? CloseDate { get; set; }
         public DateTime TargetDate { get; set; }
         public SLAType SLAType { get; set; }
+        public SLAStatus Status { get; set; }
     }
 
 }
