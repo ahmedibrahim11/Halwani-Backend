@@ -44,15 +44,12 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var teams = claimsIdentity.Claims.FirstOrDefault(e => e.Type == AdditionalClaims.Teams).Value;
-
-                return Find(s => s.UserTeams.Any(ut => teams.Contains(ut.Team.Name)) && s.RoleId == (int)RoleEnum.User).Select(e => new UserLookupViewModel
+                return Find(s=>s.RoleId== (int)RoleEnum.User).Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,
                     Email = e.Email,
                     UserName = e.UserName,
-                    Team = string.Join(",", e.UserTeams.Select(e => e.Team.Name))
                 });
             }
             catch (Exception ex)

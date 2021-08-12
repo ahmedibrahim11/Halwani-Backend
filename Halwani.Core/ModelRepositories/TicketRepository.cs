@@ -109,7 +109,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     Description = model.Description,
                     TicketStatus = model.TicketStatus,
-                    SubmitterTeam = model.SubmitterTeam,
+                    SubmitterTeam = "test",
                     SubmitterEmail = userData.Email,
                     ReportedSource = model.ReportedSource,
                     TeamName = model.TeamName,
@@ -197,8 +197,6 @@ slm.TargetDate);
                         ToTeam = model.TeamName
                     });
                 ticket.TeamName = model.TeamName;
-                ticket.SubmitterName = model.SubmitterName;
-                ticket.SubmitterEmail = model.SubmitterEmail;
                 var old = model.Attachement.Split(",");
                 List<string> result = StoreFiles(attachments, old.ToList(), saveFilePath, ticket);
 

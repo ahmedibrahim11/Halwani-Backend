@@ -21,7 +21,7 @@ namespace Halwani.Core.ModelRepositories
                 {
                     Id = e.Id,
                     Text = e.Name,
-                    IsVisible=e.IsVisible,
+                    IsVisible = e.IsVisible,
                     Children = e.ProductCategories.Select(c => new LookupViewModel
                     {
                         Id = c.Id,
@@ -70,7 +70,7 @@ namespace Halwani.Core.ModelRepositories
                     return RepositoryOutput.CreateNotFoundResponse();
 
                 old.Name = model.ParentCategory;
-                foreach (var item in model.SubCategory.Where(e => !e.SubCategoryId.HasValue||e.SubCategoryId==0))
+                foreach (var item in model.SubCategory.Where(e => !e.SubCategoryId.HasValue || e.SubCategoryId == 0))
                 {
                     old.ProductCategories.Add(new ProductCategory
                     {
@@ -86,7 +86,7 @@ namespace Halwani.Core.ModelRepositories
                         oldSub.Name = item.SubCategoryName;
                         oldSub.Goal = item.Goal;
                     }
-                   
+
                 }
                 foreach (var item in model.SubCategory.Where(e => e.SubCategoryId.HasValue && e.IsDeleted))
                 {
@@ -113,7 +113,7 @@ namespace Halwani.Core.ModelRepositories
             {
                 ParentCategoryId = category.Id,
                 ParentCategory = category.Name,
-                SubCategory = category.ProductCategories.Select(e=> new SubCateogryModel
+                SubCategory = category.ProductCategories.Select(e => new SubCateogryModel
                 {
                     Goal = e.Goal,
                     SubCategoryId = e.Id,
@@ -129,7 +129,7 @@ namespace Halwani.Core.ModelRepositories
                 response = new RepositoryOutput();
                 CategoryResultViewModel result = new CategoryResultViewModel();
 
-                var qurey = Find(/*r=>r.ProductCategories.Count>0, null, ""*/);
+                var qurey = Find(r => r.Parent == null, null, "");
 
                 qurey = FilterList(model, qurey);
                 qurey = SortList(model, qurey);
@@ -148,7 +148,8 @@ namespace Halwani.Core.ModelRepositories
         #region Private
 
         private IEnumerable<ProductCategory> FilterList(CategoryPageInputViewModel model, IEnumerable<ProductCategory> query)
-        {if (model.SearchText.Length != 0)
+        {
+            if (model.SearchText.Length != 0)
                 return query.Where(r => r.Name.Contains(model.SearchText[0]));
             return query;
         }
@@ -172,10 +173,10 @@ namespace Halwani.Core.ModelRepositories
                     {
                         Id = e.Id,
                         Text = e.Name,
-                        Goal=e.Goal
-                       
+                        Goal = e.Goal
+
                     }),
-                    IsVisible=item.IsVisible
+                    IsVisible = item.IsVisible
                 });
             }
         }
