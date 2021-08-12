@@ -84,7 +84,7 @@ namespace Halwani.Core.ModelRepositories
                                 firstRow = false;
                                 continue;
                             }
-                            var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out bool priority);
+                            var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupEnum, out bool priority, out bool isDeleted);
                             if (result == true)
                             {
                                 var checkExistance = Find(e => e.UserName == userNameText || e.Email == emailText).FirstOrDefault();
@@ -95,13 +95,33 @@ namespace Halwani.Core.ModelRepositories
                                         Name = nameText,
                                         UserName = userNameText,
                                         UserStatus = UserStatusEnum.Active,
-                                        RoleId = (int)securityGroupText,
+                                        RoleId = (int)securityGroupEnum,
                                         SetTicketHigh = priority,
                                         UserTeams = teamIdsText.Select(e => new Data.Entities.Team.UserTeams
                                         {
                                             TeamId = e
                                         }).ToList()
                                     });
+                                else
+                                {
+                                    if (isDeleted)
+                                    {
+                                        Remove(checkExistance);
+                                    }
+                                    else
+                                    {
+                                        checkExistance.Email = emailText;
+                                        checkExistance.Name = nameText;
+                                        checkExistance.UserName = userNameText;
+                                        checkExistance.UserStatus = UserStatusEnum.Active;
+                                        checkExistance.RoleId = (int)securityGroupEnum;
+                                        checkExistance.SetTicketHigh = priority;
+                                        checkExistance.UserTeams = teamIdsText.Select(e => new Data.Entities.Team.UserTeams
+                                        {
+                                            TeamId = e
+                                        }).ToList();
+                                    }
+                                }
                             }
                         }
                     }
@@ -116,7 +136,7 @@ namespace Halwani.Core.ModelRepositories
             }
         }
 
-        private bool ExtractDataFromRow(WorkbookPart workbookPart, Row thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out bool priority)
+        private bool ExtractDataFromRow(WorkbookPart workbookPart, Row thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupText, out bool priority, out bool isDeleted)
         {
             nameText = "";
             emailText = "";
@@ -124,6 +144,7 @@ namespace Halwani.Core.ModelRepositories
             teamIdsText = new List<int>();
             securityGroupText = RoleEnum.User;
             priority = false;
+            isDeleted = false;
             var name = thecurrentrow.ChildElements.ElementAt(0);
             int id;
             if (Int32.TryParse(name.InnerText, out id))
@@ -194,6 +215,23 @@ namespace Halwani.Core.ModelRepositories
                         break;
                     default:
                         priority = false;
+                        break;
+                }
+            }
+            var deleteCell = thecurrentrow.ChildElements.ElementAt(6);
+            if (int.TryParse(deleteCell.InnerText, out id))
+            {
+                SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+                switch (item.Text.InnerText.ToString())
+                {
+                    case "0":
+                        isDeleted = false;
+                        break;
+                    case "1":
+                        isDeleted = true;
+                        break;
+                    default:
+                        isDeleted = false;
                         break;
                 }
             }
