@@ -191,7 +191,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var groupBy = Find(null, null, "DefaultTeam").GroupBy(e => e.TicketType);
+                var groupBy = Find(s=>s.IsVisible==true, null, "DefaultTeam").GroupBy(e => e.TicketType);
 
                 return groupBy.Select(e => new RequestTypeListViewModel
                 {
