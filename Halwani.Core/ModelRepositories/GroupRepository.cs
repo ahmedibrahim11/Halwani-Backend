@@ -22,7 +22,7 @@ namespace Halwani.Core.ModelRepositories
                 return Find(null, null, "RequestTypeGroups,RequestTypeGroups.RequestType,RequestTypeGroups.RequestType.DefaultTeam").Select(e => new GroupListViewModel
                 {
                     Id = e.Id,
-                    Text = e.Name,
+                    Text = e.Name, 
                     RequestTypes = e.RequestTypeGroups.Where(g => g.RequestType.IsVisible).Select(e => new RequestTypeViewModel
                     {
                         Id = e.RequestType.Id,
