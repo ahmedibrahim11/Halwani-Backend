@@ -30,7 +30,9 @@ namespace Halwani.Core.ModelRepositories
                         TicketType = e.RequestType.TicketType,
                         Icon = rootFile + "/" + e.RequestTypeId + "/" + e.RequestType.Icon,
                         Description = e.RequestType.Description,
-                        DefaultTeam = e.RequestType.TeamName
+                        DefaultTeam = e.RequestType.TeamName,
+                        Priority=e.RequestType.Priority,
+                        TicketSeverity=e.RequestType.Severity
                     })
                 });
             }
@@ -100,6 +102,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
+
                 var selected = Find(r => r.RequestTypeGroups.Any(l => l.RequestType.TicketType == (TicketType)ticketType), null, "").
                      Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
                 var unselected = Find(r => r.RequestTypeGroups.Count == 0, null, "").

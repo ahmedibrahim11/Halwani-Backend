@@ -18,6 +18,10 @@ namespace Halwani.Core.ViewModels.GroupModels
         public string Icon { get; set; }
         public string Description { get; set; }
         public string  DefaultTeam { get; set; }
+
+        //[JsonConverter(typeof(JsonStringEnumConverter))]
+        public Priority Priority { get; set; }
+        public TicketSeverity TicketSeverity { get; set; }
     }
     public class GroupList
     {
