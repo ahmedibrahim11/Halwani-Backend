@@ -17,7 +17,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                return Find(e => !e.ParentCategoryId.HasValue, null, "ProductCategories").Select(e => new CategoryListViewModel
+                return Find(e => !e.ParentCategoryId.HasValue && e.IsVisible==true, null, "ProductCategories").Select(e => new CategoryListViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,

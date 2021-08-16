@@ -19,18 +19,18 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                return Find(null,null, "RequestTypeGroups,RequestTypeGroups.RequestType,RequestTypeGroups.RequestType.DefaultTeam").Select(e => new GroupListViewModel
+                return Find(null, null, "RequestTypeGroups,RequestTypeGroups.RequestType,RequestTypeGroups.RequestType.DefaultTeam").Select(e => new GroupListViewModel
                 {
                     Id = e.Id,
-                    Text = e.Name,
-                    RequestTypes = e.RequestTypeGroups.Select(e=> new RequestTypeViewModel
+                    Text = e.Name, 
+                    RequestTypes = e.RequestTypeGroups.Where(g => g.RequestType.IsVisible).Select(e => new RequestTypeViewModel
                     {
                         Id = e.RequestType.Id,
                         Text = e.RequestType.Name,
                         TicketType = e.RequestType.TicketType,
                         Icon = rootFile + "/" + e.RequestTypeId + "/" + e.RequestType.Icon,
-                        Description=e.RequestType.Description,
-                        DefaultTeam=e.RequestType.TeamName
+                        Description = e.RequestType.Description,
+                        DefaultTeam = e.RequestType.TeamName
                     })
                 });
             }
@@ -64,7 +64,7 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-               var addedGroup= Add(new Group() { Name=model.Name});
+                var addedGroup = Add(new Group() { Name = model.Name });
 
                 if (Save() < 1)
                     return 0;
@@ -100,9 +100,9 @@ namespace Halwani.Core.ModelRepositories
         {
             try
             {
-                var selected= Find(r => r.RequestTypeGroups.Any(l=>l.RequestType.TicketType==(TicketType)ticketType), null, "").
-                     Select(r => new GroupList {ID=r.Id,Name=r.Name , Selected = false });
-                var unselected = Find(r => r.RequestTypeGroups.Count==0, null, "").
+                var selected = Find(r => r.RequestTypeGroups.Any(l => l.RequestType.TicketType == (TicketType)ticketType), null, "").
+                     Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
+                var unselected = Find(r => r.RequestTypeGroups.Count == 0, null, "").
                     Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
                 return selected.Concat(unselected);
 
@@ -113,11 +113,11 @@ namespace Halwani.Core.ModelRepositories
                 return null;
             }
         }
-        public IEnumerable<GroupList> listTicketTypeGroups(int ticketType,int RTID)
+        public IEnumerable<GroupList> listTicketTypeGroups(int ticketType, int RTID)
         {
             try
             {
-                var selected = Find(r => r.RequestTypeGroups.Any(r=>r.RequestTypeId==RTID), null, "").
+                var selected = Find(r => r.RequestTypeGroups.Any(r => r.RequestTypeId == RTID), null, "").
                      Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = true });
                 var unselected = Find(r => r.RequestTypeGroups.Count == 0, null, "").
                     Select(r => new GroupList { ID = r.Id, Name = r.Name, Selected = false });
