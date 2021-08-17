@@ -46,7 +46,7 @@ namespace Halwani
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200", "https://halwani-frontend.azurewebsites.net/", "https://halwani-frontend.azurewebsites.net/hubs", "http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","https://halwani-backend.azurewebsites.net/hubs", "*").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
+                    policy.WithOrigins("http://localhost:4200", "https://halwani-frontend.azurewebsites.net/", "https://halwani-frontend.azurewebsites.net/hubs", "http://abdullahalbluwi-001-site6.itempurl.com","http://abdullahalbluwi-001-site6.itempurl.com/", "https://localhost:44345/hubs","https://halwani-backend.azurewebsites.net/hubs", "https://halwani-frontend-live.azurewebsites.net/", "https://halwani-frontend-live.azurewebsites.net", "https://halwani-backend-live.azurewebsites.net/", "https://halwani-backend-live.azurewebsites.net", "https://halwani-backend-live.azurewebsites.net/hubs", " * ").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); ;
                 });
             });
 
