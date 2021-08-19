@@ -106,7 +106,7 @@ namespace Halwani.Core.ModelRepositories
                     {
                         SLAId = sla.Id,
                         ModifiedDate = null,
-                        TargetDate = DateTime.Now.AddHours(totalHours)
+                        TargetDate = DateTime.Now.AddHours(totalHours).AddHours(Strings.AddedHoursToDate)
                     }
                 };
             }
@@ -192,7 +192,7 @@ namespace Halwani.Core.ModelRepositories
                     {
                         SLAId = openSla.Id,
                         ModifiedDate = null,
-                        TargetDate = totalHours> totalWorkingHours ? DateTime.Now.AddHours(totalHours).AddMinutes(-DateTime.Now.Minute):DateTime.Now.AddHours(totalHours)
+                        TargetDate = totalHours> totalWorkingHours ? DateTime.Now.AddHours(totalHours).AddMinutes(-DateTime.Now.Minute).AddHours(Strings.AddedHoursToDate) : DateTime.Now.AddHours(totalHours).AddHours(Strings.AddedHoursToDate)
                     }
                 };
             }

@@ -113,7 +113,7 @@ namespace Halwani.Core.ModelRepositories
             token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddDays(1).AddHours(Strings.AddedHoursToDate),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );

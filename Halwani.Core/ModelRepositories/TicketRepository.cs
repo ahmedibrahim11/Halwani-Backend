@@ -116,7 +116,7 @@ namespace Halwani.Core.ModelRepositories
                     Location = model.Location,
                     SubmitterName = userData.Name,
                     TicketName = model.Summary,
-                    SubmitDate = DateTime.Now,
+                    SubmitDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                     RequestTypeId = model.RequestTypeId,
                     Source = model.Source,
                     Priority = model.Priority,
@@ -129,10 +129,10 @@ namespace Halwani.Core.ModelRepositories
                         {
                             OldStatus = null,
                             NewStatus = Status.Created,
-                            ModifiedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                         }
                     },
-                    LastModifiedDate = DateTime.Now,
+                    LastModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                     SLmMeasurements = _slaRepository.LoadTicketSlm(model),
                 };
                 Add(ticket);
@@ -182,7 +182,7 @@ slm.TargetDate);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
                 ticket.Description = model.Description;
-                ticket.LastModifiedDate = DateTime.Now;
+                ticket.LastModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate);
                 ticket.Location = model.Location;
                 ticket.Priority = model.Priority;
                 ticket.TicketSeverity = model.TicketSeverity;
@@ -193,7 +193,7 @@ slm.TargetDate);
                     ticket.TicketHistories.Add(new TicketHistory
                     {
                         FromTeam = ticket.TeamName,
-                        ModifiedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                         ToTeam = model.TeamName
                     });
                 ticket.TeamName = model.TeamName;
@@ -314,7 +314,7 @@ slm.TargetDate);
                         {
                             if (ticketSlm.SLAStatus != SLAStatus.Deattached)
                                 ticketSlm.SLAStatus = SLAStatus.Meet;
-                            ticketSlm.ModifiedDate = DateTime.Now;
+                            ticketSlm.ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate);
                         }
                     }
                 }
@@ -329,7 +329,7 @@ slm.TargetDate);
                 ticket.TicketHistories.Add(new TicketHistory
                 {
                     OldStatus = ticket.TicketStatus,
-                    ModifiedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                     NewStatus = model.Status
                 });
 
@@ -380,7 +380,7 @@ slm.TargetDate);
                         {
                             if (ticketSlm.SLAStatus != SLAStatus.Deattached)
                                 ticketSlm.SLAStatus = SLAStatus.Meet;
-                            ticketSlm.ModifiedDate = DateTime.Now;
+                            ticketSlm.ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate);
                         }
                     }
                 }
@@ -394,7 +394,7 @@ slm.TargetDate);
                 ticket.TicketHistories.Add(new TicketHistory
                 {
                     OldStatus = ticket.TicketStatus,
-                    ModifiedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                     NewStatus = Status.Esclated
                 });
 
@@ -432,7 +432,7 @@ slm.TargetDate);
                     ticket.TicketHistories.Add(new TicketHistory
                     {
                         FromTeam = ticket.AssignedUser,
-                        ModifiedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                         ToTeam = model.UserName
                     });
                     var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, Status.Assigned, out List<SLA> closeSla);
@@ -453,7 +453,7 @@ slm.TargetDate);
                             {
                                 if (ticketSlm.SLAStatus != SLAStatus.Deattached)
                                     ticketSlm.SLAStatus = SLAStatus.Meet;
-                                ticketSlm.ModifiedDate = DateTime.Now;
+                                ticketSlm.ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate);
                             }
                         }
                     }
@@ -497,7 +497,7 @@ slm.TargetDate);
                 ticket.TicketHistories.Add(new TicketHistory
                 {
                     FromTeam = ticket.AssignedUser,
-                    ModifiedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                     ToTeam = model.UserName
                 });
                 var newSla = _slaRepository.LoadTicketSlmPerStatus(ticket, Status.Assigned, out List<SLA> closeSla);
@@ -518,7 +518,7 @@ slm.TargetDate);
                         {
                             if (ticketSlm.SLAStatus != SLAStatus.Deattached)
                                 ticketSlm.SLAStatus = SLAStatus.Meet;
-                            ticketSlm.ModifiedDate = DateTime.Now;
+                            ticketSlm.ModifiedDate = DateTime.Now.AddHours(Strings.AddedHoursToDate);
                         }
                     }
                 }
@@ -556,8 +556,8 @@ slm.TargetDate);
                     return null;
                 var attachementsList = ticket.Attachement.Split(",", StringSplitOptions.None);
                 var slm = ticket.SLmMeasurements;
-                var interventionTime = slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention)?.TargetDate - DateTime.Now;
-                var resolutionTime = slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution)?.TargetDate - DateTime.Now;
+                var interventionTime = slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Intervention)?.TargetDate - DateTime.Now.AddHours(Strings.AddedHoursToDate);
+                var resolutionTime = slm.FirstOrDefault(e => e.SLA.SLAType == Data.Entities.SLA.SLAType.Resolution)?.TargetDate - DateTime.Now.AddHours(Strings.AddedHoursToDate);
                 return new TicketDetailsModel
                 {
                     RequestTypeId = ticket.RequestTypeId,
