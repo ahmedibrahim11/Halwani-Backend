@@ -76,7 +76,7 @@ namespace Halwani.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=tcp:ticketsyslive.database.windows.net,1433;Initial Catalog=TSLive;Persist Security Info=False;User ID=TS;Password=7alwani@IT;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+                optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=tcp:ticketsys.database.windows.net,1433;Initial Catalog=Halwani;Persist Security Info=False;User ID=ikhaled;Password=7alwani@IT;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
                 //optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Server=.;Database=Halwani;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
