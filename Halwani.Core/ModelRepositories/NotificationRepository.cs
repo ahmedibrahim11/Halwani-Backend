@@ -32,7 +32,7 @@ namespace Halwani.Core.ModelRepositories
             {
                 var notificationObjectViewModel = new NotificationObjectViewModel
                 {
-                    Date = DateTime.Now,
+                    Date = DateTime.Now.AddHours(Strings.AddedHoursToDate),
                     IsSeen = false,
                     MadeBy = loggedUserId,
                     NotificationId = Guid.NewGuid(),
@@ -116,7 +116,7 @@ namespace Halwani.Core.ModelRepositories
                     UserId = userId,
                     NotificationBody = JsonConvert.SerializeObject(new List<NotificationObjectViewModel> { notificationListViewModel }),
                     CreatedBy = loggedUserId,
-                    CreationDate = DateTime.Now
+                    CreationDate = DateTime.Now.AddHours(Strings.AddedHoursToDate)
                 });
             }
             else
