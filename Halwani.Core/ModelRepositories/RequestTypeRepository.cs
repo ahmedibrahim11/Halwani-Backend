@@ -301,6 +301,7 @@ namespace Halwani.Core.ModelRepositories
                 RT.TeamName = model.TeamName;
                 RT.Priority = model.Priority;
                 RT.Severity = model.Severity;
+                RT.RequestTypeGroups.Clear();
                 RT.RequestTypeGroups = model.GroupIds.Select(e => new RequestTypeGroups
                 {
                     GroupId = e
@@ -396,6 +397,7 @@ namespace Halwani.Core.ModelRepositories
                     TicketType = (int)query.TicketType,
                     Team = query.TeamName,
                     Icon = rootFile + "/" + query.Id + "/" + query.Icon,
+              GroupIDs= query.RequestTypeGroups.Select(r=>r.GroupId).ToList()
 
                 };
             }

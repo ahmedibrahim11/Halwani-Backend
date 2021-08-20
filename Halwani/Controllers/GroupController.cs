@@ -1,12 +1,15 @@
 ﻿using Halwani.Core.ModelRepositories.Interfaces;
+using Halwani.Core.ViewModels.GenericModels;
 using Halwani.Core.ViewModels.GroupModels;
 using Halwani.Data.Entities.ProductCategories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Halwani.Controllers
@@ -54,10 +57,20 @@ namespace Halwani.Controllers
             return Ok(result);
         }
         [HttpPost]
-        [Route("getGroupforTicketType")]
-        public ActionResult getGroupforTicketType([FromBody] myID ticketType)
+        [Route("List")]
+        public ActionResult<GroupResultViewModel> List(GroupPageInputViewModel model)
         {
-            var result = _groupRepositry.listTicketTypeGroups(ticketType.id);
+            var result = _groupRepositry.List(model, User.Identity as ClaimsIdentity, out RepositoryOutput response);
+            if (response.Code == RepositoryResponseStatus.Error)
+                return Problem(response.ErrorMessages.FirstOrDefault());
+
+            return Ok(result);
+        }
+        [HttpPost]
+        [Route("getGroup")]
+        public ActionResult getGroupforTicketType()
+        {
+            var result = _groupRepositry.listTicketTypeGroups();
             if (result == null)
                 return Problem();
             return Ok(result);
@@ -70,6 +83,38 @@ namespace Halwani.Controllers
             if (result == null)
                 return Problem();
             return Ok(result);
+        }
+        [HttpGet]
+        [Authorize]
+        [Route("UpdateVisiblity")]
+        public ActionResult UpdateVisibility(int id, bool isVisible)
+        {
+            var result = _groupRepositry.UpdateVisiblity(id, isVisible);
+            if (!result.Success)
+                return Problem("");
+            return Ok(result);
+        }
+        [HttpGet]
+
+        [Route("GetForEdit/{settingID:int}")]
+        public ActionResult GetForEdit(int settingID)
+        {
+            var result = _groupRepositry.GetForEdit(settingID);
+            if (result == null)
+                return Problem();
+
+            return Ok(result);
+        }
+        [HttpPut]
+        [Route("Edit")]
+        public ActionResult Edit(CreateGroupModel model)
+        {
+            var result = _groupRepositry.Edit(model);
+            if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.Error)
+                return Problem();
+            if (result.Code == Core.ViewModels.GenericModels.RepositoryResponseStatus.NotFound)
+                return NotFound();
+            return Ok();
         }
         public class myID
         {
