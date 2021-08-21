@@ -20,7 +20,7 @@ using Halwani.Utilites.Email;
 
 namespace Halwani.Core.ModelRepositories
 {
-    public class UserRequestRepository: IUserRequestRepository
+    public class UserRequestRepository : IUserRequestRepository
     {
         private readonly IConfiguration configuration;
         private readonly IEmailService emailService;
@@ -39,6 +39,9 @@ namespace Halwani.Core.ModelRepositories
                                             {
                                                 { "[UserName]", userClaims.FindFirst(ClaimTypes.Name).Value},
                                                 { "[Text]", model.Text},
+                                                { "[BugType]", model.bugType.ToString()},
+                                                { "[UserFeedBack]", model.userFeedBack.ToString()},
+                                                { "[SupportType]", model.supportTypes.ToString()},
                                                 { "[Email]", userClaims.FindFirst(ClaimTypes.Email).Value}
                                             };
                 emailService.SendEmail(new EmailContentModel
@@ -67,6 +70,9 @@ namespace Halwani.Core.ModelRepositories
                 Dictionary<string, string> Variables = new Dictionary<string, string>
                                             {
                                                 { "[UserName]", userClaims.FindFirst(ClaimTypes.Name).Value},
+                    { "[BugType]", model.bugType.ToString()},
+                                                { "[UserFeedBack]", model.userFeedBack.ToString()},
+                                                { "[SupportType]", model.supportTypes.ToString()},
                                                 { "[Text]", model.Text},
                                                 { "[Email]", userClaims.FindFirst(ClaimTypes.Email).Value}
                                             };
