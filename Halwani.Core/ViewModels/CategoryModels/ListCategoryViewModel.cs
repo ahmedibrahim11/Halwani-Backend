@@ -5,7 +5,7 @@ namespace Halwani.Core.ViewModels.CategoryModels
     public class CategoryPageInputViewModel  : PaginationViewModel
     {
         public CategoryPageInputFilter Filter { get; set; }
-        public CategoryPageInputSort SortValue { get; set; }
+        public CategoryPageInputSort? SortValue { get; set; }
     }
     public class CategoryPageInputFilter
     {
@@ -13,7 +13,7 @@ namespace Halwani.Core.ViewModels.CategoryModels
     }
     public enum CategoryPageInputSort
     {
-        CreationDate = 0,
+        Name = 0
     }
 
     public class CategoryResultViewModel : PageResult<CategoryListViewModel>

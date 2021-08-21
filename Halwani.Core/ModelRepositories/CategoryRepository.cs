@@ -155,6 +155,29 @@ namespace Halwani.Core.ModelRepositories
         }
         private IEnumerable<ProductCategory> SortList(CategoryPageInputViewModel model, IEnumerable<ProductCategory> query)
         {
+            if (model.SortValue.HasValue)
+            {
+                switch (model.SortValue.Value)
+                {
+                    case CategoryPageInputSort.Name:
+                        switch (model.SortDirection)
+                        {
+                            case SortDirection.Asc:
+                                query = query.OrderBy(e => e.Name);
+                                break;
+                            case SortDirection.Des:
+                                query = query.OrderByDescending(e => e.Name);
+                                break;
+                            default:
+                                query = query.OrderBy(e => e.Name);
+                                break;
+                        }
+                        break;
+                    default:
+                                query = query.OrderBy(e => e.Name);
+                        break;/
+                }
+            }
             return query;
         }
         private void PagingList(CategoryPageInputViewModel model, CategoryResultViewModel result, IEnumerable<ProductCategory> qurey)
