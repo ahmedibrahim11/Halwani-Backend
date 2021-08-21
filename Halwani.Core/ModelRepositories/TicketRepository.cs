@@ -728,6 +728,19 @@ slm.TargetDate);
                             break;
                     }
                     break;
+                case TicketPageInputSort.Status:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => (int)e.TicketStatus);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => (int)e.TicketStatus);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 case TicketPageInputSort.CreationDate:
                     switch (model.SortDirection)
                     {
