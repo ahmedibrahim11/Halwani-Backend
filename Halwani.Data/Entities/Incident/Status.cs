@@ -15,6 +15,7 @@ namespace Halwani.Data.Entities.Incident
         Reopened = 6,
         Resolved = 7,
         OverDue = 8,
-        Canceled = 9
+        Canceled = 9,
+        Closed = 10
     }
 }
