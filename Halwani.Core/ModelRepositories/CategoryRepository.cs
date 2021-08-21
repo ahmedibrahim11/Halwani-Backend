@@ -175,7 +175,7 @@ namespace Halwani.Core.ModelRepositories
                         break;
                     default:
                                 query = query.OrderBy(e => e.Name);
-                        break;/
+                        break;
                 }
             }
             return query;
