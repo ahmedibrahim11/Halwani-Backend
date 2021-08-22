@@ -494,6 +494,9 @@ slm.TargetDate);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
 
+                if (string.IsNullOrEmpty(model.UserName))
+                    model.UserName = _userRepository.GetById(loggedUserId).UserName;
+
                 ticket.TicketHistories.Add(new TicketHistory
                 {
                     FromTeam = ticket.AssignedUser,

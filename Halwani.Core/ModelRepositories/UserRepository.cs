@@ -23,7 +23,7 @@ namespace Halwani.Core.ModelRepositories
 
             try
             {
-                return Find(s => s.UserTeams.Any(t => t.Team.Name == teamName && (t.User.RoleId == (int)RoleEnum.ItPersonal || t.User.RoleId == (int)RoleEnum.ItManager || t.User.RoleId == (int)RoleEnum.SuperAdmin))).Select(e => new UserLookupViewModel
+                return Find(s => s.UserTeams.Any(t => t.Team.Name == teamName && (t.User.RoleId == (int)RoleEnum.ItPersonal || t.User.RoleId == (int)RoleEnum.ItManager /*|| t.User.RoleId == (int)RoleEnum.SuperAdmin*/))).Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,
