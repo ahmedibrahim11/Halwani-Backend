@@ -495,7 +495,7 @@ slm.TargetDate);
                     return RepositoryOutput.CreateNotFoundResponse();
 
                 if (string.IsNullOrEmpty(model.UserName))
-                    model.UserName = _userRepository.GetById(loggedUserId).UserName;
+                    model.UserName = _userRepository.GetById(long.Parse(loggedUserId)).UserName;
 
                 ticket.TicketHistories.Add(new TicketHistory
                 {
