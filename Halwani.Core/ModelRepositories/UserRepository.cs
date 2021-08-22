@@ -84,6 +84,8 @@ namespace Halwani.Core.ModelRepositories
                                 firstRow = false;
                                 continue;
                             }
+                            if (thecurrentrow.ChildElements.Count < 7)
+                                continue;
                             var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupEnum, out bool priority, out bool isDeleted);
                             if (result == true)
                             {
