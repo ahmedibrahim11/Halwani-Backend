@@ -194,11 +194,11 @@ namespace Halwani.Core.ModelRepositories
             if (int.TryParse(securityGroup.InnerText, out id))
             {
                 SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
-                if (item.Text.InnerText.ToString().ToLower().Contains("it- admin"))
+                if (item.Text.InnerText.ToString().ToLower().Contains("it- admin")|| item.Text.InnerText.ToString().ToLower().Contains("it-admin"))
                     securityGroupText = RoleEnum.ItManager;
-                if (item.Text.InnerText.ToString().Contains("it-user"))
+                if (item.Text.InnerText.ToString().ToLower().Contains("it-user"))
                     securityGroupText = RoleEnum.ItPersonal;
-                if (item.Text.InnerText.ToString().Contains("user"))
+                if (item.Text.InnerText.ToString().ToLower().Contains("user"))
                     securityGroupText = RoleEnum.User;
             }
             var priorityCell = thecurrentrow.ChildElements.ElementAt(5);
