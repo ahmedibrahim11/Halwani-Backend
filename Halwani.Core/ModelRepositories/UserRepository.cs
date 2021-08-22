@@ -202,6 +202,8 @@ namespace Halwani.Core.ModelRepositories
                     securityGroupText = RoleEnum.ItPersonal;
                 if (item.Text.InnerText.ToString().ToLower().Contains("user"))
                     securityGroupText = RoleEnum.User;
+                else
+                    securityGroupText = RoleEnum.User;
             }
             var priorityCell = thecurrentrow.ChildElements.ElementAt(5);
             if (int.TryParse(priorityCell.InnerText, out id))
