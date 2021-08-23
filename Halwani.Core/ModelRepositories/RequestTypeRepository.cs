@@ -175,7 +175,7 @@ namespace Halwani.Core.ModelRepositories
                     ID = item.Id,
                     Title = item.Name,
                     Description = item.Description,
-                    Group = item.RequestTypeGroups.Count > 1 ? "(Used in 2 groups)" : item.RequestTypeGroups.First().Group.Name,
+                    Group = item.RequestTypeGroups.Select(s=>s.Group.Name).ToList(),
                     Team = item.TeamName,
                     TicketType = (int)item.TicketType,
                     IsVisable = item.IsVisible
@@ -301,6 +301,7 @@ namespace Halwani.Core.ModelRepositories
                 RT.TeamName = model.TeamName;
                 RT.Priority = model.Priority;
                 RT.Severity = model.Severity;
+                RT.RequestTypeGroups.Clear();
                 RT.RequestTypeGroups = model.GroupIds.Select(e => new RequestTypeGroups
                 {
                     GroupId = e
@@ -396,6 +397,7 @@ namespace Halwani.Core.ModelRepositories
                     TicketType = (int)query.TicketType,
                     Team = query.TeamName,
                     Icon = rootFile + "/" + query.Id + "/" + query.Icon,
+              GroupIDs= query.RequestTypeGroups.Select(r=>r.GroupId).ToList()
 
                 };
             }

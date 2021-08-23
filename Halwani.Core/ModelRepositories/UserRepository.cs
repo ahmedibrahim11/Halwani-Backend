@@ -23,7 +23,7 @@ namespace Halwani.Core.ModelRepositories
 
             try
             {
-                return Find(s => s.UserTeams.Any(t => t.Team.Name == teamName && t.User.RoleId == (int)RoleEnum.ItPersonal)).Select(e => new UserLookupViewModel
+                return Find(s => s.UserTeams.Any(t => t.Team.Name == teamName && (t.User.RoleId == (int)RoleEnum.ItPersonal || t.User.RoleId == (int)RoleEnum.ItManager /*|| t.User.RoleId == (int)RoleEnum.SuperAdmin*/))).Select(e => new UserLookupViewModel
                 {
                     Id = e.Id,
                     Text = e.Name,
@@ -84,6 +84,8 @@ namespace Halwani.Core.ModelRepositories
                                 firstRow = false;
                                 continue;
                             }
+                            if (thecurrentrow.ChildElements.Count < 7)
+                                continue;
                             var result = ExtractDataFromRow(workbookPart, thecurrentrow, out string nameText, out string emailText, out string userNameText, out List<int> teamIdsText, out RoleEnum securityGroupEnum, out bool priority, out bool isDeleted);
                             if (result == true)
                             {
@@ -194,11 +196,13 @@ namespace Halwani.Core.ModelRepositories
             if (int.TryParse(securityGroup.InnerText, out id))
             {
                 SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
-                if (item.Text.InnerText.ToString().ToLower().Contains("it- admin"))
+                if (item.Text.InnerText.ToString().ToLower().Contains("admin"))
                     securityGroupText = RoleEnum.ItManager;
-                if (item.Text.InnerText.ToString().Contains("it-user"))
+                else if (item.Text.InnerText.ToString().ToLower().Contains("it-user"))
                     securityGroupText = RoleEnum.ItPersonal;
-                if (item.Text.InnerText.ToString().Contains("user"))
+                else if (item.Text.InnerText.ToString().ToLower().Contains("user"))
+                    securityGroupText = RoleEnum.User;
+                else
                     securityGroupText = RoleEnum.User;
             }
             var priorityCell = thecurrentrow.ChildElements.ElementAt(5);

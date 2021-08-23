@@ -28,6 +28,7 @@ namespace Halwani.Core.ViewModels.TicketModels
         CreationDate = 0,
         RasiedBy = 1,
         Topic = 2,
-        Severity = 3
+        Severity = 3,
+        Status = 4
     }
 }

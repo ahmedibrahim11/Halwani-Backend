@@ -494,6 +494,9 @@ slm.TargetDate);
                 if (ticket == null)
                     return RepositoryOutput.CreateNotFoundResponse();
 
+                if (string.IsNullOrEmpty(model.UserName))
+                    model.UserName = _userRepository.GetById(long.Parse(loggedUserId)).UserName;
+
                 ticket.TicketHistories.Add(new TicketHistory
                 {
                     FromTeam = ticket.AssignedUser,
@@ -723,6 +726,19 @@ slm.TargetDate);
                             break;
                         case SortDirection.Des:
                             query = query.OrderByDescending(e => e.SubmitterName);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case TicketPageInputSort.Status:
+                    switch (model.SortDirection)
+                    {
+                        case SortDirection.Asc:
+                            query = query.OrderBy(e => (int)e.TicketStatus);
+                            break;
+                        case SortDirection.Des:
+                            query = query.OrderByDescending(e => (int)e.TicketStatus);
                             break;
                         default:
                             break;
