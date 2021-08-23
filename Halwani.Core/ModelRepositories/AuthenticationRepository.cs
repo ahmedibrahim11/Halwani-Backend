@@ -31,7 +31,7 @@ namespace Halwani.Core.ModelRepositories
             try
             {
                 //TODO: Replace with AD Authentication.
-                var user = Find(e => e.UserName == model.UserName, null, "Role").FirstOrDefault();
+                var user = Find(e => e.Email == model.UserName, null, "Role").FirstOrDefault();
                 if (user != null /*&& await userManager.CheckPasswordAsync(user, model.Password)*/)
                 {
                     if (user.UserStatus != (int)UserStatusEnum.Active)
