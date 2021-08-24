@@ -179,15 +179,16 @@ namespace Halwani.Core.ModelRepositories
                 var teamText = item.Text.InnerText.ToString().Trim();
                 if (!string.IsNullOrEmpty(teamText))
                 {
+                    int teamId = 0;
                     foreach (var team in teamText.Split(","))
                     {
-                        if (!int.TryParse(team, out int teamId))
+                        if (!int.TryParse(team, out teamId))
                         {
                             break;
                         }
                         else
                         {
-                            teamIdsText.Add(int.Parse(team));
+                            teamIdsText.Add(teamId);
                         }
                     }
                 }
@@ -198,9 +199,9 @@ namespace Halwani.Core.ModelRepositories
                 SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
                 if (item.Text.InnerText.ToString().ToLower().Contains("it- admin")|| item.Text.InnerText.ToString().ToLower().Contains("it-admin"))
                     securityGroupText = RoleEnum.ItManager;
-                if (item.Text.InnerText.ToString().ToLower().Contains("it-user"))
+                else if (item.Text.InnerText.ToString().ToLower().Contains("it-user"))
                     securityGroupText = RoleEnum.ItPersonal;
-                if (item.Text.InnerText.ToString().ToLower().Contains("user"))
+                else if(item.Text.InnerText.ToString().ToLower().Contains("user"))
                     securityGroupText = RoleEnum.User;
                 else
                     securityGroupText = RoleEnum.User;
