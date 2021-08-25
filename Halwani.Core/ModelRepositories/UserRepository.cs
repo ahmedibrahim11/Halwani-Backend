@@ -179,9 +179,9 @@ namespace Halwani.Core.ModelRepositories
                 var teamText = item.Text.InnerText.ToString().Trim();
                 if (!string.IsNullOrEmpty(teamText))
                 {
-                    int teamId = 0;
                     foreach (var team in teamText.Split(","))
                     {
+                        int teamId;
                         if (!int.TryParse(team, out teamId))
                         {
                             break;
